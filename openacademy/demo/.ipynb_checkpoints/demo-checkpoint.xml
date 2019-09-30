@@ -7,10 +7,10 @@
 Can have multiple lunes
             </field>
         </record>
-        <record model-"openacademy.course" id-"course1">
+        <record model="openacademy.course" id="course1">
             <field name="name">Course 1</field>
         </record>
-        <record model="openacademny.course" id="course2">
+        <record model="openacademy.course" id="course2">
             <field name="name">Course 2</field>
             <field name="description">Course 2's description</field>
         </record>
