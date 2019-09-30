@@ -30,7 +30,7 @@
         'views/templates.xml',
         'views/openacademy.xml',
     ],
-    # only loaded in demonstration mode
+    # only loaded in demonstration mode and not on reload?
     'demo': [
         'demo/demo.xml',
     ],
