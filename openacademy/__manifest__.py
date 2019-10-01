@@ -5,7 +5,7 @@
     'summary': """Manage trainings""",
 
     'description': """
-        Open Acadmey module for managing trainigns:
+        Open Acadamey module for managing trainings:
             - courses
             - sessions
             - registration
