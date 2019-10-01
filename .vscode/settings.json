@@ -24,7 +24,7 @@
 
      // "python.linting.pep8Path": "optional: path to python use if you have environment path",
 
-     "python.linting.pep8Enabled": true,
+     "python.linting.pep8Enabled": false,
 
     // add this auto-save option so the pylint will sow errors while editing otherwise
     //it will only show the errors on file save
@@ -35,5 +35,6 @@
     "files.exclude": {
         "**/*.pyc": true
                         },
-                        "python.pythonPath": ".venv\\Scripts\\python.exe"
+                        "python.pythonPath": "C:\\Users\\pseem\\AppData\\Local\\Programs\\Python\\Python37-32\\python.exe",
+                        "python.linting.pylintEnabled": true
 }
