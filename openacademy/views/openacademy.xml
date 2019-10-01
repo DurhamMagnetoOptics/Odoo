@@ -14,7 +14,7 @@
                             <field name="description"/>
                         </page>
                         <page string="About">
-                            This is an example of a notebook pushed from a remote PC
+                            This is an example of a notebook pushed from a remote PC a second time
                         </page>
                     </notebook>
 				</sheet>
