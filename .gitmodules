@@ -1,0 +1,4 @@
+[submodule "odoonz/odoonz-addons/auth_oauth_microsoft_graph"]
+	path = odoonz/odoonz-addons/auth_oauth_microsoft_graph
+	url = git@github.com:odoonz/odoonz-addons.git
+	branch = 12.0
