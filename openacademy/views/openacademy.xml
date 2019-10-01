@@ -64,12 +64,12 @@
 		 It is not required when it is the same module -->
 	
 	
-	<!-- session form view -->	 
+	<!-- session form view -->
 	<record model="ir.ui.view" id="session_form_view">
 		<field name="name">session.form</field>
-		<field name="res_model">openacademy.session</field>
+		<field name="model">openacademy.session</field>
 		<field name="arch" type="xml">
-			<form strings="Session Form">
+			<form string="Session Form">
 				<sheet>
 					<group>
 						<field name="name"/>
@@ -81,15 +81,15 @@
 			</form>
 		</field>
 	</record>
-		
+
 	<record model="ir.actions.act_window" id="session_list_action">
 		<field name="name">Sessions</field>
 		<field name="res_model">openacademy.session</field>
 		<field name="view_type">form</field>
 		<field name="view_mode">tree,form</field>
 	</record>
-	
+
 	<menuitem id="session_menu" name="Sessions"
-		parent="openacademy_menu"
-		action="session_list_action"/>
+			  parent="openacademy_menu"
+			  action="session_list_action"/>
 </odoo>
