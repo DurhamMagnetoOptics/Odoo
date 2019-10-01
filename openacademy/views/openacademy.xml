@@ -62,7 +62,9 @@
 	<!-- Full id location:
 		 action="openacademy.course_list_action"
 		 It is not required when it is the same module -->
-		 
+	
+	
+	<!-- session form view -->	 
 	<record model="ir.ui.view" id="session_form_view">
 		<field name="name">session.form</field>
 		<field name="res_model">openacademy.session</field>
