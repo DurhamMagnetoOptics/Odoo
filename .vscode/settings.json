@@ -17,7 +17,7 @@
     //"python.linting.pylintArgs": ["--load-plugins", "pylint_odoo"],
     "python.linting.pylintArgs": [
         "--init-hook",
-        "import sys; sys.path.append('${workspaceRoot}\\..\\odoo\\odoo')"
+        "import sys; sys.path.append('${workspaceRoot}\\..')"
     ],
 
     "python.formatting.provider": "yapf",
