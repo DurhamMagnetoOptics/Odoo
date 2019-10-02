@@ -8,7 +8,7 @@ class Course(models.Model):
     
     name = fields.Char(string="Title", required=True)
     description = fields.Text()
-
+    test = fields.
     
     responsible_id = fields.Many2One('res.users', ondelete='set null', string="Responsible", index=True)
     
