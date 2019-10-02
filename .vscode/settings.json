@@ -1,0 +1,46 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    //"python.pythonPath": "optional: path to python use if you have environment path ",
+
+    // use this so the autocompleate/goto definition will work with python extension
+    "python.autoComplete.extraPaths": [
+        "${workspaceRoot}/..",
+        "${workspaceRoot}/../odoo/",
+        "${workspaceRoot}/../odoo/addons",
+        "${workspaceRoot}/../odoo/odoo",
+        "${workspaceRoot}/../odoo/odoo/addons",
+        "${workspaceRoot}/../enterprise"],
+
+    "python.linting.enabled": true,
+
+    //load the pylint_odoo
+    //"python.linting.pylintArgs": ["--load-plugins", "pylint_odoo"],
+    "python.linting.pylintArgs": [
+        "--init-hook",
+        "import sys; sys.path.append('${workspaceRoot}\\..\\odoo\\odoo')"
+    ],
+
+    "python.formatting.provider": "yapf",
+
+    //"python.linting.pep8Enabled": true,
+
+    // add this auto-save option so the pylint will sow errors while editing otherwise
+    //it will only show the errors on file save
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 500,
+
+    // The following will hide the compiled file in the editor/ add other file to hide them from editor
+    "files.exclude": {
+        "**/*.pyc": true
+    },  
+    
+    "terminal.integrated.env.windows": {
+        "PYTHONPATH": "${workspaceRoot}\\..;${workspaceRoot}\\..\\odoo\\;${workspaceRoot}\\..\\odoo\\addons;${workspaceRoot}\\..\\odoo\\odoo;${workspaceRoot}\\..\\odoo\\odoo\\addons;${workspaceRoot}\\..\\enterprise;${env:PYTHONPATH}"
+    },
+
+    "terminal.integrated.env.linux": {
+        "PYTHONPATH": "${workspaceRoot}/..:${workspaceRoot}/../odoo/:${workspaceRoot}/../odoo/addons:${workspaceRoot}/../odoo/odoo:${workspaceRoot}/../odoo/odoo/addons:${workspaceRoot}/../enterprise:${env:PYTHONPATH}"
+    } 
+   
+    
+}
