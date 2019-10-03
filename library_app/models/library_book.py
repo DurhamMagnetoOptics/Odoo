@@ -18,7 +18,7 @@ class Book(models.Model):
         digits = [int(x) for x in self.isbn if x.isdigit()]
         if len(digits) == 13:
             ponderations = [1, 3] * 6
-            terms = [a * b for a, b in zip(digits[:12}, ponderations)]
+            terms = [a * b for a, b in zip(digits[:12], ponderations)]
             remain = sum(terms) % 10
             check = 10 - remain if remain != 0 else 0
             return digits[-1] == check
@@ -29,5 +29,5 @@ class Book(models.Model):
             if not book.isbn:
                 raise Warning('Please provide an ISBN for %s' % book.name)   
             if book.isbn and not book._check_isbn():
-                raise Warning('%s is an invalid ISBN' % book)
+                raise Warning('%s is an invalid ISBN' % book.isbn)
         return True
