@@ -40,10 +40,10 @@
         </field>
     </record>
 
-    <record id="view_saerch_book" model="ir.ui.view">
+    <record id="view_search_book" model="ir.ui.view">
         <field name="name">Book Filters</field>
         <field name="model">library.book</field>
-        <field name="arch" type="xm">
+        <field name="arch" type="xml">
             <search>
                 <field name="publisher_id"/>
                 <filter name="filter_inactive"
