@@ -12,7 +12,7 @@
                     <field name="date_published"/>
                     <field name="isbn"/>
                     <field name="active"/>
-                    <field name="imag" widget="image"/>
+                    <field name="image" widget="image"/>
                 </group>
             </form>
         </field>
