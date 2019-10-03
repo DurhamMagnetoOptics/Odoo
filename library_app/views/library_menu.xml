@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <odoo>
     <!-- Library App Menu -->
-    <menuitem id="menu_library" name="Library" />
+    <menuitem id="library_menu" name="Library" />
 
     <!--Action to open the Book list -->
     <act_window id="action_library_book"
