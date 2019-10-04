@@ -4,4 +4,7 @@
     'author': 'Daniel Reis',
     'depends': ['library_app'],
     'application': False,
+    'data': [
+        'views/book_view.xml',
+    ]    
 }
