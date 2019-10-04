@@ -6,7 +6,7 @@ class BooksExtended(Books):
     def list(self, **kwargs):
         response = super().list(**kwargs)
         if kwargs.get('available'):
-            Book = http.request.env[9]'library.book']
-            books = Book.search([('is_available', '', True)])
+            Book = http.request.env['library.book']
+            books = Book.search([('is_available', '=', True)])
             response.qcontext['books'] = books
         return response
