@@ -1,3 +1,5 @@
+from odoo.tests.common import TransactionCase
+
 class TestBook(TransactionCase):
     def setUp(self, *args, **kwargs):
         result = super().setUp(*args, **kwargs)
