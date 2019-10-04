@@ -11,4 +11,8 @@
         'views/book_view.xml',
         'views/book_list_template.xml',
         ]
+    'demo': [
+        'data/res.partner.csv',
+        'data/library.book.csv',
+        ]        
 }
