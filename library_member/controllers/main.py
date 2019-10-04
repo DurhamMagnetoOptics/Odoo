@@ -5,7 +5,7 @@ class BooksExtended(Books):
     @http.route()
     def list(self, **kwargs):
         response = super().list(**kwargs)
-        if kwargs.get('available'):
+        if kwargs.get('available')=='1':
             Book = http.request.env['library.book']
             books = Book.search([('is_available', '=', True)])
             response.qcontext['books'] = books
