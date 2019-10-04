@@ -6,7 +6,7 @@ class TestBook(TransactionCase):
         user_admin = self.env.ref('base.user_admin')
         self.env = self.env(user=user_admin)
         self.Book = self.env['library.book']
-        #How do I create two different books so I can also test the 13-digit ISBN pass-through?
+        #How do I create two different books so I can also test the 13-digit ISBN pass-through as well as the new 10-digit check?
         self.book_ode = self.Book.create({
             'name': 'Lord of the Flies',
             'isbn': '0-571-05686-5'
