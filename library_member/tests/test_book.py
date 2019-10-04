@@ -13,6 +13,7 @@ class TestBook(TransactionCase):
         })
         return result
 
+    #This only tests the len(10) branch
     def test_check_isbn(self):
         "Check valid ISBN"
         self.assertTrue(self.book_ode._check_isbn)        
