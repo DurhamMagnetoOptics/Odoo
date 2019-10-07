@@ -8,13 +8,6 @@ class Checkout(models.Model):
     request_date = fields.Date(default = lambda s: fields.Date.today())
     line_ids = fields.One2many('library.checkout.line', 'checkout_id', string='Borrowed Books',)
 
-
-class CheckoutLine(models.Model):
-    _name='library.checkout.line'
-    _description = 'Borrow Request Line'
-    checkout_id = fields.Many2one('library.chekcout')
-    book_id = fields.Many2one('libary.book')
-
     @api.model
     def _default_stage(self):
             Stage = self.env['library.checkout.stage']
@@ -30,3 +23,53 @@ class CheckoutLine(models.Model):
         group_expand='_group_expand_stage_id',
     )
     state=fields.Selection(related='stage_id.state')
+
+    @api.onchange('member_id')
+    def onchange_member_id(self):
+        today = fields.Date.today()
+        if self.request_date != today:
+            self.request_date = fields.Date.today()
+            return {'warning' : {
+                'title': 'CHanged Request Date',
+                'message': 'Request date change to today',
+            }}
+    
+    checkout_date = fields.Date(readonly=True)
+    close_date = fields.date(readonly=True)
+
+    @api.model
+    def create(self, vals):
+        #code before create: should use the vals dict
+        if 'stage_id' in vals:
+            Stage = self.env['library.checkout.stage']
+            new_state = Stage.browse(vals['stage_id']).state
+            if new_state == 'open':
+                vals['checkout_date'] = fields.Date.today()
+        
+        new_record = super().create(vals)
+        #code after create: can use the 'new_record' created
+        if new_record.state == 'done':
+            raise exception.UserError('Not allowed to create a chekout in the done state.')
+            return new_record
+    
+    @api.multi
+    def write(self, vals):
+        #code before write: can use 'self' with the old values
+        if 'stage_id' in vals:
+            Stage = self.env['library.checkout.stage']
+            new_state = Stage.browse(vals['stage_id']).state
+            if new_State == 'open' and self.state != 'open'
+                vals['checkout_date'] = fields.Date.today()
+            if new_state == 'done' and self.state != 'done':
+                vals['close_date'] = fields.Date.today()
+        super().write(vals)
+        #code after write: can use 'self' with the updated values
+        return True
+
+
+
+class CheckoutLine(models.Model):
+    _name='library.checkout.line'
+    _description = 'Borrow Request Line'
+    checkout_id = fields.Many2one('library.chekcout')
+    book_id = fields.Many2one('libary.book')
