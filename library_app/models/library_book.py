@@ -1,10 +1,20 @@
 from odoo import api, fields, models
-from odoo.exceptions import Warning
+from odoo.exceptions import Warning, ValidationError
 
 class Book(models.Model):
     _name = 'library.book'
     _description = 'Book'
     _order = 'name, date_published desc'
+
+    _sql_constraints = [
+        ('library_book_name_date_uq',
+        'UNIQUE (name, date_published)',
+        'Book title and publication date must be unique.'),
+        ('library_book_check_date',
+        'CHECK (date_published <= current_date)',
+        'Publication date must not be in the future.'),
+    ]
+
     name = fields.Char('Title', required=True)
     isbn = fields.Char('ISBN')
     book_type = fields.Selection([
@@ -76,3 +86,9 @@ class Book(models.Model):
             if book.isbn and not book._check_isbn():
                 raise Warning('%s is an invalid ISBN' % book.isbn)
         return True
+    
+    @api.constrains('isbn')
+    def _contrains_isbn_valid(self):
+        for book in self:
+            if book.isbn and not book._check_isbn():
+                raise ValidationError('{} is an invalid ISBN'.format(book.isbn))
