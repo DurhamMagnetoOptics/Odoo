@@ -35,7 +35,7 @@ class Checkout(models.Model):
             }}
     
     checkout_date = fields.Date(readonly=True)
-    close_date = fields.date(readonly=True)
+    close_date = fields.Date(readonly=True)
 
     @api.model
     def create(self, vals):
@@ -58,7 +58,7 @@ class Checkout(models.Model):
         if 'stage_id' in vals:
             Stage = self.env['library.checkout.stage']
             new_state = Stage.browse(vals['stage_id']).state
-            if new_State == 'open' and self.state != 'open'
+            if new_State == 'open' and self.state != 'open':
                 vals['checkout_date'] = fields.Date.today()
             if new_state == 'done' and self.state != 'done':
                 vals['close_date'] = fields.Date.today()
@@ -71,5 +71,5 @@ class Checkout(models.Model):
 class CheckoutLine(models.Model):
     _name='library.checkout.line'
     _description = 'Borrow Request Line'
-    checkout_id = fields.Many2one('library.chekcout')
-    book_id = fields.Many2one('libary.book')
+    checkout_id = fields.Many2one('library.checkout')
+    book_id = fields.Many2one('library.book')
