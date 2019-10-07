@@ -35,11 +35,27 @@ class Book(models.Model):
     author_ids = fields.Many2many('res.partner', string='Authors')
 
     #Computed fields
-    publisher_country_id = fields.Many2one('res.country', string='Publisher Country', compute='_compute_publisher_country')
+    publisher_country_id = fields.Many2one(
+        'res.country',
+        string='Publisher Country',
+        compute='_compute_publisher_country',
+        inverse='_inverse_publisher_country',
+        search='_search_publisher_country',
+    )
+
+    publisher_phone_related = fields.Char('Publisher Phone', related='publisher_id.phone')
+
     @api.depends('publisher_id.country_id')
     def _compute_publisher_country(self):
         for book in self:
             book.publisher_country_id = book.publisher_id.country_id
+
+    def _inverse_publisher_country(self):
+        for book in self:
+            book.publisher_id.country_id = book.publisher_country_id
+
+    def _search_publisher_country(self, operator, value):
+        return [('publisher_id.country_id', operator, value)]
 
     @api.multi
     def _check_isbn(self):
