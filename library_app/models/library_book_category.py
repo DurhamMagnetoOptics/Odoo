@@ -11,4 +11,4 @@ class BookCategory(models.Model):
     parent_path = fields.Char(index=True)
 
     #Optional but good to have:
-    child_ids = fields.One2many('librbary.book.category', 'parent_id', 'Subcategories')
+    child_ids = fields.One2many('library.book.category', 'parent_id', 'Subcategories')
