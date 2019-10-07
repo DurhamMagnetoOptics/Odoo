@@ -12,3 +12,5 @@ class BookCategory(models.Model):
 
     #Optional but good to have:
     child_ids = fields.One2many('library.book.category', 'parent_id', 'Subcategories')
+
+    highlighted_id = fields.Reference([('library.book', 'Book'), ('res.partner', 'Author')], 'Category Highlight')
