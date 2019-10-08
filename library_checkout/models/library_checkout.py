@@ -3,7 +3,7 @@ from odoo import api,  exceptions, fields, models
 class Checkout(models.Model):
     _name='library.checkout'
     _description='Checkout Request'
-    _inherit = ['mail.thread', 'mail.activity']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     member_id = fields.Many2one('library.member', required=True)
     user_id=fields.Many2one('res.users', 'Librarian', default=lambda s: s.env.uid)
     request_date = fields.Date(default = lambda s: fields.Date.today())
@@ -59,7 +59,7 @@ class Checkout(models.Model):
         #code after create: can use the 'new_record' created
         if new_record.state == 'done':
             raise exception.UserError('Not allowed to create a chekout in the done state.')
-            return new_record
+        return new_record
     
     @api.multi
     def write(self, vals):
