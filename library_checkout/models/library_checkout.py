@@ -9,6 +9,14 @@ class Checkout(models.Model):
     request_date = fields.Date(default = lambda s: fields.Date.today())
     line_ids = fields.One2many('library.checkout.line', 'checkout_id', string='Borrowed Books',)
 
+    @api.multi
+    def name_get(self):
+        names = []
+        for rec in self:
+            name = '{}/{}'.format(rec.member_id, rec.request_date)
+            names.append((rec.id, name))
+        return names
+
     @api.model
     def _default_stage(self):
             Stage = self.env['library.checkout.stage']
@@ -25,6 +33,9 @@ class Checkout(models.Model):
     )
     state=fields.Selection(related='stage_id.state')
 
+    checkout_date = fields.Date(readonly=True)
+    close_date = fields.Date(readonly=True)
+
     @api.onchange('member_id')
     def onchange_member_id(self):
         today = fields.Date.today()
@@ -34,9 +45,6 @@ class Checkout(models.Model):
                 'title': 'CHanged Request Date',
                 'message': 'Request date change to today',
             }}
-    
-    checkout_date = fields.Date(readonly=True)
-    close_date = fields.Date(readonly=True)
 
     @api.model
     def create(self, vals):
