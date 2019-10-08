@@ -13,7 +13,7 @@ class CheckoutMassMessage(models.TransientModel):
     @api.model
     def default_get(self, field_names):
         defaults = super().default_get(field_names)
-        checkout_ids = self.env.context['active_ids']
+        checkout_ids = self.env.context.get('active_ids')
         defaults['checkout_ids'] = checkout_ids
         return defaults
 

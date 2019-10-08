@@ -24,7 +24,7 @@ class TestWizard(TransactionCase):
         msgs_after = len(self.checkout0.message_ids)
         self.assertEqual(msgs_after, msgs_before+1, 'Expected on additional message in the Checkout.')
 
-    def test_button_send_empty(sefl):
+    def test_button_send_empty(self):
         """Send button errors on empty body message"""
         wizard0 = self.Wizard.create({})
         with self.assertRaises(exceptions.UserError) as e:
