@@ -1,5 +1,6 @@
 from odoo import api, exceptions, fields, models
 import logging
+from odoo import exceptions
 _logger = logging.getLogger(__name__)
 
 class CheckoutMassMessage(models.TransientModel):
@@ -19,6 +20,10 @@ class CheckoutMassMessage(models.TransientModel):
     @api.multi
     def button_send(self):
         self.ensure_one()
+        if not self.checkout_ids:
+            raise exceptions.UserError('Select at least one Checkout to send messages to.')
+        if not self.message_body:
+            raise exceptions.UserError('Write a message body to send.')
         for checkout in self.checkout_ids:
             checkout.message_post(
                 body=self.message_body,
