@@ -25,5 +25,6 @@ class CheckoutMassMessage(models.TransientModel):
                 subject=self.message_subject,
                 subtype='mail.mt_comment',
             )
+            _logger.debug('Posted %d messages to followers: %s', checkout.id, checkout.message_follower_ids)
         _logger.info('Posted %d messages to Checkouts: %s', len(self.checkout_ids), str(self.checkout_ids))
         return True
