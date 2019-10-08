@@ -13,7 +13,7 @@ class Checkout(models.Model):
     def name_get(self):
         names = []
         for rec in self:
-            name = '{}/{}'.format(rec.member_id, rec.request_date)
+            name = '{}/{}'.format(rec.member_id.name, rec.request_date)
             names.append((rec.id, name))
         return names
 

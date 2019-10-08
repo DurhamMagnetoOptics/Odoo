@@ -7,6 +7,8 @@
             <tree>
                 <field name="request_date"/>
                 <field name="member_id"/>
+                <field name="checkout_date" />
+                <field name="stage_id" />                
             </tree>
         </field>
     </record>
@@ -20,8 +22,8 @@
                     <group>
                         <field name="member_id"/>
                         <field name="request_date"/>
-                        <field name="user_id"/>
-                        <field name="line_ids"/>
+                        <field name="checkout_date"/>
+                        <field name="stage_id"/>
                     </group>
                 </sheet>
             </form>
