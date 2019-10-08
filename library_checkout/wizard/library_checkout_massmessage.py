@@ -22,8 +22,8 @@ class CheckoutMassMessage(models.TransientModel):
         self.ensure_one()
         if not self.checkout_ids:
             raise exceptions.UserError('Select at least one Checkout to send messages to.')
-        _logger.info('Posted %s messages as body [%s]', self.message_body, str(self.message_body))
-        if not self.message_body:
+        _logger.info('Posted %s messages as body', self.message_body)
+        if not self.message_body:  #See above output to understand why this is a bad exception test.  The html widget fills it with <p><br></p> by default so even if the user types noting, message_body isn't emtpy.
             raise exceptions.UserError('Write a message body to send.')
         for checkout in self.checkout_ids:
             checkout.message_post(
