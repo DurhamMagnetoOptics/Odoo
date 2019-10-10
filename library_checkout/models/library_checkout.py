@@ -9,6 +9,13 @@ class Checkout(models.Model):
     request_date = fields.Date(default = lambda s: fields.Date.today())
     line_ids = fields.One2many('library.checkout.line', 'checkout_id', string='Borrowed Books',)
 
+    def button_done(self):
+        Stage = self.env['library.checkout.stage']
+        done_stage = Stage.search([('state', '=', 'done')], limit=1)
+        for checkout in self:
+            checkout.stage_id = done_stage
+        return True
+
     @api.multi
     def name_get(self):
         names = []

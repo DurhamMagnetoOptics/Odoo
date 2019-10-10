@@ -22,7 +22,7 @@
 
     "python.formatting.provider": "yapf",
 
-    //"python.linting.pep8Enabled": true,
+    //"python.linting.pycodestyleEnabled": true,
 
     // add this auto-save option so the pylint will sow errors while editing otherwise
     //it will only show the errors on file save
