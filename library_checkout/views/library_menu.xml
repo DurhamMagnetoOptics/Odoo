@@ -17,6 +17,5 @@
     <menuitem id="menu_library_stage"
         name="Checkout Stages"
         action="action_library_stage"
-        parent="library_app.library_menu" />        
-    
+        parent="library_app.library_menu" />          
 </odoo>
