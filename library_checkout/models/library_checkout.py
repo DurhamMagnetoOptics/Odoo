@@ -46,24 +46,25 @@ class Checkout(models.Model):
 
     num_other_checkouts = fields.Integer(compute='_compute_num_other_checkouts')
 
+    @api.multi
     @api.depends('member_id')
     def _compute_num_other_checkouts(self):
-        self.ensure_one()
-        if self.member_id:
-            if self.id: #if the record is being created, this won't exist yet
-                domain = [
-                    ('member_id', '=', self.member_id.id),
-                    ('state', 'in', ['open']),
-                    ('id', '!=', self.id)
-                ]
+        for rec in self:
+            if rec.member_id:
+                if rec.id: #if the record is being created, this won't exist yet
+                    domain = [
+                        ('member_id', '=', rec.member_id.id),
+                        ('state', 'in', ['open']),
+                        ('id', '!=', rec.id)
+                    ]
+                else:
+                    domain = [
+                        ('member_id', '=', rec.member_id.id),
+                        ('state', 'in', ['open'])
+                    ]
+                rec.num_other_checkouts = rec.search_count(domain)
             else:
-                domain = [
-                    ('member_id', '=', self.member_id.id),
-                    ('state', 'in', ['open'])
-                ]
-            self.num_other_checkouts = self.search_count(domain)
-        else:
-            self.num_other_checkouts = 0           
+                rec.num_other_checkouts = 0           
 
     @api.onchange('member_id')
     def onchange_member_id(self):
