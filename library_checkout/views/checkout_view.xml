@@ -44,7 +44,14 @@
                     <group name="group_top">
                         <notebook>
                             <page string="Borrowed Books" name="page_lines" >
-                                <field name="line_ids"/>
+                                <field name="line_ids">
+                                    <tree>
+                                        <field name="book_id"/>
+                                    </tree>
+                                    <form>
+                                        <field name="book_id"/>
+                                    </form>
+                                </field>
                             </page>
                         </notebook>
                         <group name="group_col1">
