@@ -67,7 +67,7 @@
                         </group>
                         <group name="group_col2">
                             <field name="state"/>
-                            <field name="close_date"/>
+                            <field name="close_date" attrs="{'invisible:[('state', 'in', ['new', 'open'])]}"/>
                         </group>
                     </group>
                     <notebook>
