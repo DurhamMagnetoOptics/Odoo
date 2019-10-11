@@ -33,8 +33,8 @@
                 <sheet>
                     <field name="member_image" widget="image" class="oe_avatar" />
                     <div class="oe_title">
-                        <label for="name" class="oe_edit_only" />
-                        <h1><field name="name"/></h1>
+                        <label for="member_id" class="oe_edit_only" />
+                        <h1><field name="member_id"/></h1>
                         <h3>
                             <span class="oe_read_only">By</span>
                             <label for="user_id" class="oe_edit_only"/>
@@ -44,7 +44,7 @@
                     <group name="group_top">
                         <notebook>
                             <page string="Borrowed Books" name="page_lines" >
-                                <field name="lines_ids"/>
+                                <field name="line_ids"/>
                             </page>
                         </notebook>
                         <group name="group_col1">
@@ -53,7 +53,7 @@
                         </group>
                         <group name="group_col2">
                             <field name="state"/>
-                            <field name="closed_date"/>
+                            <field name="close_date"/>
                         </group>
                     </group>
                 </sheet>
