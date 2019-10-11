@@ -25,6 +25,14 @@ class Checkout(models.Model):
             names.append((rec.id, name))
         return names
 
+
+    num_books = fields.Integer(compute='_compute_num_books')
+
+    @api.depends('line_ids')
+    def _compute_num_books(self):
+        for rec in self:
+            rec.num_books = len(rec.line_ids)
+
     @api.model
     def _default_stage(self):
             Stage = self.env['library.checkout.stage']
@@ -46,7 +54,6 @@ class Checkout(models.Model):
 
     num_other_checkouts = fields.Integer(compute='_compute_num_other_checkouts')
 
-    @api.multi
     @api.depends('member_id')
     def _compute_num_other_checkouts(self):
         for rec in self:

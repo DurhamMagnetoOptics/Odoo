@@ -12,11 +12,16 @@
         <field name="name">Checkout Tree</field>
         <field name="model">library.checkout</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree
+                decoration-muted="state in ['done', 'cancel']"
+                decoration-bf="state=='open'"
+            >
+                <field name="state" invisible="True" />
                 <field name="request_date"/>
                 <field name="member_id"/>
                 <field name="checkout_date" />
-                <field name="stage_id" />                
+                <field name="stage_id" />              
+                <field name="num_books" sum="# Books"/>  
             </tree>
         </field>
     </record>
@@ -67,7 +72,7 @@
                         </group>
                         <group name="group_col2">
                             <field name="state"/>
-                            <field name="close_date" attrs="{'invisible:[('state', 'in', ['new', 'open'])]}"/>
+                            <field name="close_date" attrs="{'invisible':[('state', 'in', ['new', 'open'])]}"/>
                         </group>
                     </group>
                     <notebook>
