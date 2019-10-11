@@ -1,5 +1,23 @@
 <?xml version="1.0"?>
 <odoo>
+    <record id="view_filter_checkout" model="ir.ui.view">
+        <field name="model">library.checkout</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="member_id"/>
+                <field name="user_id"/>
+                <filter name="filter_not_done"
+                    string="To Return"
+                    domain="[('state', '=', 'open')]"/>
+                <filter name="filter_my_checkouts"
+                    string="My Checkouts"
+                    domain="[('user_id','=',uid)]"/>
+                <filter name="group_user"
+                    string="By Member"
+                    context="{'group_by': 'member_id'}"/>
+            </search>
+        </field>
+    </record>
     <act_window id="action_other_checkouts_button"
         name="Open Other Checkouts"
         res_model="library.checkout"
