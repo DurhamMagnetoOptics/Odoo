@@ -50,7 +50,7 @@ class Checkout(models.Model):
         if self.request_date != today:
             self.request_date = fields.Date.today()
             return {'warning' : {
-                'title': 'CHanged Request Date',
+                'title': 'Changed Request Date',
                 'message': 'Request date change to today',
             }}
 
@@ -75,7 +75,7 @@ class Checkout(models.Model):
         if 'stage_id' in vals:
             Stage = self.env['library.checkout.stage']
             new_state = Stage.browse(vals['stage_id']).state
-            if new_State == 'open' and self.state != 'open':
+            if new_state == 'open' and self.state != 'open':
                 vals['checkout_date'] = fields.Date.today()
             if new_state == 'done' and self.state != 'done':
                 vals['close_date'] = fields.Date.today()
