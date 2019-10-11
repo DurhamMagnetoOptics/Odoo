@@ -23,7 +23,7 @@
                     <button name="button_done"
                         type="object"
                         string="Return Books"
-                        attrs="{[('state', 'in', ['new', 'done'])]}"
+                        attrs="{'invisible': [('state', 'in', ['new', 'done'])]}"
                         class="oe_highlight"/>
                 </header>
                 <sheet>
