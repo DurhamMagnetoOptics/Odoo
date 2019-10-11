@@ -44,6 +44,17 @@ class Checkout(models.Model):
     checkout_date = fields.Date(readonly=True)
     close_date = fields.Date(readonly=True)
 
+    num_other_checkouts = fields.Integer(compute='_compute_num_other_checkouts')
+
+    def _compute_num_other_checkouts(self):
+        for rec in self:
+            domain = [
+                ('member_id', '=' checkout.rec.id),
+                ('state', 'in' ['open']),
+                ('id', '!=' rec.id)
+            ]
+            rec.num_other_checkouts = self.search_count(domain)
+
     @api.onchange('member_id')
     def onchange_member_id(self):
         today = fields.Date.today()

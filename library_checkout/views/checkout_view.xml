@@ -1,5 +1,13 @@
 <?xml version="1.0"?>
 <odoo>
+    <act_window id="action_other_checkouts_button"
+        name="Open Other Checkouts"
+        res_model="library.checkout"
+        view_mode="tree,form"
+        domain="[('member_id', '=', default_member_id),
+            ('state', 'in', ['open']),
+            ('id', '!=', active_id)]" />
+
     <record id="view_tree_checkout" model="ir.ui.view">
         <field name="name">Checkout Tree</field>
         <field name="model">library.checkout</field>
@@ -31,6 +39,17 @@
                         options="{'fold_field': 'fold'}" />                        
                 </header>
                 <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button class="oe_stat_button"
+                            icon="fa-tasks"
+                            help="Other checkouts pending reutrn."
+                            type="action"
+                            name="%(action_other_checkouts_button)d"
+                            context="{'default_member_id': member_id}">
+
+                            <field string="To Return" name="num_other_checkouts" widget="statinfo"/>
+                        </button>
+                    </div>
                     <field name="member_image" widget="image" class="oe_avatar" />
                     <div class="oe_title">
                         <label for="member_id" class="oe_edit_only" />
