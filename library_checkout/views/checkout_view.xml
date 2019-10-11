@@ -42,18 +42,6 @@
                         </h3>
                     </div>
                     <group name="group_top">
-                        <notebook>
-                            <page string="Borrowed Books" name="page_lines" >
-                                <field name="line_ids">
-                                    <tree>
-                                        <field name="book_id"/>
-                                    </tree>
-                                    <form>
-                                        <field name="book_id"/>
-                                    </form>
-                                </field>
-                            </page>
-                        </notebook>
                         <group name="group_col1">
                             <field name="user_id" />
                             <field name="checkout_date"/>
@@ -63,6 +51,18 @@
                             <field name="close_date"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Borrowed Books" name="page_lines" >
+                            <field name="line_ids">
+                                <tree>
+                                    <field name="book_id"/>
+                                </tree>
+                                <form>
+                                    <field name="book_id"/>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>                    
                 </sheet>
                 <!-- discuss widgets -->
                 <div class="oe_chatter">
