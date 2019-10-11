@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <odoo>
-    <activity string="Activities"/>
+    <record id="view_activity_checkout" model="ir.ui.view">
+        <field name="model">library.checkout</field>
+        <field name="arch" type="xml">
+            <activity string="Activities"/>
+        </field>
+    </record>
     <record id="view_calendar_checkout" model="ir.ui.view">
         <field name="model">library.checkout</field>
         <field name="arch" type="xml">
