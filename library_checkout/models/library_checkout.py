@@ -5,6 +5,7 @@ class Checkout(models.Model):
     _description='Checkout Request'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     member_id = fields.Many2one('library.member', required=True)
+    member_image = fields.Binary(related='member_id.partner_id.image')
     user_id=fields.Many2one('res.users', 'Librarian', default=lambda s: s.env.uid)
     request_date = fields.Date(default = lambda s: fields.Date.today())
     line_ids = fields.One2many('library.checkout.line', 'checkout_id', string='Borrowed Books',)

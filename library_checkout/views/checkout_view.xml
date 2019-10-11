@@ -26,8 +26,36 @@
                         attrs="{'invisible': [('state', 'in', ['new', 'done'])]}"
                         class="oe_highlight"/>
                 </header>
+                <field name="stage_id"
+                    widget="statusbar"
+                    clickable="True"
+                    options="{'fold_field': 'fold'}" />
                 <sheet>
-                    <!-- To add form widget-->
+                    <field name="member_image" widget="image" class="oe_avatar" />
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only" />
+                        <h1><field name="name"/></h1>
+                        <h3>
+                            <span class="oe_read_only">By</span>
+                            <label for="user_id" class="oe_edit_only"/>
+                            <field name="user_id" class="oe_inline" />
+                        </h3>
+                    </div>
+                    <group name="group_top">
+                        <notebook>
+                            <page string="Borrowed Books" name="page_lines" >
+                                <field name="lines_ids"/>
+                            </page>
+                        </notebook>
+                        <group name="group_col1">
+                            <field name="user_id" />
+                            <field name="checkout_date"/>
+                        </group>
+                        <group name="group_col2">
+                            <field name="state"/>
+                            <field name="closed_date"/>
+                        </group>
+                    </group>
                 </sheet>
                 <!-- discuss widgets -->
                 <div class="oe_chatter">
