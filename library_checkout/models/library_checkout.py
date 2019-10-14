@@ -1,13 +1,14 @@
-from odoo import api,  exceptions, fields, models
+from odoo import api, exceptions, fields, models
 
 class Checkout(models.Model):
-    _name='library.checkout'
-    _description='Checkout Request'
+    """Module which stores the architecture for allowing members to check out books"""
+    _name = 'library.checkout'
+    _description = 'Checkout Request'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     member_id = fields.Many2one('library.member', required=True)
     member_image = fields.Binary(related='member_id.partner_id.image')
-    user_id=fields.Many2one('res.users', 'Librarian', default=lambda s: s.env.uid)
-    request_date = fields.Date(default = lambda s: fields.Date.today())
+    user_id = fields.Many2one('res.users', 'Librarian', default=lambda s: s.env.uid)
+    request_date = fields.Date(default=lambda s: fields.Date.today())
     line_ids = fields.One2many('library.checkout.line', 'checkout_id', string='Borrowed Books',)
 
     def button_done(self):
@@ -35,19 +36,19 @@ class Checkout(models.Model):
 
     @api.model
     def _default_stage(self):
-            Stage = self.env['library.checkout.stage']
-            return Stage.search([], limit=1)
+        Stage = self.env['library.checkout.stage']
+        return Stage.search([], limit=1)
     
     @api.model
     def _group_expand_stage_id(self, stages, domain, order):
         return stages.search([], order=order)
     
-    stage_id=fields.Many2one(
+    stage_id = fields.Many2one(
         'library.checkout.stage',
         default=_default_stage,
         group_expand='_group_expand_stage_id',
     )
-    state=fields.Selection(related='stage_id.state')
+    state = fields.Selection(related='stage_id.state')
 
     checkout_date = fields.Date(readonly=True)
     close_date = fields.Date(readonly=True)
@@ -95,7 +96,7 @@ class Checkout(models.Model):
         new_record = super().create(vals)
         #code after create: can use the 'new_record' created
         if new_record.state == 'done':
-            raise exception.UserError('Not allowed to create a chekout in the done state.')
+            raise exceptions.UserError('Not allowed to create a chekout in the done state.')
         return new_record
     
     @api.multi
@@ -135,7 +136,7 @@ class Checkout(models.Model):
 
 
 class CheckoutLine(models.Model):
-    _name='library.checkout.line'
+    _name = 'library.checkout.line'
     _description = 'Borrow Request Line'
     checkout_id = fields.Many2one('library.checkout')
     book_id = fields.Many2one('library.book')
