@@ -4,12 +4,12 @@
 
     // use this so the autocompleate/goto definition will work with python extension
     "python.autoComplete.extraPaths": [
-        "${workspaceRoot}",
-        "${workspaceRoot}/odoo/",
-        "${workspaceRoot}/odoo/addons",
-        "${workspaceRoot}/odoo/odoo",
-        "${workspaceRoot}/odoo/odoo/addons",
-        "${workspaceRoot}/enterprise"],
+        "${workspaceFolder}",
+        "${workspaceFolder}/odoo/",
+        "${workspaceFolder}/odoo/addons",
+        "${workspaceFolder}/odoo/odoo",
+        "${workspaceFolder}/odoo/odoo/addons",
+        "${workspaceFolder}/enterprise"],
 
     "python.linting.enabled": true,
 
@@ -18,7 +18,7 @@
     //C8201 is the odoo plugin message about no UTF-8 coding comment.
     "python.linting.pylintArgs": [
         "--init-hook",
-        "import sys; sys.path.append('${workspaceRoot}'); sys.path.append('${workspaceRoot}\\odoo'); sys.path.append('${workspaceRoot}\\enterprise')",
+        "import sys; sys.path.append('${workspaceFolder}'); sys.path.append('${workspaceFolder}\\odoo'); sys.path.append('${workspaceFolder}\\enterprise')",
         "--load-plugins",
         "pylint_odoo",
         "--disable=C8201"
@@ -39,11 +39,11 @@
     },  
     
     "terminal.integrated.env.windows": {
-        "PYTHONPATH": "${workspaceRoot}\\odoo\\;${workspaceRoot}\\odoo\\addons;${workspaceRoot}\\odoo\\odoo;${workspaceRoot}\\odoo\\odoo\\addons;${workspaceRoot}\\enterprise;${env:PYTHONPATH}"
+        "PYTHONPATH": "${workspaceFolder}\\odoo\\;${workspaceFolder}\\odoo\\addons;${workspaceFolder}\\odoo\\odoo;${workspaceFolder}\\odoo\\odoo\\addons;${workspaceFolder}\\enterprise;${env:PYTHONPATH}"
     },
 
     "terminal.integrated.env.linux": {
-        "PYTHONPATH": "${workspaceRoot}/odoo/:${workspaceRoot}/odoo/addons:${workspaceRoot}/odoo/odoo:${workspaceRoot}/odoo/odoo/addons:${workspaceRoot}/enterprise:${env:PYTHONPATH}"
+        "PYTHONPATH": "${workspaceFolder}/odoo/:${workspaceFolder}/odoo/addons:${workspaceFolder}/odoo/odoo:${workspaceFolder}/odoo/odoo/addons:${workspaceFolder}/enterprise:${env:PYTHONPATH}"
     },
 
     "python.pythonPath": "venv\\Scripts\\python.exe"
