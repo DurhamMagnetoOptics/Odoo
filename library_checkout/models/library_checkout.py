@@ -122,10 +122,10 @@ class Checkout(models.Model):
         'Priority',
         default='1'
     )
-    kanban_state = field.Selection(
+    kanban_state = fields.Selection(
         [
             ('normal', 'In Progress'),
-            'blocked', 'Blocked'),
+            ('blocked', 'Blocked'),
             ('done', 'Read for next stage')
         ],
         'Kanban State',
