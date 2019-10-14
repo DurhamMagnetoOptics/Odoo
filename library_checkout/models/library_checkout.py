@@ -111,6 +111,26 @@ class Checkout(models.Model):
         super().write(vals)
         #code after write: can use 'self' with the updated values
         return True
+    
+    color = fields.Integer('Color Index')
+    priority = fields.Selection(
+        [
+            ('0', 'Low'),
+            ('1', 'Normal'),
+            ('2', 'High')
+        ],
+        'Priority',
+        default='1'
+    )
+    kanban_state = field.Selection(
+        [
+            ('normal', 'In Progress'),
+            'blocked', 'Blocked'),
+            ('done', 'Read for next stage')
+        ],
+        'Kanban State',
+        default='normal'
+    )
 
 
 
