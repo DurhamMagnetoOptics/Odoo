@@ -38,13 +38,13 @@
         "**/*.pyc": true
     },  
     
-    "terminal.integrated.env.windows": {
-        "PYTHONPATH": "${workspaceFolder}\\odoo\\;${workspaceFolder}\\odoo\\addons;${workspaceFolder}\\odoo\\odoo;${workspaceFolder}\\odoo\\odoo\\addons;${workspaceFolder}\\enterprise;${env:PYTHONPATH}"
-    },
+    //"terminal.integrated.env.windows": {
+    //    "PYTHONPATH": "${workspaceFolder}\\odoo\\;${workspaceFolder}\\odoo\\addons;${workspaceFolder}\\odoo\\odoo;${workspaceFolder}\\odoo\\odoo\\addons;${workspaceFolder}\\enterprise;${env:PYTHONPATH}"
+    //},
 
-    "terminal.integrated.env.linux": {
-        "PYTHONPATH": "${workspaceFolder}/odoo/:${workspaceFolder}/odoo/addons:${workspaceFolder}/odoo/odoo:${workspaceFolder}/odoo/odoo/addons:${workspaceFolder}/enterprise:${env:PYTHONPATH}"
-    },
+    //"terminal.integrated.env.linux": {
+    //    "PYTHONPATH": "${workspaceFolder}/odoo/:${workspaceFolder}/odoo/addons:${workspaceFolder}/odoo/odoo:${workspaceFolder}/odoo/odoo/addons:${workspaceFolder}/enterprise:${env:PYTHONPATH}"
+    //},
 
     "python.pythonPath": "venv\\Scripts\\python.exe",
     "python.linting.pylintPath": "${env:LOCALAPPDATA}\\Programs\\Python\\Python37-32\\Scripts\\pylint",
