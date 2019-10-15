@@ -1,6 +1,5 @@
-#This is a modified version of the Odoo community edition file, where i had some issues with their versions on my machine
+#This is a modified version of the Odoo community edition file, which fixes some issues with their versions
 #Still need to install wkhtmlto pdf 0.12.5 https://github.com/wkhtmltopdf/wkhtmltopdf/releases/tag/0.12.5
-#For linting, need pylint and the oca pylint plugin described here: https://odoo-development.readthedocs.io/en/latest/ide/emacs/pylint.html
 Babel==2.3.4
 chardet==3.0.4
 decorator==4.0.10
