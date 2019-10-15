@@ -11,7 +11,16 @@
             "program": "${workspaceFolder}\\odoo\\odoo-bin",
             "console": "integratedTerminal",
             "args": ["-r", "odoo", "-w", "odoo", "--dev=all", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user"]
-        },        
+        },   
+        {
+            "name": "Odoo Update",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}\\odoo\\odoo-bin",
+            "console": "integratedTerminal",
+            //update "testdb" and "module name" as appropriate
+            "args": ["-u", "library_app", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
+        },              
         {
             "name": "Python: Current File (Integrated Terminal)",
             "type": "python",
