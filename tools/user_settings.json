@@ -44,5 +44,10 @@
     // The following will hide the compiled file in the editor/ add other file to hide them from editor
     "files.exclude": {
         "**/*.pyc": true
-    },  
+    },
+    
+    "python.pythonPath": "venv\\Scripts\\python.exe",
+    "python.linting.pylintPath": "${env:LOCALAPPDATA}\\Programs\\Python\\Python37-32\\Scripts\\pylint",
+    "python.linting.pylintEnabled": true
+    
 }
