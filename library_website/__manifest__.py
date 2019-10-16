@@ -8,5 +8,10 @@
         'security/library_security.xml',
         'security/ir.model.access.csv',
         'views/library_member.xml',
+        'views/helloworld_template.xml'
+    ],
+    'depends': [
+        'library_checkout',
+        'website'
     ]    
 }
