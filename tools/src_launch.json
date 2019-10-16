@@ -1,0 +1,55 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Odoo",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}\\odoo\\odoo-bin",
+            "console": "integratedTerminal",
+            "args": ["-r", "odoo", "-w", "odoo", "--dev=all", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user"]
+        },   
+        {
+            "name": "Odoo Update",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}\\odoo\\odoo-bin",
+            "console": "integratedTerminal",
+            //update "testdb" and "module name" as appropriate
+            "args": ["-u", "library_website", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
+        },           
+        {
+            "name": "Odoo Update & Tests",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}\\odoo\\odoo-bin",
+            "console": "integratedTerminal",
+            //update "testdb" and "module name" as appropriate
+            "args": ["-u", "library_website", "--test-enable", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
+        },             
+        {
+            "name": "Python: Current File (Integrated Terminal)",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Module",
+            "type": "python",
+            "request": "launch",
+            "module": "enter-your-module-name-here",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Current File (External Terminal)",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "externalTerminal"
+        }
+    ]
+}
