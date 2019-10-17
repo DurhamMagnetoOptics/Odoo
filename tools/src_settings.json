@@ -4,29 +4,21 @@
 
     // use this so the autocompleate/goto definition will work with python extension
     "python.autoComplete.extraPaths": [
-        "${workspaceFolder}/..",
-        "${workspaceFolder}/../odoo/",
-        "${workspaceFolder}/../odoo/addons",
-        "${workspaceFolder}/../odoo/odoo",
-        "${workspaceFolder}/../odoo/odoo/addons",
-        "${workspaceFolder}/../enterprise"],
+        "${workspaceFolder}",
+        "${workspaceFolder}/odoo/",
+        "${workspaceFolder}/odoo/addons",
+        "${workspaceFolder}/odoo/odoo",
+        "${workspaceFolder}/odoo/odoo/addons",
+        "${workspaceFolder}/enterprise"],
 
-
-    "terminal.integrated.env.windows": {
-        "PYTHONPATH": "${workspaceFolder}\\..;${workspaceFolder}\\..\\odoo\\;${workspaceFolder}\\..\\odoo\\addons;${workspaceFolder}\\..\\odoo\\odoo;${workspaceFolder}\\..\\odoo\\odoo\\addons;${workspaceFolder}\\..\\enterprise;${env:PYTHONPATH}"
-    },
-
-    "terminal.integrated.env.linux": {
-        "PYTHONPATH": "${workspaceFolder}/..:${workspaceFolder}/../odoo/:${workspaceFolder}/../odoo/addons:${workspaceFolder}/../odoo/odoo:${workspaceFolder}/../odoo/odoo/addons:${workspaceFolder}/../enterprise:${env:PYTHONPATH}"
-    }, 
-            
     "python.linting.enabled": true,
 
     //load the pylint_odoo
     //"python.linting.pylintArgs": ["--load-plugins", "pylint_odoo"],
+    //C8201 is the odoo plugin message about no UTF-8 coding comment.
     "python.linting.pylintArgs": [
         "--init-hook",
-        "import sys; sys.path.append(os.path.join(r'${workspaceFolder}', os.pardir)); sys.path.append(os.path.join(r'${workspaceFolder}', os.pardir, 'enterprise')); sys.path.append(os.path.join(r'${workspaceFolder}', os.pardir, 'odoo'))",
+        "import sys; sys.path.append(r'${workspaceFolder}'); sys.path.append(os.path.join(r'${workspaceFolder}', 'odoo')); sys.path.append(os.path.join(r'${workspaceFolder}', 'enterprise'))",
         "--load-plugins",
         "pylint_odoo",
         "--disable=C8201"
@@ -44,10 +36,19 @@
     // The following will hide the compiled file in the editor/ add other file to hide them from editor
     "files.exclude": {
         "**/*.pyc": true
-    },
+    },  
     
+    //"terminal.integrated.env.windows": {
+    //    "PYTHONPATH": "${workspaceFolder}\\odoo\\;${workspaceFolder}\\odoo\\addons;${workspaceFolder}\\odoo\\odoo;${workspaceFolder}\\odoo\\odoo\\addons;${workspaceFolder}\\enterprise;${env:PYTHONPATH}"
+    //},
+
+    //"terminal.integrated.env.linux": {
+    //    "PYTHONPATH": "${workspaceFolder}/odoo/:${workspaceFolder}/odoo/addons:${workspaceFolder}/odoo/odoo:${workspaceFolder}/odoo/odoo/addons:${workspaceFolder}/enterprise:${env:PYTHONPATH}"
+    //},
+
     "python.pythonPath": ".venv\\Scripts\\python.exe",
     "python.linting.pylintPath": "${env:LOCALAPPDATA}\\Programs\\Python\\Python37-32\\Scripts\\pylint",
     "python.linting.pylintEnabled": true
+   
     
 }
