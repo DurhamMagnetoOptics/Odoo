@@ -14,8 +14,11 @@ When there is some stock (but not enough), we execute two moves:
 2) Execute the alternate rule for the shortfall.
 
 This differs from the default MTS_else_MTO rule in that:
-1) It allows partial fulfillment from stock
-2) The MTO rule is a completely separate rule, rather than treating the MTS_else_MTO
+
+    1) It allows partial fulfillment from stock instead of leaving the insufficient
+    stock in place and ordering the full quantity
+
+    2) The MTO rule is a completely separate rule, rather than treating the MTS_else_MTO
     rule as MTO.  This means we can have a different source location for the MTO branch
     than we do for the MTS branch (ie if there isn't stock in a storage location, then
     resupply/manufacutre in place instead of in the storge location). This is useful in
@@ -24,7 +27,6 @@ This differs from the default MTS_else_MTO rule in that:
 
 Essentially, we are recreating the functionality of the OCA module stock_mts_mto_rule
 using the new architecture for mts_else_mto in Odoo 13
-
 
 ==================
 Known Limitations
