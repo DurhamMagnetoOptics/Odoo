@@ -54,15 +54,15 @@ class StockRule(models.Model):
             if rule.procure_method == 'mts_else_alt':
                 qty_needed = procurement.product_uom._compute_quantity(procurement.product_qty, procurement.product_id.uom_id)
                 qty_available = forecasted_qties_by_loc[rule.location_src_id][procurement.product_id.id]
-                qty_shortfall = float_compare(qty_needed, qty_available, precision_rounding=procurement.product_id.uom_id.rounding)
-                if qty_shortfall <= 0:
+                qty_shortfall = qty_needed - qty_available
+                if float_compare(qty_shortfall, 0, precision_rounding=procurement.product_id.uom_id.rounding) <= 0:   #1 means first numeber biger than second, 0 means equal, -1 means first number smaller than second; 
                     #Execute the existing rule (mto_else_alt's source and location and type) as 'take from stock' for full qty
                     forecasted_qties_by_loc[rule.location_src_id][procurement.product_id.id] -= qty_needed
 
                     move_values = rule._get_stock_move_values(*procurement)
                     move_values['procure_method'] = 'make_to_stock'
                     moves_values_by_company[procurement.company_id.id].append(move_values)
-                elif qty_available > 0:
+                elif float_compare(qty_available, 0, precision_rounding=procurement.product_id.uom_id.rounding) > 0:   #1 means first numeber biger than second, 0 means equal, -1 means first number smaller than second; 
                     #Execute the existing rule (mto_else_alt's source and location and type) as take from stock for the amount in stock
                     forecasted_qties_by_loc[rule.location_src_id][procurement.product_id.id] -= qty_available
 
