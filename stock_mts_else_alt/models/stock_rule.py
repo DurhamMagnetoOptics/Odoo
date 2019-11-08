@@ -10,6 +10,7 @@ class StockRule(models.Model):
 
     procure_method = fields.Selection(selection_add=[('mts_else_alt', 'Take from stock; if shoftfall, trigger alternate rule')])
 
+    ##TODO: Validate the alternate rule: the destination location of the alternate rule shouhld match the destination location of the main rule (else the actual need won't be satisfied); the source location of the alternate rule cannot match the destination location of the main rule (else we'll create an infinite loop)
     alternate_rule_id = fields.Many2one('stock.rule', string="Alternate Rule")
 
     def _get_message_dict(self):
@@ -50,6 +51,7 @@ class StockRule(models.Model):
 
         # Prepare the move values, adapt the `procure_method` if needed.
         for procurement, rule in procurements:
+            ###MODIFICATION BEGINS HERE###
             #Handle the new procurement method
             if rule.procure_method == 'mts_else_alt':
                 qty_needed = procurement.product_uom._compute_quantity(procurement.product_qty, procurement.product_id.uom_id)
@@ -80,6 +82,7 @@ class StockRule(models.Model):
                     move_values = rule.alternate_rule_id._get_stock_move_values(*procurement)
                     moves_values_by_company[procurement.company_id.id].append(move_values)                    
             else:
+                ###MODIFICATION ENDS HERE###
                 #Original block from Odoo stock_rule.py
                 procure_method = rule.procure_method
                 if rule.procure_method == 'mts_else_mto':
