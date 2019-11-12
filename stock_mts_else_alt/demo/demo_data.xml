@@ -163,7 +163,7 @@
             <function eval="[[('state','=','confirm'),('id', '=', ref('stock_inventory_CompA'))]]" model="stock.inventory" name="search"/>
         </function>        
 
-        <!-- BOM  -->     
+        <!-- BOM    
         <record id="mrp_bom_MW3" model="mrp.bom">
             <field name="product_tmpl_id" model="product.template"
                 eval="obj().env.ref('stock_mts_else_alt.product_product_MW3').product_tmpl_id.id"/>      
@@ -176,7 +176,7 @@
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">5</field>
             <field name="bom_id" ref="mrp_bom_MW3"/>
-        </record>    
+        </record>    -->
 
         <!-- Settings -->
         <record id="my_config_settings" model="res.config.settings">
