@@ -17,4 +17,7 @@
     'data': [
         'view/pull_rule.xml',
     ],
+    'demo': [
+        'demo/demo_data.xml',
+    ]
 }
