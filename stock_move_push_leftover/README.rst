@@ -1,6 +1,6 @@
-==================
+=========================
 Stock Move Push Leftover
-==================
+=========================
 
 In Odoo 13, push rules are only applied to stock moves which
 do not already have child moves.  The assumption is that, if 
@@ -13,8 +13,10 @@ needed by the child moves.  This can happen if, for example,
 an automatically generated PO is modified before being placed.
 
 Odoo handles the case where the quantity is less than the
-child needs (backorder) but does not handle the case where 
-the quantity is more than the child needs.
+child needs (backorder) or when the quantity is greater than
+the expected (todo) quanityt (extra move created to allow
+push) but does not handle the case where the quanityt is as 
+expected but more than the child needs.
 
 This module fixes that.  When confirming a stock move and
 checking whether pull rules need to be applied, we test
@@ -28,4 +30,11 @@ that new move.
 Known Limitations
 ==================
 
-
+This does not apply in cases where the expected/reserved
+quanity is increased after the move is committed/ready. So
+it will not account for manually increasing the expected
+quantity of a move; that should be done by increasing the
+done quanity and letting existing logic take care of the 
+extra.  This module is limited to the case where the quantity
+is increased beyond the needs of the chained move _before_ the
+move is committed.  This may be unique to the purchase module.
