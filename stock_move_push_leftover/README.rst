@@ -38,3 +38,8 @@ done quanity and letting existing logic take care of the
 extra.  This module is limited to the case where the quantity
 is increased beyond the needs of the chained move _before_ the
 move is committed.  This may be unique to the purchase module.
+
+Note: demo data (from mts_else_mto) is, as setup, 
+nearly but not quite sufficient for testing.  You
+must first change the default location for the "Receipt"
+operation to be "WH/Goods In".
