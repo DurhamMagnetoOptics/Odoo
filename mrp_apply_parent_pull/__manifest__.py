@@ -15,7 +15,7 @@
         'mrp',
     ],
     'data': [
-        'data/data.xml',
+        
     ],
     'demo': [
         

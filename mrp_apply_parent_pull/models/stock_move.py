@@ -3,7 +3,7 @@
 from odoo import models
 from odoo.exceptions import UserError
 from odoo.tools import float_compare
-"""
+
 class StockMove(models.Model):
     _inherit = "stock.move"
 
@@ -11,12 +11,21 @@ class StockMove(models.Model):
         super()._adjust_procure_method() #First check as normal.
 
         #Now we only want to consider cases where a more specific rule wasn't found
-        gen = (move for move in self if move.procure_method == 'make_to_stock')
+        gen = (move for move in self if (move.procure_method == 'make_to_stock'))
         for move in gen:
             product_id = move.product_id
+
+            #Recursively build a list of all the parents up the chain
             loc_ids = []
+            thisGen = move.location_id
+            while thisGen.location_id: #check if a parent exists
+                #if so, add it and move up a level
+                loc_ids.append(thisGen.location_id.id)
+                thisGen = thisGen.location_id
+
+            #now use a search domain that includes all of the parents instead of an exact match to this source.    
             domain = [
-                ('location_src_id', '=', move.location_id.id),
+                ('location_src_id', 'in', loc_ids),
                 ('location_id', '=', move.location_dest_id.id),
                 ('action', '!=', 'push')
             ]
@@ -25,4 +34,3 @@ class StockMove(models.Model):
                 move.procure_method = rules.procure_method
             else:
                 move.procure_method = 'make_to_stock'
-"""                
