@@ -8,9 +8,6 @@ class StockMove(models.Model):
     _inherit = "stock.move"
 
     def _adjust_procure_method(self):
-        """ This method will try to apply the procure method MTO on some moves if
-        a compatible MTO route is found on a (grand-)parent.
-        """
         super()._adjust_procure_method() #First check as normal.
 
         #Now we only want to consider cases where a more specific rule wasn't found
