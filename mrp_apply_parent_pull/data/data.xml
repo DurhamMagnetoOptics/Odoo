@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <!-- Locations -->
+        <record id="stock_location_GoodsIn" model="stock.location">
+            <field name="name">Goods In</field>
+            <field name="location_id" model="stock.location"
+                eval="obj().env.ref('stock.warehouse0').view_location_id.id"/>
+        </record>          
+        <record id="stock_location_Stores" model="stock.location">
+            <field name="name">Stores</field>
+            <field name="location_id" model="stock.location"
+                eval="obj().env.ref('stock.warehouse0').view_location_id.id"/>
+        </record>          
+        <record id="stock_location_Vertical1" model="stock.location">
+            <field name="name">Vertical 1</field>
+            <field name="location_id" ref="stock_location_Stores"/>
+        </record>  
+        <record id="stock_location_Builds" model="stock.location">
+            <field name="name">Builds</field>
+            <field name="location_id" model="stock.location"
+                eval="obj().env.ref('stock.warehouse0').view_location_id.id"/>
+        </record>          
+        <record id="stock_location_HUST" model="stock.location">
+            <field name="name">HUST</field>
+            <field name="location_id" ref="stock_location_Builds"/>
+        </record>   
+
+        <!-- Route -->
+        <record id="stock_location_route_ComponentResupply" model="stock.location.route">
+            <field name="name">Component Resupply</field>
+            <field name="product_selectable">True</field>
+        </record>
+        <record id="stock_location_rule_ResupplyInPlace" model="stock.rule">
+            <field name="name">Resupply In Place</field>
+            <field name="action">pull</field>
+            <field name="picking_type_id" model="stock.picking.type"
+                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
+            <field name="location_src_id" ref="stock_location_GoodsIn"/>
+            <field name="location_id" ref="stock_location_Builds"/>   
+            <field name="procure_method">make_to_order</field>
+            <field name="route_id" ref="stock_location_route_ComponentResupply"/>
+            <field name="sequence">10</field>               
+        </record>          
+        <record id="stock_location_rule_ResupplyStores" model="stock.rule">
+            <field name="name">Resupply Stores</field>
+            <field name="action">pull</field>
+            <field name="picking_type_id" model="stock.picking.type"
+                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
+            <field name="location_src_id" ref="stock_location_GoodsIn"/>
+            <field name="location_id" ref="stock_location_Stores"/>   
+            <field name="procure_method">make_to_order</field>
+            <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
+            <field name="sequence">15</field>              
+        </record>    
+        <record id="stock_location_rule_ResupplyStores" model="stock.rule">
+            <field name="name">Putaway Leftovers</field>
+            <field name="action">push</field>
+            <field name="picking_type_id" model="stock.picking.type"
+                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
+            <field name="location_src_id" ref="stock_location_GoodsIn"/>
+            <field name="location_id" ref="stock_location_Stores"/>   
+            <field name="auto">manual</field>
+            <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
+            <field name="sequence">20</field>              
+        </record>              
+        <record id="stock_location_rule_TriggerPO" model="stock.rule">
+            <field name="name">Trigger PO</field>
+            <field name="action">pull</field>
+            <field name="picking_type_id" model="stock.picking.type"
+                eval="obj().env.ref('stock.warehouse0').in_type_id.id"/>
+            <field name="location_src_id" ref="stock.stock_location_suppliers"/>    
+            <field name="location_id" ref="stock_location_GoodsIn"/>   
+            <field name="procure_method">make_to_stock</field>
+            <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
+            <field name="sequence">25</field>              
+        </record>           
+
+
+        <!-- Products-->
+        <record id="product_product_MW3" model="product.product">
+            <field name="name">MW3</field>
+            <field name="categ_id" ref="product.product_category_5"/>
+            <field name="standard_price">290</field>
+            <field name="list_price">520</field>
+            <field name="type">product</field>
+            <field name="weight">0.01</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
+            <field name="description">MicroWriter 3</field>
+            <field name="default_code">DMO_MW3</field>
+        </record> 
+
+        <record id="product_product_CompA" model="product.product">
+            <field name="name">CompA</field>
+            <field name="categ_id" ref="product.product_category_5"/>
+            <field name="standard_price">2.50</field>
+            <field name="list_price">2.50</field>
+            <field name="type">product</field>
+            <field name="weight">0.01</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
+            <field name="description">Machined Component</field>
+            <field name="default_code">PL-12345</field>
+            <field name="route_ids" eval="[(6, 0, [ref('stock_location_route_ComponentResupply')])]"/>            
+        </record>         
+
+        <!-- Supplier -->       
+        <record id="product_supplierinfo_CompA" model="product.supplierinfo">
+            <field name="product_tmpl_id" model="product.template"
+                eval="obj().env.ref('mrp_apply_parent_pull.product_product_CompA').product_tmpl_id.id"/> 
+            <field name="name" ref="base.res_partner_12"/>
+            <field name="delay">1</field>
+            <field name="min_qty">0</field>
+            <field name="price">2.50</field>
+        </record>    
+
+        <!-- Orderpoint --> 
+        <record id="stock_warehouse_orderpoint_CompAHUST" model="stock.warehouse.orderpoint">
+            <field name="product_id" ref="product_product_CompA"/>
+            <field name="location_id" ref="stock_location_HUST"/>
+            <field name="product_min_qty">0.0</field>
+            <field name="product_max_qty">0.0</field>
+            <field name="qty_multiple">1.0</field>
+        </record>   
+
+        <!-- Putaway -->
+        <record id="stock_putaway_rule_CompA" model="stock.putaway.rule">
+            <field name="product_id" ref="product_product_CompA"/>
+            <field name="location_in_id" ref="stock_location_Stores"/>
+            <field name="location_out_id" ref="stock_location_Vertical1"/>
+        </record>  
+
+        <!-- Resource: stock.inventory.line -->
+        <record id="stock_inventory_CompA" model="stock.inventory">
+            <field name="name">Starting CompA Inventory</field>
+        </record>
+
+        <record id="stock_inventory_line_CompA" model="stock.inventory.line">
+            <field name="product_id" ref="product_product_CompA"/>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="inventory_id" ref="stock_inventory_CompA"/>
+            <field name="product_qty">2.0</field>
+            <field name="location_id" ref="stock_location_Vertical1"/>
+        </record>  
+
+        <function model="stock.inventory" name="_action_start">
+            <function eval="[[('state','=','draft'),('id', '=', ref('stock_inventory_CompA'))]]" model="stock.inventory" name="search"/>
+        </function>
+        <function model="stock.inventory" name="action_validate">
+            <function eval="[[('state','=','confirm'),('id', '=', ref('stock_inventory_CompA'))]]" model="stock.inventory" name="search"/>
+        </function>        
+
+        <record id="mrp_bom_MW3" model="mrp.bom">
+            <field name="product_tmpl_id" model="product.template"
+                eval="obj().env.ref('mrp_apply_parent_pull.product_product_MW3').product_tmpl_id.id"/>      
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+        </record>
+        <record id="mrp_bom_manufacture_line_1" model="mrp.bom.line">
+            <field name="product_id" ref="product_product_CompA"/>
+            <field name="product_qty">5</field>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="sequence">5</field>
+            <field name="bom_id" ref="mrp_bom_MW3"/>
+        </record> 
+
+        <!-- Settings -->
+        <record id="my_config_settings" model="res.config.settings">
+            <field name="group_stock_multi_locations" eval="True"/>
+            <field name="group_stock_adv_location" eval="True"/>
+        </record>
+        <function model="res.config.settings" name="execute">
+            <value model="res.config.settings"
+                search="[('id', '=', ref('my_config_settings'))]"/>
+        </function>                 
+    </data>
+</odoo> 

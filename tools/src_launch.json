@@ -19,7 +19,7 @@
             "program": "${workspaceFolder}\\odoo\\odoo-bin",
             "console": "integratedTerminal",
             //update "testdb" and "module name" as appropriate
-            "args": ["-u", "stock_move_push_leftover", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
+            "args": ["-u", "mrp_apply_parent_pull", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
         },           
         {
             "name": "Odoo Update & Tests",
@@ -28,7 +28,7 @@
             "program": "${workspaceFolder}\\odoo\\odoo-bin",
             "console": "integratedTerminal",
             //update "testdb" and "module name" as appropriate
-            "args": ["-u", "stock_move_push_leftover", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--test-enable", "--stop-after-init"]
+            "args": ["-u", "mrp_apply_parent_pull", "--test-enable", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
         },      
         {
             "name": "Odoo Fresh Install",
@@ -37,7 +37,7 @@
             "program": "${workspaceFolder}\\odoo\\odoo-bin",
             "console": "integratedTerminal",
             //update "testdb" and "module name" as appropriate
-            "args": ["-i", "account_accountant,mrp,sale_management,purchase,stock_mts_else_alt,stock_move_push_leftover", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
+            "args": ["-i", "account_accountant,mrp,sale_management,purchase", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
         },                  
         {
             "name": "Python: Current File (Integrated Terminal)",
