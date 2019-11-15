@@ -3,8 +3,8 @@
 {
     'name': 'MTS else Alternate Rule',
     'summary': 'Modify MTS else MTO to actually execute an alternate rule instead of automatically running MTS in the same source location',
-    'version': '13.0.1.0.0',
-    'development_status': 'Mature',
+    'version': '13.0.1.1.0',
+    'development_status': 'caveat emptor',
     'category': 'Warehouse',
     'website': 'http://www.dmoltd.co.uk',
     'author': 'Durham Magneto Optics Ltd',
