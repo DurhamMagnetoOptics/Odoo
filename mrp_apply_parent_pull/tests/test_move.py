@@ -4,7 +4,6 @@ class TestMove(SavepointCase):
     def setUp(self, *args, **kwargs):
         result = super().setUp(*args, **kwargs)
 
-        self.scheduler = self.env['stock.scheduler.compute']
         self.warehouse = self.env.ref('stock.warehouse0')
         self.uom_xid = self.ref('uom.product_uom_unit')
 
@@ -30,6 +29,10 @@ class TestMove(SavepointCase):
             'name': 'HUST',
             'location_id': self.Builds.id
         })        
+  
+
+        #Make Stores the default location for the default Receipt operation type
+        self.warehouse.in_type_id.default_location_dest_id = self.Stores             
 
         #Create route
         self.route = self.env['stock.location.route']
@@ -37,7 +40,38 @@ class TestMove(SavepointCase):
         self.ComponentResupply = self.route.create({
             'name': 'Component Resupply',
             'product_selectable': True
+        })            
+
+
+        #Create products
+        self.product = self.env['product.product']
+        self.MW3 = self.product.create({
+            'name': 'MW3',
+            'categ_id': self.ref('product.product_category_5'),
+            'standard_price': 290.0,
+            'list_price': 520.0,
+            'type': 'product',
+            'weight': 0.01,
+            'uom_id': self.uom_xid,
+            'uom_po_id': self.uom_xid,
+            'description': 'MicroWriter 3',
+            'default_code': 'DMO_MW3',
         })
+        self.CompA = self.product.create({
+            'name': 'CompA',
+            'categ_id': self.ref('product.product_category_5'),
+            'standard_price': 2.5,
+            'list_price': 2.5,
+            'type': 'product',
+            'weight': 0.01,
+            'uom_id': self.uom_xid,
+            'uom_po_id': self.uom_xid,
+            'description': 'Machined Component',
+            'default_code': 'PL-12345',
+            'route_ids': [(6,0,[self.ComponentResupply.id])],
+        })       
+
+        #Create Rules
         self.ResupplyInPlace = self.rule.create({
             'name': 'Resupply In Place',
             'action': 'pull',
@@ -48,17 +82,6 @@ class TestMove(SavepointCase):
             'route_id': self.ComponentResupply.id,
             'sequence': 10,
         })
-        self.KitFromStores = self.rule.create({
-            'name': 'Kit From Stores',
-            'action': 'pull',
-            'picking_type_id': self.warehouse.int_type_id.id,
-            'location_src_id': self.Stores.id,
-            'location_id': self.Builds.id,
-            'procure_method': 'mts_else_alt',
-            'alternate_rule_id': self.ResupplyInPlace.id,            
-            'route_id': self.ComponentResupply.id,
-            'sequence': 5,
-        })       
         self.ResupplyStores = self.rule.create({
             'name': 'Resupply Stores',
             'action': 'pull',
@@ -88,39 +111,32 @@ class TestMove(SavepointCase):
             'procure_method': 'make_to_stock',
             'route_id': self.ComponentResupply.id,
             'sequence': 25,
-        })              
+        })   
+        self.MTOKitting = self.rule.create({
+            'name': 'Kit On Demand',
+            'action': 'pull',
+            'picking_type_id': self.warehouse.manu_type_id.id,
+            'location_src_id': self.Builds.id,
+            'location_id': self.CompA.property_stock_production.id,
+            'procure_method': 'make_to_order',
+            'route_id': self.ComponentResupply.id,
+            'sequence': 30,
+        })          
+          
 
-        #Make Stores the default location for the default Receipt operation type
-        self.warehouse.in_type_id.default_location_dest_id = self.Stores             
 
-
-        #Create products
-        self.product = self.env['product.product']
-        self.MW3 = self.product.create({
-            'name': 'MW3',
-            'categ_id': self.ref('product.product_category_5'),
-            'standard_price': 290.0,
-            'list_price': 520.0,
-            'type': 'product',
-            'weight': 0.01,
-            'uom_id': self.uom_xid,
-            'uom_po_id': self.uom_xid,
-            'description': 'MicroWriter 3',
-            'default_code': 'DMO_MW3',
+        #Create BOM
+        self.MW3_BOM = self.env['mrp.bom'].create({
+            'product_tmpl_id': self.MW3.product_tmpl_id.id,
+            'product_uom_id': self.ref('uom.product_uom_unit')
         })
-        self.CompA = self.product.create({
-            'name': 'CompA',
-            'categ_id': self.ref('product.product_category_5'),
-            'standard_price': 2.5,
-            'list_price': 2.5,
-            'type': 'product',
-            'weight': 0.01,
-            'uom_id': self.uom_xid,
-            'uom_po_id': self.uom_xid,
-            'description': 'Machined Component',
-            'default_code': 'PL-12345',
-            'route_ids': [(6,0,[self.ComponentResupply.id])],
-        })         
+        self.compA_BOM_line = self.env['mrp.bom.line'].create({
+            'product_id': self.CompA.id,
+            'product_qty': 5.0,
+            'product_uom_id': self.ref('uom.product_uom_unit'),
+            'sequence': 5,
+            'bom_id': self.MW3_BOM.id
+        })   
 
 
         #create Suplier
@@ -151,63 +167,62 @@ class TestMove(SavepointCase):
 
         return result
     
-    def test_split(self):
-        "Trigger the restock with some but not enough"
+    def test_parent_pull(self):
+        "Creat an MO with an MTO route on the parent location"
+        self.MTOKitting.procure_method = 'make_to_order'
 
-        #create inventory
-        #self.inventoryNeed = self.env['stock.inventory'].create({
-        #    'name': 'Fake manufacturing need'      
-        #})      
-        #self.inventoryLineNeed = self.env['stock.inventory.line'].create({
-        #    'product_id': self.CompA.id,
-        #    'product_uom_id': self.uom_xid,
-        #    'inventory_id': self.inventoryNeed.id,
-        #    'product_qty': -4.0,
-        #    'location_id': self.HUST.id,
-        #})
-        #self.inventoryNeed._action_start()
-        #self.inventoryNeed.action_validate()   
-        #self.scheduler._procure_calculation_orderpoint()  #Once to trigger the pull from """
-
-        inStockQty =  2.0
-        neededQty = 5.0
-
-        #create inventory
-        self.inventoryCompA = self.env['stock.inventory'].create({
-            'name': 'Starting CompA Inventory'   
-        })      
-        self.inventoryLineCompA = self.env['stock.inventory.line'].create({
-            'product_id': self.CompA.id,
-            'product_uom_id': self.uom_xid,
-            'inventory_id': self.inventoryCompA.id,
-            'product_qty': inStockQty,
-            'location_id': self.Vertical1.id,
-        })
-        self.inventoryCompA._action_start()
-        self.inventoryCompA.action_validate()
-
-
-        #Create procurement
-        values = {
-            'warehouse_id': self.warehouse,
-            'route_ids': self.ComponentResupply,
-        }
-        PG = self.env['procurement.group']
+        #create MO
         strOrigin = 'mts_else_mto Test Replenishment'
-        
-        proc = PG.Procurement(
-            self.CompA,
-            neededQty,
-            self.CompA.uom_id,
-            self.HUST,  # Location
-            "Test Replenishment",  # Name
-            strOrigin,  # Origin
-            self.warehouse.company_id,
-            values  # Values
-        )
-        PG.run([proc])
+        self.MW3_MO = self.env['mrp.production'].create({
+            'name': strOrigin,
+            'origin': strOrigin,
+            'product_tmpl_id': self.MW3.product_tmpl_id.id,
+            'product_id': self.MW3.id,
+            'product_qty': 1.0,
+            'location_src_id': self.HUST.id,
+            'location_dest_id': self.HUST.id,
+            'bom_id': self.MW3_BOM.id,
+            'product_uom_id': self.ref('uom.product_uom_unit')
+        })      
+        self.MW3_MO._onchange_move_raw()
+        self.MW3_MO.action_confirm()
         
         myMoves = self.env['stock.move'].search([('origin', '=', strOrigin)])
-        move1 = myMoves.search([('location_id', '=', self.Stores.id), ('location_dest_id', '=', self.HUST.id)])
-        move2 = myMoves.search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.HUST.id)])
-        move3 = myMoves.search([('location_dest_id', '=', self.goodsIn.id)])
+        move1 = myMoves.search([('location_id', '=', self.CompA.property_stock_production.id), ('location_dest_id', '=', self.HUST.id)])
+        move2 = myMoves.search([('location_id', '=', self.HUST.id), ('location_dest_id', '=', self.CompA.property_stock_production.id)])
+        move3 = myMoves.search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.HUST.id)])
+        move4 = myMoves.search([('location_dest_id', '=', self.goodsIn.id)])
+
+        self.assertEqual(len(myMoves), 4, msg='More than 4 moves generated')
+        self.assertEqual(len(move1), 1, msg='More than 1 move prod->HUST')
+        self.assertEqual(len(move2), 1, msg='More than 1 move HUST->prod')
+        self.assertEqual(len(move3), 1, msg='More than 1 move GoodsIn->HUST')
+        self.assertEqual(len(move4), 1, msg='More than 1 move to GoodsIn')
+
+
+    def test_no_parent_pull(self):
+        "Creat an MO with an MTO route on the parent location"
+        self.MTOKitting.procure_method = 'make_to_stock'
+
+        #create MO
+        strOrigin = 'mts_else_mto Test Replenishment'
+        self.MW3_MO = self.env['mrp.production'].create({
+            'name': strOrigin,
+            'origin': strOrigin,
+            'product_tmpl_id': self.MW3.product_tmpl_id.id,
+            'product_id': self.MW3.id,
+            'product_qty': 1.0,
+            'location_src_id': self.HUST.id,
+            'location_dest_id': self.HUST.id,
+            'bom_id': self.MW3_BOM.id,
+            'product_uom_id': self.ref('uom.product_uom_unit')
+        })      
+        self.MW3_MO._onchange_move_raw()
+        self.MW3_MO.action_confirm()
+        
+        myMoves = self.env['stock.move'].search([('origin', '=', strOrigin)])
+        move1 = myMoves.search([('location_id', '=', self.CompA.property_stock_production.id), ('location_dest_id', '=', self.HUST.id)])
+        move2 = myMoves.search([('location_id', '=', self.HUST.id), ('location_dest_id', '=', self.CompA.property_stock_production.id)])
+        self.assertEqual(len(myMoves), 2, msg='More than 2 moves generated')        
+        self.assertEqual(len(move1), 1, msg='More than 1 move prod->HUST')    
+        self.assertEqual(len(move2), 1, msg='More than 1 move HUST->prod')          

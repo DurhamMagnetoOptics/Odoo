@@ -17,7 +17,9 @@
         'stock_mts_else_alt',
         'stock_move_push_leftover',
         'mrp_apply_parent_pull',
+        'stock',
         'purchase',
+        'purchase_stock',
     ],
     'data': [
         'data/data.xml',

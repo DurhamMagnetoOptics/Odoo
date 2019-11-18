@@ -26,57 +26,11 @@
             <field name="location_id" ref="stock_location_Builds"/>
         </record>   
 
-        <!-- TODO: trigger PO can really be purchase, and add the "virt/prod pulls from Builds" rule -->
         <!-- Route -->
         <record id="stock_location_route_ComponentResupply" model="stock.location.route">
             <field name="name">Component Resupply</field>
             <field name="product_selectable">True</field>
         </record>
-        <record id="stock_location_rule_ResupplyInPlace" model="stock.rule">
-            <field name="name">Resupply In Place</field>
-            <field name="action">pull</field>
-            <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
-            <field name="location_src_id" ref="stock_location_GoodsIn"/>
-            <field name="location_id" ref="stock_location_Builds"/>   
-            <field name="procure_method">make_to_order</field>
-            <field name="route_id" ref="stock_location_route_ComponentResupply"/>
-            <field name="sequence">10</field>               
-        </record>          
-        <record id="stock_location_rule_ResupplyStores" model="stock.rule">
-            <field name="name">Resupply Stores</field>
-            <field name="action">pull</field>
-            <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
-            <field name="location_src_id" ref="stock_location_GoodsIn"/>
-            <field name="location_id" ref="stock_location_Stores"/>   
-            <field name="procure_method">make_to_order</field>
-            <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
-            <field name="sequence">15</field>              
-        </record>    
-        <record id="stock_location_rule_ResupplyStores" model="stock.rule">
-            <field name="name">Putaway Leftovers</field>
-            <field name="action">push</field>
-            <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
-            <field name="location_src_id" ref="stock_location_GoodsIn"/>
-            <field name="location_id" ref="stock_location_Stores"/>   
-            <field name="auto">manual</field>
-            <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
-            <field name="sequence">20</field>              
-        </record>              
-        <record id="stock_location_rule_TriggerPO" model="stock.rule">
-            <field name="name">Trigger PO</field>
-            <field name="action">pull</field>
-            <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('stock.warehouse0').in_type_id.id"/>
-            <field name="location_src_id" ref="stock.stock_location_suppliers"/>    
-            <field name="location_id" ref="stock_location_GoodsIn"/>   
-            <field name="procure_method">make_to_stock</field>
-            <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
-            <field name="sequence">25</field>              
-        </record>           
-
 
         <!-- Products-->
         <record id="product_product_MW3" model="product.product">
@@ -104,7 +58,77 @@
             <field name="description">Machined Component</field>
             <field name="default_code">PL-12345</field>
             <field name="route_ids" eval="[(6, 0, [ref('stock_location_route_ComponentResupply')])]"/>            
-        </record>         
+        </record>    
+
+
+        <!-- Rules -->
+        <record id="stock_location_rule_ResupplyInPlace" model="stock.rule">
+            <field name="name">Resupply In Place</field>
+            <field name="action">pull</field>
+            <field name="picking_type_id" model="stock.picking.type"
+                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
+            <field name="location_src_id" ref="stock_location_GoodsIn"/>
+            <field name="location_id" ref="stock_location_Builds"/>   
+            <field name="procure_method">make_to_order</field>
+            <field name="route_id" ref="stock_location_route_ComponentResupply"/>
+            <field name="sequence">10</field>               
+        </record>          
+        <record id="stock_location_rule_KitFromStores" model="stock.rule">
+            <field name="name">Kit from Stores</field>
+            <field name="action">pull</field>
+            <field name="picking_type_id" model="stock.picking.type"
+                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
+            <field name="location_src_id" ref="stock_location_Stores"/>
+            <field name="location_id" ref="stock_location_Builds"/>   
+            <field name="procure_method">mts_else_alt</field>
+            <field name="alternate_rule_id" ref="stock_location_rule_ResupplyInPlace"/>
+            <field name="route_id" ref="stock_location_route_ComponentResupply"/>
+            <field name="sequence">5</field>               
+        </record>               
+        <record id="stock_location_rule_ResupplyStores" model="stock.rule">
+            <field name="name">Resupply Stores</field>
+            <field name="action">pull</field>
+            <field name="picking_type_id" model="stock.picking.type"
+                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
+            <field name="location_src_id" ref="stock_location_GoodsIn"/>
+            <field name="location_id" ref="stock_location_Stores"/>   
+            <field name="procure_method">make_to_order</field>
+            <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
+            <field name="sequence">15</field>              
+        </record>    
+        <record id="stock_location_rule_PutawayLeftovers" model="stock.rule">
+            <field name="name">Putaway Leftovers</field>
+            <field name="action">push</field>
+            <field name="picking_type_id" model="stock.picking.type"
+                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
+            <field name="location_src_id" ref="stock_location_GoodsIn"/>
+            <field name="location_id" ref="stock_location_Stores"/>   
+            <field name="auto">manual</field>
+            <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
+            <field name="sequence">20</field>              
+        </record>              
+        <record id="stock_location_rule_TriggerPO" model="stock.rule">
+            <field name="name">Trigger PO</field>
+            <field name="action">buy</field>
+            <field name="picking_type_id" model="stock.picking.type"
+                eval="obj().env.ref('stock.warehouse0').in_type_id.id"/> 
+            <field name="location_id" ref="stock_location_GoodsIn"/>   
+            <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
+            <field name="sequence">25</field>              
+        </record>          
+        <record id="stock_location_rule_MTOKitting" model="stock.rule">
+            <field name="name">Kit on Demand</field>
+            <field name="action">pull</field>
+            <field name="picking_type_id" model="stock.picking.type"
+                eval="obj().env.ref('stock.warehouse0').manu_type_id.id"/>
+            <field name="location_src_id" ref="stock_location_Builds"/>   
+            <field name="location_id" model="product.template"
+                eval="obj().env.ref('dmo_demo_data.product_product_CompA').property_stock_production.id"/>                 
+            <field name="procure_method">make_to_order</field>
+            <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
+            <field name="sequence">30</field>              
+        </record>                      
+     
 
         <!-- Supplier -->       
         <record id="product_supplierinfo_CompA" model="product.supplierinfo">
@@ -114,16 +138,7 @@
             <field name="delay">1</field>
             <field name="min_qty">0</field>
             <field name="price">2.50</field>
-        </record>    
-
-        <!-- Orderpoint --> 
-        <record id="stock_warehouse_orderpoint_CompAHUST" model="stock.warehouse.orderpoint">
-            <field name="product_id" ref="product_product_CompA"/>
-            <field name="location_id" ref="stock_location_HUST"/>
-            <field name="product_min_qty">0.0</field>
-            <field name="product_max_qty">0.0</field>
-            <field name="qty_multiple">1.0</field>
-        </record>   
+        </record>       
 
         <!-- Putaway -->
         <record id="stock_putaway_rule_CompA" model="stock.putaway.rule">
@@ -175,7 +190,11 @@
         <function model="res.config.settings" name="execute">
             <value model="res.config.settings"
                 search="[('id', '=', ref('my_config_settings'))]"/>
-        </function>      
-        <!-- TODO:  XML equivalent of "self.warehouse.in_type_id.default_location_dest_id = self.Stores" -->           
+        </function>     
+
+        <!-- TODO:  XML equivalent of "self.warehouse.in_type_id.default_location_dest_id = self.goodsIn" -->  
+        <record id="stock.picking_type_in" model="stock.picking.type">
+            <field name="default_location_dest_id" ref="stock_location_GoodsIn"/>
+        </record>                 
     </data>
 </odoo> 
