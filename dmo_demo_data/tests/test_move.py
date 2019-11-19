@@ -173,6 +173,13 @@ class TestMove(SavepointCase):
             'location_out_id': self.Vertical1.id,            
         })         
 
+        #activate push_leftover option on Receipt operation       
+        self.warehouse.in_type_id.push_leftover = True  
+
+        #Active apply_parent_pull on Manufacture operation
+        self.warehouse.manu_type_id.apply_parent_pull = True
+
+
         #Confirm any existing RFQs for the supplier of interest, so we don't muddy up our test results.
         myPOs = self.env['purchase.order'].search([('partner_id', '=', self.supplierCompA.name.id),('state', '=', 'draft')])
         for PO in myPOs:

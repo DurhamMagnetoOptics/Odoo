@@ -182,6 +182,14 @@
             <field name="bom_id" ref="mrp_bom_MW3"/>
         </record> 
 
+        <!-- create xml id for manufacturing operation, for more convenience -->
+        <function model="ir.model.data" name="_update_xmlids">
+            <value model="base" eval="[{
+                'xml_id': 'dmo_demo_data.picking_type_manu',
+                'record': obj().env.ref('stock.warehouse0').manu_type_id
+            }]"/>
+        </function>   
+
         <!-- Settings -->
         <record id="my_config_settings" model="res.config.settings">
             <field name="group_stock_multi_locations" eval="True"/>
@@ -192,9 +200,27 @@
                 search="[('id', '=', ref('my_config_settings'))]"/>
         </function>     
 
-        <!-- TODO:  XML equivalent of "self.warehouse.in_type_id.default_location_dest_id = self.goodsIn" -->  
+        <!-- Receipts go to goods in by default (like receipt in 2 steps) -->
+        <!-- Turn on push leftovers for receipts -->        
         <record id="stock.picking_type_in" model="stock.picking.type">
             <field name="default_location_dest_id" ref="stock_location_GoodsIn"/>
-        </record>                 
+            <field name="push_leftover">True</field>
+        </record>  
+
+
+        <!-- Turn on apply_parent for manufacturing -->
+        <record id="dmo_demo_data.picking_type_manu" model="stock.picking.type">
+            <field name="apply_parent_pull">True</field>
+        </record>              
+
+       
+
+        <!-- TODO: XML equivalent of:
+        #activate push_leftover option on Receipt operation       
+        self.warehouse.in_type_id.push_leftover = True  
+
+        #Active apply_parent_pull on Manufacture operation
+        self.warehouse.manu_type_id.apply_parent_pull = True
+        -->             
     </data>
 </odoo> 

@@ -10,8 +10,8 @@ class StockMove(models.Model):
     def _adjust_procure_method(self):
         super()._adjust_procure_method() #First check as normal.
 
-        #Now we only want to consider cases where a more specific rule wasn't found
-        gen = (move for move in self if (move.procure_method == 'make_to_stock'))
+        #Now we only want to consider cases where a more specific rule wasn't found, and the route has this option enabled
+        gen = (move for move in self if (move.procure_method == 'make_to_stock' and move.picking_type_id.apply_parent_pull))
         for move in gen:
             product_id = move.product_id
 

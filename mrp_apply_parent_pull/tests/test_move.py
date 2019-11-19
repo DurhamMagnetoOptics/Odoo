@@ -164,6 +164,8 @@ class TestMove(SavepointCase):
             'location_out_id': self.Vertical1.id,            
         })         
 
+        #Enable option
+        self.warehouse.manu_type_id.apply_parent_pull = True
 
         return result
     
@@ -225,4 +227,34 @@ class TestMove(SavepointCase):
         move2 = myMoves.search([('location_id', '=', self.HUST.id), ('location_dest_id', '=', self.CompA.property_stock_production.id)])
         self.assertEqual(len(myMoves), 2, msg='More than 2 moves generated')        
         self.assertEqual(len(move1), 1, msg='More than 1 move prod->HUST')    
-        self.assertEqual(len(move2), 1, msg='More than 1 move HUST->prod')          
+        self.assertEqual(len(move2), 1, msg='More than 1 move HUST->prod')         
+
+    def test_parent_pull_off(self):
+        "Creat an MO with an MTO route on the parent location, but the option disabled"
+        #Enable option
+        self.warehouse.manu_type_id.apply_parent_pull = False
+
+        self.MTOKitting.procure_method = 'make_to_order'
+
+        #create MO
+        strOrigin = 'mts_else_mto Test Replenishment'
+        self.MW3_MO = self.env['mrp.production'].create({
+            'name': strOrigin,
+            'origin': strOrigin,
+            'product_tmpl_id': self.MW3.product_tmpl_id.id,
+            'product_id': self.MW3.id,
+            'product_qty': 1.0,
+            'location_src_id': self.HUST.id,
+            'location_dest_id': self.HUST.id,
+            'bom_id': self.MW3_BOM.id,
+            'product_uom_id': self.ref('uom.product_uom_unit')
+        })      
+        self.MW3_MO._onchange_move_raw()
+        self.MW3_MO.action_confirm()
+        
+        myMoves = self.env['stock.move'].search([('origin', '=', strOrigin)])
+        move1 = myMoves.search([('location_id', '=', self.CompA.property_stock_production.id), ('location_dest_id', '=', self.HUST.id)])
+        move2 = myMoves.search([('location_id', '=', self.HUST.id), ('location_dest_id', '=', self.CompA.property_stock_production.id)])
+        self.assertEqual(len(myMoves), 2, msg='More than 2 moves generated')        
+        self.assertEqual(len(move1), 1, msg='More than 1 move prod->HUST')    
+        self.assertEqual(len(move2), 1, msg='More than 1 move HUST->prod')        
