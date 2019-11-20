@@ -18,7 +18,7 @@ class StockMove(models.Model):
 
         #Then go back and check the cases parent skipped.
         for move in self:
-            if move.move_dest_ids:
+            if move.move_dest_ids and move.picking_type_id.push_leftover:
                 #In this case our parent function did nothing, so we need to test if there are leftover parts
                 
                 decimal_precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')

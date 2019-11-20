@@ -7,7 +7,9 @@ Available addons
 addon | version | summary
 --- | --- | ---
 [auth_oauth_microsoft_graph](auth_oauth_microsoft_graph/) | 12.0.1.0.0 | From Odoonz: Allow users to login using Microsoft Graph.
-[stock_mts_else_alt](stock_mts_else_alt/) | 13.0.1.0.0 | Split procurements based on partial stock and trigger alternate rule.
+[stock_mts_else_alt](stock_mts_else_alt/) | 13.0.1.1.0 | Split procurements based on partial stock and trigger alternate rule.
 [stock_move_push_leftover](stock_move_push_leftover/) | 13.0.1.1.0  | When child moves do not account for full stock, look for a push rule for the remainder.
+[mrp_apply_parent_pull](mrp_apply_parent_pull/) | 13.0.1.0.0  | Look for rules that apply to a destinations parents as well as the destination when satisfyin MRP needs.
+[dmo_demo_Data](dmo_demo_Data/) | 13.0.1.0.0  | A place to throw demo data and tests that cross module boundaries.
 
 [//]: # (end addons)
