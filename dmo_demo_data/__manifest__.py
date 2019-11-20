@@ -1,7 +1,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
-##TODO: add those UK accouunting modules (and anything else to make it look like our prod DB) for the benefit of odoo.sh dev servers
+##TODO: add those UK accounting modules (and anything else to make it look like our prod DB) for the benefit of odoo.sh dev servers
 {
     'name': 'DMO Demo Data',
     'summary': 'A place to throw demo data and tests that cross module boundaries',
