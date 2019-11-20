@@ -37,7 +37,7 @@
             "program": "${workspaceFolder}\\odoo\\odoo-bin",
             "console": "integratedTerminal",
             //update "testdb" and "module name" as appropriate
-            "args": ["-i", "account_accountant,mrp,sale_management,purchase", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
+            "args": ["-i", "stock,purchase,mrp,dmo_demo_data", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
         },                  
         {
             "name": "Python: Current File (Integrated Terminal)",
