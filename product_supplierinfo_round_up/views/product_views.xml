@@ -5,7 +5,7 @@
         <field name="inherit_id" ref="product.product_supplierinfo_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//label[@for='min_qty']" position="attributes">
-                <attribute name="string">Minimum Order Quantity</attribute>
+                <attribute name="string">Min. Order Qty</attribute>
             </xpath>             
             <xpath expr="//label[@for='price']" position="before">
                 <label for="increment_qty"/>
