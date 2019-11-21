@@ -120,6 +120,7 @@ class TestMove(SavepointCase):
             'location_id': self.goodsIn.id,
             'route_id': self.ComponentResupply.id,
             'sequence': 25,
+            'group_propagation_option': 'none'
         })   
         self.MTOKitting = self.rule.create({
             'name': 'Kit On Demand',
@@ -153,7 +154,9 @@ class TestMove(SavepointCase):
             'product_tmpl_id': self.CompA.product_tmpl_id.id,
             'name': self.ref('base.res_partner_12'),
             'delay': 1,
-            'min_qty': 0.0,
+            'min_qty': 10.0,
+            'increment_qty': 5.0,
+            'round_up': True,
             'price': 2.50,
         })
 
@@ -187,13 +190,14 @@ class TestMove(SavepointCase):
 
         return result
     
-    def test_complete_MO(self):
-        "Test MO -> PO flow, including partial stock, parent pull rule, and leftover putaway"
+    def test_complete_flow(self):
+        "Test MO -> PO flow, including partial stock, parent pull rule, leftover putaway, and MOQ rounding"
 
 
         inStockQty =  2.0
-        neededQty = 5.0
-        orderedQty = 10.0
+        neededQty = 3.0
+        orderedQty1 = 10.0
+        orderedQty2 = 20.0
 
         #neededQty is set in the BOM
         self.compA_BOM_line.product_qty = neededQty
@@ -215,38 +219,69 @@ class TestMove(SavepointCase):
 
         #create MO
         strOrigin = 'mts_else_mto Test Replenishment'
-        self.MW3_MO = self.env['mrp.production'].create({
-            'name': strOrigin,
-            'origin': strOrigin,
+        self.MW3_MO_for2 = self.env['mrp.production'].create({
+            'name': strOrigin + ' 1',
+            'origin': strOrigin + ' 1',
             'product_tmpl_id': self.MW3.product_tmpl_id.id,
             'product_id': self.MW3.id,
-            'product_qty': 1.0,
+            'product_qty': 2.0,
             'location_src_id': self.HUST.id,
             'location_dest_id': self.HUST.id,
             'bom_id': self.MW3_BOM.id,
             'product_uom_id': self.ref('uom.product_uom_unit')
         })      
-        self.MW3_MO._onchange_move_raw()
-        self.MW3_MO.action_confirm()
+        self.MW3_MO_for4 = self.env['mrp.production'].create({
+            'name': strOrigin + ' 2',
+            'origin': strOrigin + ' 2',
+            'product_tmpl_id': self.MW3.product_tmpl_id.id,
+            'product_id': self.MW3.id,
+            'product_qty': 4.0,
+            'location_src_id': self.HUST.id,
+            'location_dest_id': self.HUST.id,
+            'bom_id': self.MW3_BOM.id,
+            'product_uom_id': self.ref('uom.product_uom_unit')
+        })            
 
-        ##Update PO to orderedQty and confirm
+        self.MW3_MO_for2._onchange_move_raw()
+        self.MW3_MO_for2.action_confirm()
+
+        ##Check PO
         myPOs = self.env['purchase.order'].search([('partner_id', '=', self.supplierCompA.name.id),('state', '=', 'draft')])
         self.assertEqual(len(myPOs), 1, msg='More than 1 PO generated')
         self.assertEqual(len(myPOs.order_line), 1, msg='More than 1 line on the PO')
-        self.assertEqual(myPOs.order_line.product_qty, (neededQty - inStockQty), msg='More than %s items purchased' % (neededQty - inStockQty))
+        self.assertEqual(myPOs.order_line.product_qty, orderedQty1, msg='More than %s items purchased' % orderedQty1)
+        self.assertEqual(myPOs.order_line.desired_qty, (2*neededQty - inStockQty), msg='More than %s items purchased' % (2*neededQty - inStockQty))
+
+        self.MW3_MO_for4._onchange_move_raw()
+        self.MW3_MO_for4.action_confirm()
+
+        ##Check PO again
+        myPOs = self.env['purchase.order'].search([('partner_id', '=', self.supplierCompA.name.id),('state', '=', 'draft')])
+        self.assertEqual(len(myPOs), 1, msg='More than 1 PO generated')
+        self.assertEqual(len(myPOs.order_line), 1, msg='More than 1 line on the PO')
+        self.assertEqual(myPOs.order_line.product_qty, orderedQty2, msg='More than %s items purchased' % orderedQty2)
+        self.assertEqual(myPOs.order_line.desired_qty, (6*neededQty - inStockQty), msg='More than %s items purchased' % (6*neededQty - inStockQty))   
+
+        #Place order
+        myPOs.button_confirm()     
         
-        #"Manually" increase the quantity to be purchased & confirm PO
-        myPOs.order_line.product_qty = orderedQty
-        myPOs.button_confirm()
 
-        #These are all the states we check for in the other tests
-        #TODO fuse them all together
-        #parent pull tests
-        move1 = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.HUST.id)])
+        #Check stock moves
+        moves = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.HUST.id)])
         move2 = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.Stores.id)])
+        move3 = self.env['stock.move'].search([('location_id', '=', self.Stores.id), ('location_dest_id', '=', self.HUST.id)])
 
-        self.assertEqual(len(move1), 1, msg='More than 1 move GoodsIn->HUST')
-        self.assertEqual(len(move2), 1, msg='More than 1 move GoodsIn->Stores')
+        self.assertEqual(len(moves), 2, msg='Not 2 moves GoodsIn->HUST')
+        self.assertEqual(len(move2), 1, msg='Not 1 move GoodsIn->Stores')
+        self.assertEqual(len(move3), 1, msg='Not  1 move Stores->HUST')
 
-        self.assertEqual(move1.product_uom_qty, (neededQty - inStockQty), msg='There are not %s units in GoodsIn->Hust' % (neededQty - inStockQty))
-        self.assertEqual(move2.product_uom_qty, (orderedQty - neededQty + inStockQty), msg='There are not %s units in GoodsIn->Hust' % (orderedQty - neededQty + inStockQty))
+        sum_qty = 0
+        for move in moves:
+            sum_qty += move.product_uom_qty
+
+        self.assertEqual(sum_qty, (6*neededQty - inStockQty), msg='There are not %s units in GoodsIn->Hust' % (6*neededQty - inStockQty))
+        leftover = orderedQty2 - (6*neededQty - inStockQty)
+        self.assertEqual(move2.product_uom_qty, leftover, msg='There are not %s units in GoodsIn->Stores' % leftover)
+        self.assertEqual(move3.product_uom_qty, inStockQty, msg='There are not %s units in Stores->HUST' % inStockQty)
+        
+        

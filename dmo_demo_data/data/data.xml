@@ -114,6 +114,7 @@
                 eval="obj().env.ref('stock.warehouse0').in_type_id.id"/> 
             <field name="location_id" ref="stock_location_GoodsIn"/>   
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
+            <field name="group_propagation_option">none</field>
             <field name="sequence">25</field>              
         </record>          
         <record id="stock_location_rule_MTOKitting" model="stock.rule">
@@ -136,7 +137,9 @@
                 eval="obj().env.ref('dmo_demo_data.product_product_CompA').product_tmpl_id.id"/> 
             <field name="name" ref="base.res_partner_12"/>
             <field name="delay">1</field>
-            <field name="min_qty">0</field>
+            <field name="min_qty">10.0</field>
+            <field name="increment_qty">5.0</field>
+            <field name="round_up">True</field>
             <field name="price">2.50</field>
         </record>       
 
@@ -176,7 +179,7 @@
         </record>
         <record id="mrp_bom_manufacture_line_1" model="mrp.bom.line">
             <field name="product_id" ref="product_product_CompA"/>
-            <field name="product_qty">5</field>
+            <field name="product_qty">3</field>
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">5</field>
             <field name="bom_id" ref="mrp_bom_MW3"/>
@@ -207,20 +210,9 @@
             <field name="push_leftover">True</field>
         </record>  
 
-
         <!-- Turn on apply_parent for manufacturing -->
         <record id="dmo_demo_data.picking_type_manu" model="stock.picking.type">
             <field name="apply_parent_pull">True</field>
-        </record>              
-
-       
-
-        <!-- TODO: XML equivalent of:
-        #activate push_leftover option on Receipt operation       
-        self.warehouse.in_type_id.push_leftover = True  
-
-        #Active apply_parent_pull on Manufacture operation
-        self.warehouse.manu_type_id.apply_parent_pull = True
-        -->             
+        </record>                    
     </data>
 </odoo> 

@@ -1,7 +1,8 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
-##TODO: add those UK accounting modules (and anything else to make it look like our prod DB) for the benefit of odoo.sh dev servers
+##TODO: add those UK accounting modules (and anything else to make it look like our prod DB) for the benefit of odoo.sh dev servers??
+##TODO: eventually data.xml needs to be moved to demo; it depends on data only available when other modules (notably, products) load their demo data
 {
     'name': 'DMO Demo Data',
     'summary': 'A place to throw demo data and tests that cross module boundaries',
@@ -17,14 +18,15 @@
         'stock_mts_else_alt',
         'stock_move_push_leftover',
         'mrp_apply_parent_pull',
+        'product_supplierinfo_round_up',
         'stock',
         'purchase',
         'purchase_stock',
     ],
     'data': [
-        'data/data.xml',
+        
     ],
     'demo': [
-        
+        'data/data.xml',
     ]
 }
