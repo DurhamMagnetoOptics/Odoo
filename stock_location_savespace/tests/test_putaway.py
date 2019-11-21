@@ -125,6 +125,9 @@ class TestMove(TransactionCase):
     def test_putaway_nostock(self):
         "Verify behaviour if override enabled and putaway exists, but no stock"
 
+        #Enable override
+        self.Stores.putaway_savespace = True
+
         #create putaway rule
         self.putawayCompA = self.env['stock.putaway.rule'].create({
             'product_id': self.CompA.id,
@@ -156,6 +159,9 @@ class TestMove(TransactionCase):
     def test_noputaway_nostock(self):
         "Verify behaviour if override enabled and no putaway exists and no stock"     
 
+        #Enable override
+        self.Stores.putaway_savespace = True
+
         #Create stock move
         move1 = self.env['stock.move'].create({
             'name': 'savespace_test_putaway_1',
@@ -179,6 +185,9 @@ class TestMove(TransactionCase):
 
     def test_putaway_stock(self):
         "Verify behaviour if override enabled and putaway exists and so does stock"
+
+        #Enable override
+        self.Stores.putaway_savespace = True
 
         #create inventory
         self.inventoryCompA = self.env['stock.inventory'].create({
@@ -225,6 +234,9 @@ class TestMove(TransactionCase):
     def test_noputaway_stock(self):
         "Verify behaviour if override enabled and no putaway exists but stock exists"   
 
+        #Enable override
+        self.Stores.putaway_savespace = True
+
         #create inventory
         self.inventoryCompA = self.env['stock.inventory'].create({
             'name': 'Starting CompA Inventory'
@@ -257,6 +269,7 @@ class TestMove(TransactionCase):
         self.assertEqual(len(move1.move_line_ids), 1)
 
         # check if the putaway was rightly applied
+        ##TODO: should be Shelf4 when things are working
         self.assertEqual(move1.move_line_ids.location_dest_id.id, self.Stores.id)              
                  
 

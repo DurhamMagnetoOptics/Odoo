@@ -10,5 +10,9 @@ class Location(models.Model):
         res = super()._get_putaway_strategy(product)
         if not res:
             #TODO search my children for any stock, and if found return one of their locations
-            res = self.env['stock.location']
+
+            #quants = self.env['stock.quant'].search([('product_id','=',product.id),('quantity', '>', 0.0)])
+            #my_quants = quants.with_context(location=self)
+            #if my_quants:
+            #    return my_quants[0].location_id
         return res
