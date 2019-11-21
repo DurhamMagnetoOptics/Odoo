@@ -7,7 +7,7 @@ class StockRule(models.Model):
         #temporarily set product_qty back to desired_qty, so we ignore this MOQ for the purposes of running the parent logic
         if line.desired_qty:  #in case it's not set.  This will also be the case if desired_qty = 0, which seems ok?
             #We assume there is no case where desired_qty = 0 could lead to product_qty != 0
-            #So we're safe to leave product_qty unitiailized (0)
+            #So we're safe to leave product_qty unchanged if desired_qty = 0
             #The other case is that we've inherited a PO where desired_qty didn't exist, in which case we definitely want to start with product_qty as-is
             line.product_qty = line.desired_qty
 
