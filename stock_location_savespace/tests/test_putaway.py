@@ -36,19 +36,19 @@ class TestMove(TransactionCase):
             'location_id': self.Stores.id
         })    
         self.Shelf1 = self.Location.create({
-            'name': 'Vertical 1',
+            'name': 'Shelf 1',
             'location_id': self.Vertical1.id
         })        
         self.Shelf2 = self.Location.create({
-            'name': 'Vertical 1',
+            'name': 'Shelf 2',
             'location_id': self.Vertical1.id
         })         
         self.Shelf3 = self.Location.create({
-            'name': 'Vertical 1',
+            'name': 'Shelf 3',
             'location_id': self.Vertical2.id
         })        
         self.Shelf4 = self.Location.create({
-            'name': 'Vertical 1',
+            'name': 'Shelf 4',
             'location_id': self.Vertical2.id
         })  
 
@@ -182,6 +182,94 @@ class TestMove(TransactionCase):
         # check if the putaway was rightly applied
         self.assertEqual(move1.move_line_ids.location_dest_id.id, self.Stores.id)           
 
+    def test_putaway_stock(self):
+        "Verify behaviour if override enabled and putaway exists and so does stock"
+
+        #Enable override
+        self.Stores.putaway_savespace = True
+
+        #create inventory
+        self.inventoryCompA = self.env['stock.inventory'].create({
+            'name': 'Starting CompA Inventory'
+        })      
+        self.inventoryLineCompA = self.env['stock.inventory.line'].create({
+            'product_id': self.CompA.id,
+            'product_uom_id': self.uom_unit.id,
+            'inventory_id': self.inventoryCompA.id,
+            'product_qty': 2.0,
+            'location_id': self.Shelf4.id,
+        })
+        self.inventoryCompA._action_start()
+        self.inventoryCompA.action_validate()          
+
+        #create putaway rule
+        self.putawayCompA = self.env['stock.putaway.rule'].create({
+            'product_id': self.CompA.id,
+            'location_in_id': self.Stores.id,
+            'location_out_id': self.Shelf2.id,            
+        })          
+
+        #Create stock move
+        move1 = self.env['stock.move'].create({
+            'name': 'savespace_test_putaway_1',
+            'location_id': self.supplier_location.id,
+            'location_dest_id': self.Stores.id,
+            'product_id': self.CompA.id,
+            'product_uom': self.uom_unit.id,
+            'product_uom_qty': 100.0,
+        })
+        move1._action_confirm()
+        self.assertEqual(move1.state, 'confirmed')
+
+        # assignment
+        move1._action_assign()
+        self.assertEqual(move1.state, 'assigned')
+        self.assertEqual(len(move1.move_line_ids), 1)
+
+        # check if the putaway was rightly applied
+        self.assertEqual(move1.move_line_ids.location_dest_id.id, self.Shelf2.id)    
+
+
+    def test_noputaway_stock_elsewhere(self):
+        "Verify behaviour if override enabled and no putaway exists but stock exists in a non-child location"   
+
+        #Enable override
+        self.Stores.putaway_savespace = True
+
+        #create inventory
+        self.inventoryCompA = self.env['stock.inventory'].create({
+            'name': 'Starting CompA Inventory'
+        })      
+        self.inventoryLineCompA = self.env['stock.inventory.line'].create({
+            'product_id': self.CompA.id,
+            'product_uom_id': self.uom_unit.id,
+            'inventory_id': self.inventoryCompA.id,
+            'product_qty': 2.0,
+            'location_id': self.HUST.id,
+        })
+        self.inventoryCompA._action_start()
+        self.inventoryCompA.action_validate()            
+
+        #Create stock move
+        move1 = self.env['stock.move'].create({
+            'name': 'savespace_test_putaway_1',
+            'location_id': self.supplier_location.id,
+            'location_dest_id': self.Stores.id,
+            'product_id': self.CompA.id,
+            'product_uom': self.uom_unit.id,
+            'product_uom_qty': 100.0,
+        })
+        move1._action_confirm()
+        self.assertEqual(move1.state, 'confirmed')
+
+        # assignment
+        move1._action_assign()
+        self.assertEqual(move1.state, 'assigned')
+        self.assertEqual(len(move1.move_line_ids), 1)
+
+        # check if the putaway was rightly applied
+        self.assertEqual(move1.move_line_ids.location_dest_id.id, self.Stores.id)       
+
 
     def test_putaway_stock(self):
         "Verify behaviour if override enabled and putaway exists and so does stock"
@@ -270,6 +358,106 @@ class TestMove(TransactionCase):
 
         # check if the putaway was rightly applied
         ##TODO: should be Shelf4 when things are working
-        self.assertEqual(move1.move_line_ids.location_dest_id.id, self.Stores.id)              
+        self.assertEqual(move1.move_line_ids.location_dest_id.id, self.Shelf4.id)              
                  
+    def test_putaway_stock(self):
+        "Verify behaviour if override enabled and putaway exists and so does stock"
 
+        #Enable override
+        self.Stores.putaway_savespace = True
+
+        #create inventory
+        self.inventoryCompA = self.env['stock.inventory'].create({
+            'name': 'Starting CompA Inventory'
+        })      
+        self.inventoryLineCompA = self.env['stock.inventory.line'].create({
+            'product_id': self.CompA.id,
+            'product_uom_id': self.uom_unit.id,
+            'inventory_id': self.inventoryCompA.id,
+            'product_qty': 2.0,
+            'location_id': self.Shelf4.id,
+        })
+        self.inventoryCompA._action_start()
+        self.inventoryCompA.action_validate()          
+
+        #create putaway rule
+        self.putawayCompA = self.env['stock.putaway.rule'].create({
+            'product_id': self.CompA.id,
+            'location_in_id': self.Stores.id,
+            'location_out_id': self.Shelf2.id,            
+        })          
+
+        #Create stock move
+        move1 = self.env['stock.move'].create({
+            'name': 'savespace_test_putaway_1',
+            'location_id': self.supplier_location.id,
+            'location_dest_id': self.Stores.id,
+            'product_id': self.CompA.id,
+            'product_uom': self.uom_unit.id,
+            'product_uom_qty': 100.0,
+        })
+        move1._action_confirm()
+        self.assertEqual(move1.state, 'confirmed')
+
+        # assignment
+        move1._action_assign()
+        self.assertEqual(move1.state, 'assigned')
+        self.assertEqual(len(move1.move_line_ids), 1)
+
+        # check if the putaway was rightly applied
+        self.assertEqual(move1.move_line_ids.location_dest_id.id, self.Shelf2.id)    
+
+
+    def test_noputaway_stock_newer(self):
+        "Verify behaviour if override enabled and no putaway exists but stock exists"   
+
+        #Enable override
+        self.Stores.putaway_savespace = True
+
+        #create inventory
+        self.inventoryCompA = self.env['stock.inventory'].create({
+            'name': 'Starting CompA Inventory'
+        })      
+        self.inventoryLineCompA = self.env['stock.inventory.line'].create({
+            'product_id': self.CompA.id,
+            'product_uom_id': self.uom_unit.id,
+            'inventory_id': self.inventoryCompA.id,
+            'product_qty': 2.0,
+            'location_id': self.Shelf4.id,
+        })
+        self.inventoryCompA._action_start()
+        self.inventoryCompA.action_validate()            
+
+        self.inventoryCompA = self.env['stock.inventory'].create({
+            'name': 'Second CompA Inventory'
+        })      
+        self.inventoryLineCompA = self.env['stock.inventory.line'].create({
+            'product_id': self.CompA.id,
+            'product_uom_id': self.uom_unit.id,
+            'inventory_id': self.inventoryCompA.id,
+            'product_qty': 3.0,
+            'location_id': self.Shelf3.id,
+        })
+        self.inventoryCompA._action_start()
+        self.inventoryCompA.action_validate()           
+
+        #Create stock move
+        move1 = self.env['stock.move'].create({
+            'name': 'savespace_test_putaway_1',
+            'location_id': self.supplier_location.id,
+            'location_dest_id': self.Stores.id,
+            'product_id': self.CompA.id,
+            'product_uom': self.uom_unit.id,
+            'product_uom_qty': 100.0,
+        })
+        move1._action_confirm()
+        self.assertEqual(move1.state, 'confirmed')
+
+        # assignment
+        move1._action_assign()
+        self.assertEqual(move1.state, 'assigned')
+        self.assertEqual(len(move1.move_line_ids), 1)
+
+        # check if the putaway was rightly applied
+        ##TODO: should be Shelf4 when things are working
+        self.assertEqual(move1.move_line_ids.location_dest_id.id, self.Shelf3.id)   
