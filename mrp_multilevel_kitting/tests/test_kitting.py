@@ -18,10 +18,7 @@ class TestMove(SavepointCase):
             'name': 'HUST',
             'location_id': self.Builds.id
         })               
-  
-
-        #Make Stores the default location for the default Receipt operation type
-        self.warehouse.in_type_id.default_location_dest_id = self.goodsIn             
+            
 
         #Clear default locations on Manufacturing Operation
         self.warehouse.manu_type_id.default_location_dest_id = False
@@ -94,7 +91,7 @@ class TestMove(SavepointCase):
             'location_src_id': self.HUST.id,
             'location_id': self.CompA.property_stock_production.id,
             'procure_method': 'make_to_order',
-            'route_id': self.ComponentResupply.id,
+            'route_id': self.SubassyResupply.id,
             'sequence': 30,
         })                    
           
@@ -114,8 +111,8 @@ class TestMove(SavepointCase):
         })          
 
         self.SubA_BOM = self.env['mrp.bom'].create({
-            'product_tmpl_id': self.MW3.product_tmpl_id.id,
-            'product_uom_id': self.ref('uom.product_uom_unit')
+            'product_tmpl_id': self.SubA.product_tmpl_id.id,
+            'product_uom_id': self.ref('uom.product_uom_unit'),
             'multilevel_kitting_name': 'XY2'
         })
         self.subA_compA_BOM_line = self.env['mrp.bom.line'].create({
@@ -136,8 +133,8 @@ class TestMove(SavepointCase):
         #create MO
         strOrigin = 'mrp_multilevel_kitting Test Replenishment'
         self.MW3_MO = self.env['mrp.production'].create({
-            'name': strOrigin + ' 1',
-            'origin': strOrigin + ' 1',
+            'name': strOrigin,
+            'origin': strOrigin,
             'product_tmpl_id': self.MW3.product_tmpl_id.id,
             'product_id': self.MW3.id,
             'product_qty': 1.0,
@@ -147,9 +144,101 @@ class TestMove(SavepointCase):
             'product_uom_id': self.ref('uom.product_uom_unit')
         })              
 
-        #Tests: with boolean Off.  With boolean on but name blank.  With boolean on and name filled in and location doesn't exist.  With boolean on and name filled in and location does exist.
-
         self.MW3_MO._onchange_move_raw()
         self.MW3_MO.action_confirm()
 
         #Check that a new MO is created for XY2, and that it has HUST as destination and HUST or XY2 as source, depending on the test case.
+        #Tests: with boolean Off.  With boolean on but name blank.  With boolean on and name filled in and location doesn't exist.  With boolean on and name filled in and location does exist.
+        myMOs = self.env['mrp.production'].search([('product_id.id', '=', self.SubA.id)])
+        self.assertEqual(len(myMOs), 1, msg='Not 1 MO generated for SubA')
+        self.assertEqual(myMOs.location_src_id.id, self.HUST.id, msg='Source location not HUST')
+        self.assertEqual(myMOs.location_dest_id.id, self.HUST.id, msg='Destination location not HUST')
+
+    def test_enabled_noname(self):
+        "Make sure multilevel_kitting off creates the need in-situ, even with multilevel_kitting name set on BOM"
+
+        self.warehouse.manu_type_id.multilevel_kitting = True
+        self.SubA_BOM.multilevel_kitting_name = False
+
+        #create MO
+        strOrigin = 'mrp_multilevel_kitting Test Replenishment'
+        self.MW3_MO = self.env['mrp.production'].create({
+            'name': strOrigin,
+            'origin': strOrigin,
+            'product_tmpl_id': self.MW3.product_tmpl_id.id,
+            'product_id': self.MW3.id,
+            'product_qty': 1.0,
+            'location_src_id': self.HUST.id,
+            'location_dest_id': self.HUST.id,
+            'bom_id': self.MW3_BOM.id,
+            'product_uom_id': self.ref('uom.product_uom_unit')
+        })              
+
+        self.MW3_MO._onchange_move_raw()
+        self.MW3_MO.action_confirm()
+
+        myMOs = self.env['mrp.production'].search([('product_id.id', '=', self.SubA.id)])
+        self.assertEqual(len(myMOs), 1, msg='Not 1 MO generated for SubA')
+        self.assertEqual(myMOs.location_src_id.id, self.HUST.id, msg='Source location not HUST')
+        self.assertEqual(myMOs.location_dest_id.id, self.HUST.id, msg='Destination location not HUST')        
+
+    def test_enabled_namenotexist(self):
+        "Make sure multilevel_kitting off creates the need in-situ, even with multilevel_kitting name set on BOM"
+
+        self.warehouse.manu_type_id.multilevel_kitting = True
+
+        #create MO
+        strOrigin = 'mrp_multilevel_kitting Test Replenishment'
+        self.MW3_MO = self.env['mrp.production'].create({
+            'name': strOrigin,
+            'origin': strOrigin,
+            'product_tmpl_id': self.MW3.product_tmpl_id.id,
+            'product_id': self.MW3.id,
+            'product_qty': 1.0,
+            'location_src_id': self.HUST.id,
+            'location_dest_id': self.HUST.id,
+            'bom_id': self.MW3_BOM.id,
+            'product_uom_id': self.ref('uom.product_uom_unit')
+        })              
+
+        self.MW3_MO._onchange_move_raw()
+        self.MW3_MO.action_confirm()
+
+        myMOs = self.env['mrp.production'].search([('product_id.id', '=', self.SubA.id)])
+        self.assertEqual(len(myMOs), 1, msg='Not 1 MO generated for SubA')
+        #TODO: when working soure location will be named 'XY2' and its parent will be HUST
+        self.assertEqual(myMOs.location_src_id.id, self.HUST.id, msg='Source location not HUST')
+        self.assertEqual(myMOs.location_dest_id.id, self.HUST.id, msg='Destination location not HUST')        
+
+    def test_enabled_nameexist(self):
+        "Make sure multilevel_kitting off creates the need in-situ, even with multilevel_kitting name set on BOM"
+
+        self.warehouse.manu_type_id.multilevel_kitting = True
+        XY2 = self.Location.create({
+            'name': self.SubA_BOM.multilevel_kitting_name,
+            'location_id': self.HUST.id
+        })        
+
+
+        #create MO
+        strOrigin = 'mrp_multilevel_kitting Test Replenishment'
+        self.MW3_MO = self.env['mrp.production'].create({
+            'name': strOrigin,
+            'origin': strOrigin,
+            'product_tmpl_id': self.MW3.product_tmpl_id.id,
+            'product_id': self.MW3.id,
+            'product_qty': 1.0,
+            'location_src_id': self.HUST.id,
+            'location_dest_id': self.HUST.id,
+            'bom_id': self.MW3_BOM.id,
+            'product_uom_id': self.ref('uom.product_uom_unit')
+        })              
+
+        self.MW3_MO._onchange_move_raw()
+        self.MW3_MO.action_confirm()
+
+        myMOs = self.env['mrp.production'].search([('product_id.id', '=', self.SubA.id)])
+        self.assertEqual(len(myMOs), 1, msg='Not 1 MO generated for SubA')
+        #TODO: when working soure location will XY2
+        self.assertEqual(myMOs.location_src_id.id, self.HUST.id, msg='Source location not HUST')
+        self.assertEqual(myMOs.location_dest_id.id, self.HUST.id, msg='Destination location not HUST')              
