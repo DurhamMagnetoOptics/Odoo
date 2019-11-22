@@ -261,10 +261,12 @@ class TestMove(SavepointCase):
         
 
         #Check stock moves
+        receipt1 = self.env['stock.move'].search([('location_dest_id', '=', self.goodsIn.id)])
         moves = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.HUST.id)])
         move2 = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.Stores.id)])
         move3 = self.env['stock.move'].search([('location_id', '=', self.Stores.id), ('location_dest_id', '=', self.HUST.id)])
-
+                
+        self.assertEqual(len(receipt1), 1, msg='Not  1 incoming stock move') 
         self.assertEqual(len(moves), 2, msg='Not 2 moves GoodsIn->HUST')
         self.assertEqual(len(move2), 1, msg='Not 1 move GoodsIn->Stores')
         self.assertEqual(len(move3), 1, msg='Not  1 move Stores->HUST')
@@ -273,12 +275,19 @@ class TestMove(SavepointCase):
         for move in moves:
             sum_qty += move.product_uom_qty
 
+        self.assertEqual(receipt1.product_uom_qty, orderedQty2, msg='Not  %s units being delivered' % orderedQty2) 
         self.assertEqual(sum_qty, (6*neededQty - inStockQty), msg='There are not %s units in GoodsIn->Hust' % (6*neededQty - inStockQty))
         leftover = orderedQty2 - (6*neededQty - inStockQty)
         self.assertEqual(move2.product_uom_qty, leftover, msg='There are not %s units in GoodsIn->Stores' % leftover)
         self.assertEqual(move3.product_uom_qty, inStockQty, msg='There are not %s units in Stores->HUST' % inStockQty)
 
-        #Check that new delivery was sent directly to the bin that already had some:
+        #Execute receipt
+        self.assertEqual(len(receipt1.move_line_ids), 1, msg='Not 1 line in incoming stock move') 
+        receipt1.move_line_ids.qty_done = orderedQty2
+        receipt1._action_done()
+        self.assertEqual(receipt1.state, 'done')
+
+        #Check that it was sent directly to the bin that already had some:
         self.assertEqual(move2.move_line_ids.location_dest_id.id, self.Vertical1.id)
         
         
