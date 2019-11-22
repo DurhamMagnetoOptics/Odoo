@@ -19,6 +19,7 @@
         'stock_move_push_leftover',
         'mrp_apply_parent_pull',
         'product_supplierinfo_round_up',
+        'stock_location_savespace',
         'stock',
         'purchase',
         'purchase_stock',
@@ -27,6 +28,6 @@
         
     ],
     'demo': [
-        'data/data.xml',
+        'demo/data.xml',
     ]
 }
