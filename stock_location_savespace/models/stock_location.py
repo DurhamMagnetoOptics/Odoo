@@ -8,7 +8,7 @@ class Location(models.Model):
     def _get_putaway_strategy(self, product):
         ''' Returns the location where the product has to be put, if any compliant putaway strategy is found. Otherwise returns None.'''
         res = super()._get_putaway_strategy(product)
-        if not res:
+        if not res and self.putaway_savespace:
             local_product = product.with_context(location=self.id)
             if local_product.qty_available > 0.0:
                 domain_quant, dummy, dummy = local_product._get_domain_locations()

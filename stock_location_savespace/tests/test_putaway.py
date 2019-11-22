@@ -461,3 +461,54 @@ class TestMove(TransactionCase):
         # check if the putaway was rightly applied
         ##TODO: should be Shelf4 when things are working
         self.assertEqual(move1.move_line_ids.location_dest_id.id, self.Shelf3.id)   
+
+    def test_null_noputaway_stock_newer(self):
+        "Verify behaviour if override enabled and no putaway exists but stock exists"   
+
+        #create inventory
+        self.inventoryCompA = self.env['stock.inventory'].create({
+            'name': 'Starting CompA Inventory'
+        })      
+        self.inventoryLineCompA = self.env['stock.inventory.line'].create({
+            'product_id': self.CompA.id,
+            'product_uom_id': self.uom_unit.id,
+            'inventory_id': self.inventoryCompA.id,
+            'product_qty': 2.0,
+            'location_id': self.Shelf4.id,
+        })
+        self.inventoryCompA._action_start()
+        self.inventoryCompA.action_validate()            
+
+        self.inventoryCompA = self.env['stock.inventory'].create({
+            'name': 'Second CompA Inventory'
+        })      
+        self.inventoryLineCompA = self.env['stock.inventory.line'].create({
+            'product_id': self.CompA.id,
+            'product_uom_id': self.uom_unit.id,
+            'inventory_id': self.inventoryCompA.id,
+            'product_qty': 3.0,
+            'location_id': self.Shelf3.id,
+        })
+        self.inventoryCompA._action_start()
+        self.inventoryCompA.action_validate()           
+
+        #Create stock move
+        move1 = self.env['stock.move'].create({
+            'name': 'savespace_test_putaway_1',
+            'location_id': self.supplier_location.id,
+            'location_dest_id': self.Stores.id,
+            'product_id': self.CompA.id,
+            'product_uom': self.uom_unit.id,
+            'product_uom_qty': 100.0,
+        })
+        move1._action_confirm()
+        self.assertEqual(move1.state, 'confirmed')
+
+        # assignment
+        move1._action_assign()
+        self.assertEqual(move1.state, 'assigned')
+        self.assertEqual(len(move1.move_line_ids), 1)
+
+        # check if the putaway was rightly applied
+        ##TODO: should be Shelf4 when things are working
+        self.assertEqual(move1.move_line_ids.location_dest_id.id, self.Stores.id)           

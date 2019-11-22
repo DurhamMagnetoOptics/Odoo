@@ -15,7 +15,8 @@ class TestMove(SavepointCase):
         })
         self.Stores = self.Location.create({
             'name': 'Stores',
-            'location_id': self.warehouse.view_location_id.id
+            'location_id': self.warehouse.view_location_id.id,
+            'putaway_savespace': True
         })
         self.Vertical1 = self.Location.create({
             'name': 'Vertical 1',
@@ -169,13 +170,6 @@ class TestMove(SavepointCase):
             'qty_multiple': 1.0,
         })        
 
-        #create putaway rule
-        self.putawayCompA = self.env['stock.putaway.rule'].create({
-            'product_id': self.CompA.id,
-            'location_in_id': self.Stores.id,
-            'location_out_id': self.Vertical1.id,            
-        })         
-
         #activate push_leftover option on Receipt operation       
         self.warehouse.in_type_id.push_leftover = True  
 
@@ -283,5 +277,8 @@ class TestMove(SavepointCase):
         leftover = orderedQty2 - (6*neededQty - inStockQty)
         self.assertEqual(move2.product_uom_qty, leftover, msg='There are not %s units in GoodsIn->Stores' % leftover)
         self.assertEqual(move3.product_uom_qty, inStockQty, msg='There are not %s units in Stores->HUST' % inStockQty)
+
+        #Check that new delivery was sent directly to the bin that already had some:
+        self.assertEqual(move2.move_line_ids.location_dest_id.id, self.Vertical1.id)
         
         

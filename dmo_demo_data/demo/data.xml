@@ -9,6 +9,7 @@
         </record>          
         <record id="stock_location_Stores" model="stock.location">
             <field name="name">Stores</field>
+            <field name="putaway_savespace">True</field>
             <field name="location_id" model="stock.location"
                 eval="obj().env.ref('stock.warehouse0').view_location_id.id"/>
         </record>          
@@ -142,13 +143,6 @@
             <field name="round_up">True</field>
             <field name="price">2.50</field>
         </record>       
-
-        <!-- Putaway -->
-        <record id="stock_putaway_rule_CompA" model="stock.putaway.rule">
-            <field name="product_id" ref="product_product_CompA"/>
-            <field name="location_in_id" ref="stock_location_Stores"/>
-            <field name="location_out_id" ref="stock_location_Vertical1"/>
-        </record>  
 
         <!-- Resource: stock.inventory.line -->
         <record id="stock_inventory_CompA" model="stock.inventory">
