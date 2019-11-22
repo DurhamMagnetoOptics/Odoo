@@ -1,1 +1,1 @@
-from . import test_putaway
+from . import test_kitting
