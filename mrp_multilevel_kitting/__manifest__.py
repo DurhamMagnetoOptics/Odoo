@@ -15,7 +15,8 @@
         'mrp',
     ],
     'data': [
-        
+        'views/mrp_bom_views.xml',
+        'views/stock_picking_views.xml',
     ],
     'demo': [
         

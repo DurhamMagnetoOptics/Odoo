@@ -1,0 +1,12 @@
+<odoo>
+    <record id="mrp_bom_form_view_inherit_mrp_multilevel_kitting" model="ir.ui.view">
+        <field name="name">Bill of Materials</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <field name="code" position="after">
+                <field name="multilevel_kitting_name"/>
+            </field>
+        </field>
+    </record>
+</odoo>
