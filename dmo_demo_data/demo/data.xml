@@ -318,7 +318,7 @@
         </record>
         <record id="mrp_bom_manufacture_line_SubA1" model="mrp.bom.line">
             <field name="product_id" ref="product_product_CompA"/>
-            <field name="product_qty">1.0</field>
+            <field name="product_qty">9.0</field>
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">5</field>
             <field name="bom_id" ref="mrp_bom_SubA"/>
