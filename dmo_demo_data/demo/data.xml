@@ -134,12 +134,12 @@
         </record>          
         <record id="stock_location_rule_KitFromStores" model="stock.rule">
             <field name="name">Kit from Stores</field>
-            <field name="action">pull</field>
+            <field name="action">branch</field>
             <field name="picking_type_id" model="stock.picking.type"
                 eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
             <field name="location_src_id" ref="stock_location_Stores"/>
             <field name="location_id" ref="stock_location_Builds"/>   
-            <field name="procure_method">mts_else_alt</field>
+            <field name="procure_method">make_to_stock</field>
             <field name="alternate_rule_id" ref="stock_location_rule_ResupplyInPlace"/>
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>
             <field name="sequence">5</field>     
@@ -205,12 +205,12 @@
         </record>  
         <record id="stock_location_rule_SubFromStores" model="stock.rule">
             <field name="name">Subs from Stores</field>
-            <field name="action">pull</field>
+            <field name="action">branch</field>
             <field name="picking_type_id" model="stock.picking.type"
                 eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
             <field name="location_src_id" ref="stock_location_Stores"/>
             <field name="location_id" ref="stock_location_Builds"/>   
-            <field name="procure_method">mts_else_alt</field>
+            <field name="procure_method">make_to_stock</field>
             <field name="alternate_rule_id" ref="stock_location_rule_MTOSubAssy"/>
             <field name="route_id" ref="stock_location_route_SubassemblyResupply"/>
             <field name="sequence">20</field>      
@@ -331,7 +331,7 @@
             <field name="bom_id" ref="mrp_bom_SubA"/>
         </record>              
 
-        <!-- create xml id for manufacturing operation, for more convenience -->
+        <!-- create xml id for manufacturing operation, "for more convenience" -->
         <function model="ir.model.data" name="_update_xmlids">
             <value model="base" eval="[{
                 'xml_id': 'dmo_demo_data.picking_type_manu',

@@ -1,4 +1,5 @@
 from odoo.tests.common import SavepointCase
+from odoo import exceptions
 
 class TestMove(SavepointCase):
     def setUp(self, *args, **kwargs):
@@ -50,11 +51,11 @@ class TestMove(SavepointCase):
         })
         self.KitFromStores = self.rule.create({
             'name': 'Kit From Stores',
-            'action': 'pull',
+            'action': 'branch',
             'picking_type_id': self.warehouse.int_type_id.id,
             'location_src_id': self.Stores.id,
             'location_id': self.Builds.id,
-            'procure_method': 'mts_else_alt',
+            'procure_method': 'make_to_stock',
             'alternate_rule_id': self.ResupplyInPlace.id,            
             'route_id': self.ComponentResupply.id,
             'sequence': 5,
@@ -331,3 +332,84 @@ class TestMove(SavepointCase):
         #self.assertEqual(move1.product_qty, neededQty, msg='More than %s units in Stores->Hust' % neededQty)
         self.assertEqual(move2.product_qty, neededQty, msg='More than %s units in GoodsIn->Hust' % neededQty)
         self.assertEqual(move3.product_qty, neededQty, msg='More than %s units in Vendors->GoodsIn' % neededQty)
+
+    def test_location(self):
+        alt_rule = self.rule.create({
+            'name': 'Resupply In Place',
+            'action': 'pull',
+            'picking_type_id': self.warehouse.int_type_id.id,
+            'location_src_id': self.goodsIn.id,
+            'location_id': self.goodsIn.id,
+            'procure_method': 'make_to_order',
+            'route_id': self.ComponentResupply.id,
+            'sequence': 10,
+        })
+        prime_vals = {
+            'name': 'Kit From Stores',
+            'action': 'branch',
+            'picking_type_id': self.warehouse.int_type_id.id,
+            'location_src_id': self.Stores.id,
+            'location_id': self.Builds.id,
+            'procure_method': 'make_to_stock',
+            'alternate_rule_id': alt_rule.id,            
+            'route_id': self.ComponentResupply.id,
+            'sequence': 5,
+        }
+
+        with self.assertRaises(exceptions.ValidationError):
+            #Raises error becuase alternate rule and primary rule must have the same destination
+            prime_rule = self.rule.create(prime_vals)                    
+
+
+    def test_location_src(self):        
+        alt_rule = self.rule.create({
+            'name': 'Resupply In Place',
+            'action': 'pull',
+            'picking_type_id': self.warehouse.int_type_id.id,
+            'location_src_id': self.Builds.id,
+            'location_id': self.Builds.id,
+            'procure_method': 'make_to_order',
+            'route_id': self.ComponentResupply.id,
+            'sequence': 10,
+        })
+        prime_vals = {
+            'name': 'Kit From Stores',
+            'action': 'branch',
+            'picking_type_id': self.warehouse.int_type_id.id,
+            'location_src_id': self.Stores.id,
+            'location_id': self.Builds.id,
+            'procure_method': 'make_to_stock',
+            'alternate_rule_id': alt_rule.id,            
+            'route_id': self.ComponentResupply.id,
+            'sequence': 5,
+        }
+        with self.assertRaises(exceptions.ValidationError):
+            #Raises error becuase alternate rule's source can't be primary rule's destination
+            prime_rule = self.rule.create(prime_vals)                        
+ 
+
+    def test_mtselsemto(self):        
+        alt_rule = self.rule.create({
+            'name': 'Resupply In Place',
+            'action': 'pull',
+            'picking_type_id': self.warehouse.int_type_id.id,
+            'location_src_id': self.goodsIn.id,
+            'location_id': self.Builds.id,
+            'procure_method': 'make_to_order',
+            'route_id': self.ComponentResupply.id,
+            'sequence': 10,
+        })
+        prime_vals = {
+            'name': 'Kit From Stores',
+            'action': 'branch',
+            'picking_type_id': self.warehouse.int_type_id.id,
+            'location_src_id': self.Stores.id,
+            'location_id': self.Builds.id,
+            'procure_method': 'mts_else_mto',
+            'alternate_rule_id': alt_rule.id,            
+            'route_id': self.ComponentResupply.id,
+            'sequence': 5,
+        }
+        with self.assertRaises(exceptions.ValidationError):
+            #Raises error because we can't combine branch with mts_else_mto procurement
+            prime_rule = self.rule.create(prime_vals)                

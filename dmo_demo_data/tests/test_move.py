@@ -144,11 +144,11 @@ class TestMove(SavepointCase):
         })
         self.KitFromStores = self.rule.create({
             'name': 'Kit From Stores',
-            'action': 'pull',
+            'action': 'branch',
             'picking_type_id': self.warehouse.int_type_id.id,
             'location_src_id': self.Stores.id,
             'location_id': self.Builds.id,
-            'procure_method': 'mts_else_alt',
+            'procure_method': 'make_to_stock',
             'alternate_rule_id': self.ResupplyInPlace.id,            
             'route_id': self.ComponentResupply.id,
             'sequence': 5,
@@ -208,11 +208,11 @@ class TestMove(SavepointCase):
         })   
         self.SubFromStores = self.rule.create({
             'name': 'Subs from Stores',
-            'action': 'pull',
+            'action': 'branch',
             'picking_type_id': self.warehouse.int_type_id.id,
             'location_src_id': self.Stores.id,
             'location_id': self.Builds.id,
-            'procure_method': 'mts_else_alt',
+            'procure_method': 'make_to_stock',
             'alternate_rule_id': self.MTOSubAssy.id,
             'route_id': self.SubResupply.id,
             'sequence': 20,
@@ -254,7 +254,8 @@ class TestMove(SavepointCase):
 
         self.SubA_BOM = self.env['mrp.bom'].create({
             'product_tmpl_id': self.SubA.product_tmpl_id.id,
-            'product_uom_id': self.ref('uom.product_uom_unit')
+            'product_uom_id': self.ref('uom.product_uom_unit'),
+            'multilevel_kitting_name': 'XY2'
         })
         self.compA_subABOM_line = self.env['mrp.bom.line'].create({
             'product_id': self.CompA.id,
@@ -291,7 +292,34 @@ class TestMove(SavepointCase):
             'round_up': True,
             'price': 2.50,
         })        
-    
+
+
+        #create inventory
+        self.inventoryCompA = self.env['stock.inventory'].create({
+            'name': 'Starting CompA Inventory'
+        })      
+        self.inventoryLineCompA = self.env['stock.inventory.line'].create({
+            'product_id': self.CompA.id,
+            'product_uom_id': self.uom_xid,
+            'inventory_id': self.inventoryCompA.id,
+            'product_qty': 2.0,
+            'location_id': self.Shelf1.id,
+        })
+        self.inventoryCompA._action_start()
+        self.inventoryCompA.action_validate()   
+
+        self.inventorySubA = self.env['stock.inventory'].create({
+            'name': 'Starting SubA Inventory'
+        })      
+        self.inventoryLineSubA = self.env['stock.inventory.line'].create({
+            'product_id': self.SubA.id,
+            'product_uom_id': self.uom_xid,
+            'inventory_id': self.inventorySubA.id,
+            'product_qty': 1.0,
+            'location_id': self.Shelf4.id,
+        })
+        self.inventorySubA._action_start()
+        self.inventorySubA.action_validate()         
 
         #activate push_leftover option on Receipt operation       
         self.warehouse.in_type_id.push_leftover = True  
@@ -313,32 +341,8 @@ class TestMove(SavepointCase):
     def test_complete_flow(self):
         "Test MO -> PO flow, including partial stock, parent pull rule, leftover putaway, and MOQ rounding"
 
-
-        inStockQty =  2.0
-        neededQty = 3.0
-        orderedQty1 = 10.0
-        orderedQty2 = 20.0
-
-        #neededQty is set in the BOM
-        self.compA_BOM_line.product_qty = neededQty
-
-        #create inventory
-        self.inventoryCompA = self.env['stock.inventory'].create({
-            'name': 'Starting CompA Inventory'
-        })      
-        self.inventoryLineCompA = self.env['stock.inventory.line'].create({
-            'product_id': self.CompA.id,
-            'product_uom_id': self.uom_xid,
-            'inventory_id': self.inventoryCompA.id,
-            'product_qty': inStockQty,
-            'location_id': self.Shelf1.id,
-        })
-        self.inventoryCompA._action_start()
-        self.inventoryCompA.action_validate()
-
-
         #create MO
-        strOrigin = 'mts_else_mto Test Replenishment'
+        strOrigin = 'DMO Demo Test Replenishment'
         self.MW3_MO_for2 = self.env['mrp.production'].create({
             'name': strOrigin + ' 1',
             'origin': strOrigin + ' 1',
@@ -350,6 +354,48 @@ class TestMove(SavepointCase):
             'bom_id': self.MW3_BOM.id,
             'product_uom_id': self.ref('uom.product_uom_unit')
         })      
+       
+
+        self.MW3_MO_for2._onchange_move_raw()
+        self.MW3_MO_for2.action_confirm()
+
+        #From setup function, above
+        #in stock compA: 2
+        #compA per MW3: 25.0
+        #subA per MW3: 2.0
+        #compA per subA: 1.0
+        #compB per subA: 14.0
+        #compA bought in 10 + 5's
+        #compB bought in 100 + 100's
+
+        ##Check MO
+        myMOs = self.env['mrp.production'].search([('product_id', '=', self.SubA.id)])
+        self.assertEqual(len(myMOs), 1, msg='Not 1 MO generated')
+        self.assertEqual(myMOs.product_qty, 3.0)  #MO for need (4) less the one in stock, as per stock_mts_else_alt; created immediately (MTO) from rule on Builds (not Builds/HUST) as per mrp_apply_parent_pull
+
+        ##Check PO
+        myPOs = self.env['purchase.order'].search([('partner_id', '=', self.supplierCompA.name.id),('state', '=', 'draft')])
+        self.assertEqual(len(myPOs), 1, msg='Not 1 PO generated')
+        self.assertEqual(len(myPOs.order_line), 2, msg='Not 2 lines on the PO')
+        compAline = myPOs.order_line.search([('product_id', '=', self.CompA.id)])
+        compBline = myPOs.order_line.search([('product_id', '=', self.CompB.id)])
+        self.assertEqual(len(compAline), 1, msg='Not 1 line for compA')
+        self.assertEqual(len(compBline), 1, msg='Not 1 line for compB')
+        #POs for need less in stock (as per stock_mts_else_alt) rounded up to min + N * inc as per product_supplierinfo_round_up
+        self.assertEqual(compAline.desired_qty, 51.0, msg='More than %s items purchased' % 51.0)  #2*25 + (2*2-1)*1 - 2
+        self.assertEqual(compAline.product_qty, 55.0, msg='More than %s items purchased' % 55.0)
+        self.assertEqual(compBline.desired_qty, 42.0, msg='More than %s items purchased' % 42.0)  #(2*2-1)*14
+        self.assertEqual(compBline.product_qty, 100.0, msg='More than %s items purchased' % 100.0)     
+
+        #find XY2, created as per mrp_multilevel_kitting
+        XY2 = False
+        for loc in self.HUST.child_ids:
+            if loc.name == self.SubA_BOM.multilevel_kitting_name:
+                XY2 = loc
+                continue
+        self.assertTrue(loc)           
+        
+        """ Not ready to worry about mergings, yet
         self.MW3_MO_for4 = self.env['mrp.production'].create({
             'name': strOrigin + ' 2',
             'origin': strOrigin + ' 2',
@@ -360,60 +406,71 @@ class TestMove(SavepointCase):
             'location_dest_id': self.HUST.id,
             'bom_id': self.MW3_BOM.id,
             'product_uom_id': self.ref('uom.product_uom_unit')
-        })            
-
-        self.MW3_MO_for2._onchange_move_raw()
-        self.MW3_MO_for2.action_confirm()
-
-        ##Check PO
-        myPOs = self.env['purchase.order'].search([('partner_id', '=', self.supplierCompA.name.id),('state', '=', 'draft')])
-        self.assertEqual(len(myPOs), 1, msg='More than 1 PO generated')
-        self.assertEqual(len(myPOs.order_line), 1, msg='More than 1 line on the PO')
-        self.assertEqual(myPOs.order_line.product_qty, orderedQty1, msg='More than %s items purchased' % orderedQty1)
-        self.assertEqual(myPOs.order_line.desired_qty, (2*neededQty - inStockQty), msg='More than %s items purchased' % (2*neededQty - inStockQty))
-
+        })             
         self.MW3_MO_for4._onchange_move_raw()
         self.MW3_MO_for4.action_confirm()
 
         ##Check PO again
         myPOs = self.env['purchase.order'].search([('partner_id', '=', self.supplierCompA.name.id),('state', '=', 'draft')])
-        self.assertEqual(len(myPOs), 1, msg='More than 1 PO generated')
-        self.assertEqual(len(myPOs.order_line), 1, msg='More than 1 line on the PO')
-        self.assertEqual(myPOs.order_line.product_qty, orderedQty2, msg='More than %s items purchased' % orderedQty2)
-        self.assertEqual(myPOs.order_line.desired_qty, (6*neededQty - inStockQty), msg='More than %s items purchased' % (6*neededQty - inStockQty))   
+        self.assertEqual(len(myPOs), 1, msg='Not 1 PO generated')
+        self.assertEqual(len(myPOs.order_line), 2, msg='Not 2 lines on the PO')
+        compAline = myPOs.order_line.search([('product_id', '=', self.CompA.id)])
+        compBline = myPOs.order_line.search([('product_id', '=', self.CompB.id)])
+        self.assertEqual(len(compAline), 1, msg='Not 1 line for compA')
+        self.assertEqual(len(compBline), 1, msg='Not 1 line for compB')
+        self.assertEqual(compAline.desired_qty, 159.0, msg='More than %s items purchased' % 159.0)  #2*25 + ((2*2)-1)*1 - 2 + 4*25 + 4*2*1
+        self.assertEqual(compAline.product_qty, 160.0, msg='More than %s items purchased' % 160.0)
+        self.assertEqual(compBline.desired_qty, 154.0, msg='More than %s items purchased' % 154.0)  #(2*2-1)*14 + 4*2*14
+        self.assertEqual(compBline.product_qty, 200.0, msg='More than %s items purchased' % 200.0)    
+        """
 
         #Place order
         myPOs.button_confirm()     
         
-
         #Check stock moves
-        receipt1 = self.env['stock.move'].search([('location_dest_id', '=', self.goodsIn.id)])
-        moves = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.HUST.id)])
-        move2 = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.Stores.id)])
-        move3 = self.env['stock.move'].search([('location_id', '=', self.Stores.id), ('location_dest_id', '=', self.HUST.id)])
+        receipt_compA = self.env['stock.move'].search([('location_dest_id', '=', self.goodsIn.id),('product_id', '=', self.CompA.id)])
+        receipt_compB = self.env['stock.move'].search([('location_dest_id', '=', self.goodsIn.id),('product_id', '=', self.CompB.id)])
+        #stock moves created on demand (MTO) from pull rule in Builds (not Builds/HUST or Builds/HUST/XY2) as per mrp_apply_parent_pull
+        compA_GItoHUST = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.HUST.id),('product_id', '=', self.CompA.id)])
+        compA_GItoXY2 = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', XY2.id),('product_id', '=', self.CompA.id)])
+        compB_GItoXY2 = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', XY2.id),('product_id', '=', self.CompB.id)])
+        #Push rule (Gi -> Stores) applied to over-order (from MOQ, etc.) as per stock_move_push_leftover
+        compA_GItoStores = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.Stores.id),('product_id', '=', self.CompA.id)])
+        compB_GItoStores = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.Stores.id),('product_id', '=', self.CompB.id)])
+        compA_StorestoHust = self.env['stock.move'].search([('location_id', '=', self.Stores.id), ('location_dest_id', '=', self.HUST.id),('product_id', '=', self.CompA.id)])
+        subA_StorestoHust = self.env['stock.move'].search([('location_id', '=', self.Stores.id), ('location_dest_id', '=', self.HUST.id),('product_id', '=', self.SubA.id)])
                 
-        self.assertEqual(len(receipt1), 1, msg='Not  1 incoming stock move') 
-        self.assertEqual(len(moves), 2, msg='Not 2 moves GoodsIn->HUST')
-        self.assertEqual(len(move2), 1, msg='Not 1 move GoodsIn->Stores')
-        self.assertEqual(len(move3), 1, msg='Not  1 move Stores->HUST')
+        self.assertEqual(len(receipt_compA), 1, msg='Not  1 stock move') 
+        self.assertEqual(len(receipt_compB), 1, msg='Not  1 stock move') 
+        self.assertEqual(len(compA_GItoHUST), 1, msg='Not  1 stock move') 
+        self.assertEqual(len(compA_GItoXY2), 1, msg='Not  1 stock move') 
+        self.assertEqual(len(compB_GItoXY2), 1, msg='Not  1 stock move') 
+        self.assertEqual(len(compA_GItoStores), 1, msg='Not  1 stock move') 
+        self.assertEqual(len(compB_GItoStores), 1, msg='Not  1 stock move') 
+        self.assertEqual(len(compA_StorestoHust), 1, msg='Not  1 stock move') 
+        self.assertEqual(len(subA_StorestoHust), 1, msg='Not  1 stock move') 
 
-        sum_qty = 0
-        for move in moves:
-            sum_qty += move.product_uom_qty
+        self.assertEqual(receipt_compA.product_uom_qty, 55.0) 
+        self.assertEqual(receipt_compB.product_uom_qty, 100.0) 
+        self.assertEqual(compA_GItoHUST.product_uom_qty, 48.0) 
+        self.assertEqual(compA_GItoXY2.product_uom_qty, 3.0) 
+        self.assertEqual(compB_GItoXY2.product_uom_qty, 42.0) 
+        self.assertEqual(compA_GItoStores.product_uom_qty, 4.0) 
+        self.assertEqual(compB_GItoStores.product_uom_qty, 58.0) 
+        self.assertEqual(compA_StorestoHust.product_uom_qty, 2.0) 
+        self.assertEqual(subA_StorestoHust.product_uom_qty, 1.0) 
 
-        self.assertEqual(receipt1.product_uom_qty, orderedQty2, msg='Not  %s units being delivered' % orderedQty2) 
-        self.assertEqual(sum_qty, (6*neededQty - inStockQty), msg='There are not %s units in GoodsIn->Hust' % (6*neededQty - inStockQty))
-        leftover = orderedQty2 - (6*neededQty - inStockQty)
-        self.assertEqual(move2.product_uom_qty, leftover, msg='There are not %s units in GoodsIn->Stores' % leftover)
-        self.assertEqual(move3.product_uom_qty, inStockQty, msg='There are not %s units in Stores->HUST' % inStockQty)
 
-        #Execute receipt
-        self.assertEqual(len(receipt1.move_line_ids), 1, msg='Not 1 line in incoming stock move') 
-        receipt1.move_line_ids.qty_done = orderedQty2
-        receipt1._action_done()
-        self.assertEqual(receipt1.state, 'done')
+        #Execute receipts
+        self.assertEqual(len(receipt_compA.move_line_ids), 1, msg='Not 1 line in incoming stock move') 
+        receipt_compA.move_line_ids.qty_done = 55.0
+        receipt_compA._action_done()
+        self.assertEqual(receipt_compA.state, 'done')
 
-        #Check that it was sent directly to the bin that already had some:
-        self.assertEqual(move2.move_line_ids.location_dest_id.id, self.Vertical1.id)
-        
-        
+        self.assertEqual(len(receipt_compB.move_line_ids), 1, msg='Not 1 line in incoming stock move') 
+        receipt_compB.move_line_ids.qty_done = 100.0
+        receipt_compB._action_done()
+        self.assertEqual(receipt_compA.state, 'done')
+
+        #Check that CompA was sent directly to the bin that already had some, as per stock_location_savespace
+        self.assertEqual(compA_GItoStores.move_line_ids.location_dest_id.id, self.Shelf1.id)
