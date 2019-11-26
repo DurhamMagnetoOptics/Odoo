@@ -22,6 +22,26 @@ class TestMove(SavepointCase):
             'name': 'Vertical 1',
             'location_id': self.Stores.id
         })
+        self.Shelf1 = self.Location.create({
+            'name': 'Shelf 1',
+            'location_id': self.Vertical1.id
+        })
+        self.Shelf2 = self.Location.create({
+            'name': 'Shelf 2',
+            'location_id': self.Vertical1.id
+        })
+        self.Vertical2 = self.Location.create({
+            'name': 'Vertical 2',
+            'location_id': self.Stores.id
+        })        
+        self.Shelf3 = self.Location.create({
+            'name': 'Shelf 3',
+            'location_id': self.Vertical1.id
+        })
+        self.Shelf4 = self.Location.create({
+            'name': 'Shelf 4',
+            'location_id': self.Vertical1.id
+        })                
         self.Builds = self.Location.create({
             'name': 'Builds',
             'location_id': self.warehouse.view_location_id.id
@@ -41,7 +61,11 @@ class TestMove(SavepointCase):
         self.ComponentResupply = self.route.create({
             'name': 'Component Resupply',
             'product_selectable': True
-        })            
+        })      
+        self.SubResupply = self.route.create({
+            'name': 'Subassy Resupply',
+            'product_selectable': True
+        })               
 
 
         #Create products
@@ -57,7 +81,24 @@ class TestMove(SavepointCase):
             'uom_po_id': self.uom_xid,
             'description': 'MicroWriter 3',
             'default_code': 'DMO_MW3',
+            'sale_ok': True,
+            'purchase_ok': False,
         })
+        self.SubA = self.product.create({
+            'name': 'SubA',
+            'categ_id': self.ref('product.product_category_5'),
+            'standard_price': 290.0,
+            'list_price': 520.0,
+            'type': 'product',
+            'weight': 0.01,
+            'uom_id': self.uom_xid,
+            'uom_po_id': self.uom_xid,
+            'description': 'Subassembly A',
+            'default_code': 'DMO_XY2',
+            'sale_ok': False,
+            'purchase_ok': False,    
+            'route_ids': [(6,0,[self.SubResupply.id])],
+        })        
         self.CompA = self.product.create({
             'name': 'CompA',
             'categ_id': self.ref('product.product_category_5'),
@@ -70,7 +111,24 @@ class TestMove(SavepointCase):
             'description': 'Machined Component',
             'default_code': 'PL-12345',
             'route_ids': [(6,0,[self.ComponentResupply.id])],
-        })       
+            'sale_ok': False,
+            'purchase_ok': True,            
+        })    
+        self.CompB = self.product.create({
+            'name': 'CompB',
+            'categ_id': self.ref('product.product_category_5'),
+            'standard_price': 2.5,
+            'list_price': 2.5,
+            'type': 'product',
+            'weight': 0.01,
+            'uom_id': self.uom_xid,
+            'uom_po_id': self.uom_xid,
+            'description': 'Screw',
+            'default_code': 'PT-12345',
+            'route_ids': [(6,0,[self.ComponentResupply.id])],
+            'sale_ok': False,
+            'purchase_ok': True,            
+        })            
 
         #Create Rules
         self.ResupplyInPlace = self.rule.create({
@@ -82,6 +140,7 @@ class TestMove(SavepointCase):
             'procure_method': 'make_to_order',
             'route_id': self.ComponentResupply.id,
             'sequence': 10,
+            'propagate_cancel': True,
         })
         self.KitFromStores = self.rule.create({
             'name': 'Kit From Stores',
@@ -93,6 +152,7 @@ class TestMove(SavepointCase):
             'alternate_rule_id': self.ResupplyInPlace.id,            
             'route_id': self.ComponentResupply.id,
             'sequence': 5,
+            'propagate_cancel': True,
         })          
         self.ResupplyStores = self.rule.create({
             'name': 'Resupply Stores',
@@ -121,7 +181,8 @@ class TestMove(SavepointCase):
             'location_id': self.goodsIn.id,
             'route_id': self.ComponentResupply.id,
             'sequence': 25,
-            'group_propagation_option': 'none'
+            'group_propagation_option': 'none',
+            'propagate_cancel': True,
         })   
         self.MTOKitting = self.rule.create({
             'name': 'Kit On Demand',
@@ -132,7 +193,42 @@ class TestMove(SavepointCase):
             'procure_method': 'make_to_order',
             'route_id': self.ComponentResupply.id,
             'sequence': 30,
-        })          
+            'propagate_cancel': True,
+        })         
+
+
+        self.MTOSubAssy = self.rule.create({
+            'name': 'Build Subassy',
+            'action': 'manufacture',
+            'picking_type_id': self.warehouse.manu_type_id.id,
+            'location_id': self.Builds.id,
+            'route_id': self.SubResupply.id,
+            'sequence': 25,
+            'propagate_cancel': True,
+        })   
+        self.SubFromStores = self.rule.create({
+            'name': 'Subs from Stores',
+            'action': 'pull',
+            'picking_type_id': self.warehouse.int_type_id.id,
+            'location_src_id': self.Stores.id,
+            'location_id': self.Builds.id,
+            'procure_method': 'mts_else_alt',
+            'alternate_rule_id': self.MTOSubAssy.id,
+            'route_id': self.SubResupply.id,
+            'sequence': 20,
+            'propagate_cancel': True,
+        })    
+        self.MTOKittingSub = self.rule.create({
+            'name': 'Subassy On Demand',
+            'action': 'pull',
+            'picking_type_id': self.warehouse.manu_type_id.id,
+            'location_src_id': self.Builds.id,
+            'location_id': self.CompA.property_stock_production.id,
+            'procure_method': 'make_to_order',
+            'route_id': self.SubResupply.id,
+            'sequence': 30,
+            'propagate_cancel': True,
+        })                    
           
 
 
@@ -143,11 +239,37 @@ class TestMove(SavepointCase):
         })
         self.compA_BOM_line = self.env['mrp.bom.line'].create({
             'product_id': self.CompA.id,
-            'product_qty': 5.0,
+            'product_qty': 25.0,
             'product_uom_id': self.ref('uom.product_uom_unit'),
             'sequence': 5,
             'bom_id': self.MW3_BOM.id
         })   
+        self.SubA_BOM_line = self.env['mrp.bom.line'].create({
+            'product_id': self.SubA.id,
+            'product_qty': 2.0,
+            'product_uom_id': self.ref('uom.product_uom_unit'),
+            'sequence': 5,
+            'bom_id': self.MW3_BOM.id
+        })     
+
+        self.SubA_BOM = self.env['mrp.bom'].create({
+            'product_tmpl_id': self.SubA.product_tmpl_id.id,
+            'product_uom_id': self.ref('uom.product_uom_unit')
+        })
+        self.compA_subABOM_line = self.env['mrp.bom.line'].create({
+            'product_id': self.CompA.id,
+            'product_qty': 1.0,
+            'product_uom_id': self.ref('uom.product_uom_unit'),
+            'sequence': 5,
+            'bom_id': self.SubA_BOM.id
+        })   
+        self.compB_subABOM_line = self.env['mrp.bom.line'].create({
+            'product_id': self.CompB.id,
+            'product_qty': 14.0,
+            'product_uom_id': self.ref('uom.product_uom_unit'),
+            'sequence': 5,
+            'bom_id': self.SubA_BOM.id
+        })              
 
 
         #create Suplier
@@ -160,21 +282,25 @@ class TestMove(SavepointCase):
             'round_up': True,
             'price': 2.50,
         })
-
-        #create reordering rule
-        self.orderpointCompA = self.env['stock.warehouse.orderpoint'].create({
-            'product_id': self.CompA.id,
-            'location_id': self.HUST.id,
-            'product_min_qty': 0.0,
-            'product_max_qty': 0.0,
-            'qty_multiple': 1.0,
+        self.supplierCompB = self.env['product.supplierinfo'].create({
+            'product_tmpl_id': self.CompB.product_tmpl_id.id,
+            'name': self.ref('base.res_partner_12'),
+            'delay': 1,
+            'min_qty': 100.0,
+            'increment_qty': 100.0,
+            'round_up': True,
+            'price': 2.50,
         })        
+    
 
         #activate push_leftover option on Receipt operation       
         self.warehouse.in_type_id.push_leftover = True  
 
         #Active apply_parent_pull on Manufacture operation
         self.warehouse.manu_type_id.apply_parent_pull = True
+        self.warehouse.manu_type_id.multilevel_kitting = True
+        self.warehouse.manu_type_id.default_location_dest_id = False
+        self.warehouse.manu_type_id.default_location_src_id = False
 
 
         #Confirm any existing RFQs for the supplier of interest, so we don't muddy up our test results.
@@ -205,7 +331,7 @@ class TestMove(SavepointCase):
             'product_uom_id': self.uom_xid,
             'inventory_id': self.inventoryCompA.id,
             'product_qty': inStockQty,
-            'location_id': self.Vertical1.id,
+            'location_id': self.Shelf1.id,
         })
         self.inventoryCompA._action_start()
         self.inventoryCompA.action_validate()

@@ -2,7 +2,6 @@
 
 
 ##TODO: add those UK accounting modules (and anything else to make it look like our prod DB) for the benefit of odoo.sh dev servers??
-##TODO: eventually data.xml needs to be moved to demo; it depends on data only available when other modules (notably, products) load their demo data
 {
     'name': 'DMO Demo Data',
     'summary': 'A place to throw demo data and tests that cross module boundaries',
@@ -20,6 +19,7 @@
         'mrp_apply_parent_pull',
         'product_supplierinfo_round_up',
         'stock_location_savespace',
+        'mrp_multilevel_kitting',
         'stock',
         'purchase',
         'purchase_stock',
