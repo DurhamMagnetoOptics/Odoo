@@ -17,6 +17,26 @@
             <field name="name">Vertical 1</field>
             <field name="location_id" ref="stock_location_Stores"/>
         </record>  
+        <record id="stock_location_Shelf1" model="stock.location">
+            <field name="name">Shelf 1</field>
+            <field name="location_id" ref="stock_location_Vertical1"/>
+        </record>  
+        <record id="stock_location_Shelf2" model="stock.location">
+            <field name="name">Shelf 2</field>
+            <field name="location_id" ref="stock_location_Vertical1"/>
+        </record>       
+        <record id="stock_location_Vertical2" model="stock.location">
+            <field name="name">Vertical 2</field>
+            <field name="location_id" ref="stock_location_Stores"/>
+        </record>  
+        <record id="stock_location_Shelf3" model="stock.location">
+            <field name="name">Shelf 3</field>
+            <field name="location_id" ref="stock_location_Vertical2"/>
+        </record>  
+        <record id="stock_location_Shelf4" model="stock.location">
+            <field name="name">Shelf 4</field>
+            <field name="location_id" ref="stock_location_Vertical2"/>
+        </record>                       
         <record id="stock_location_Builds" model="stock.location">
             <field name="name">Builds</field>
             <field name="location_id" model="stock.location"
@@ -32,6 +52,10 @@
             <field name="name">Component Resupply</field>
             <field name="product_selectable">True</field>
         </record>
+        <record id="stock_location_route_SubassemblyResupply" model="stock.location.route">
+            <field name="name">Subassembly Resupply</field>
+            <field name="product_selectable">True</field>
+        </record>        
 
         <!-- Products-->
         <record id="product_product_MW3" model="product.product">
@@ -45,8 +69,24 @@
             <field name="uom_po_id" ref="uom.product_uom_unit"/>
             <field name="description">MicroWriter 3</field>
             <field name="default_code">DMO_MW3</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>             
         </record> 
-
+        <record id="product_product_SubA" model="product.product">
+            <field name="name">SubA</field>
+            <field name="categ_id" ref="product.product_category_5"/>
+            <field name="standard_price">12</field>
+            <field name="list_price">15</field>
+            <field name="type">product</field>
+            <field name="weight">0.01</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
+            <field name="description">Subassembly A</field>
+            <field name="default_code">DMO_XY2</field>
+            <field name="route_ids" eval="[(6, 0, [ref('stock_location_route_SubassemblyResupply')])]"/>            
+            <field name="sale_ok">False</field>
+            <field name="purchase_ok">False</field>             
+        </record>         
         <record id="product_product_CompA" model="product.product">
             <field name="name">CompA</field>
             <field name="categ_id" ref="product.product_category_5"/>
@@ -58,8 +98,25 @@
             <field name="uom_po_id" ref="uom.product_uom_unit"/>
             <field name="description">Machined Component</field>
             <field name="default_code">PL-12345</field>
-            <field name="route_ids" eval="[(6, 0, [ref('stock_location_route_ComponentResupply')])]"/>            
+            <field name="route_ids" eval="[(6, 0, [ref('stock_location_route_ComponentResupply')])]"/>
+            <field name="sale_ok">False</field>
+            <field name="purchase_ok">True</field>            
         </record>    
+        <record id="product_product_CompB" model="product.product">
+            <field name="name">CompB</field>
+            <field name="categ_id" ref="product.product_category_5"/>
+            <field name="standard_price">0.03</field>
+            <field name="list_price">0.03</field>
+            <field name="type">product</field>
+            <field name="weight">0.01</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
+            <field name="description">Screw</field>
+            <field name="default_code">PT-12345</field>
+            <field name="route_ids" eval="[(6, 0, [ref('stock_location_route_ComponentResupply')])]"/>   
+            <field name="sale_ok">False</field>
+            <field name="purchase_ok">True</field>                       
+        </record>           
 
 
         <!-- Rules -->
@@ -72,19 +129,21 @@
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="procure_method">make_to_order</field>
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>
-            <field name="sequence">10</field>               
+            <field name="sequence">10</field> 
+            <field name="propagate_cancel">True</field>
         </record>          
         <record id="stock_location_rule_KitFromStores" model="stock.rule">
             <field name="name">Kit from Stores</field>
-            <field name="action">pull</field>
+            <field name="action">branch</field>
             <field name="picking_type_id" model="stock.picking.type"
                 eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
             <field name="location_src_id" ref="stock_location_Stores"/>
             <field name="location_id" ref="stock_location_Builds"/>   
-            <field name="procure_method">mts_else_alt</field>
+            <field name="procure_method">make_to_stock</field>
             <field name="alternate_rule_id" ref="stock_location_rule_ResupplyInPlace"/>
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>
-            <field name="sequence">5</field>               
+            <field name="sequence">5</field>     
+            <field name="propagate_cancel">True</field>                      
         </record>               
         <record id="stock_location_rule_ResupplyStores" model="stock.rule">
             <field name="name">Resupply Stores</field>
@@ -95,7 +154,7 @@
             <field name="location_id" ref="stock_location_Stores"/>   
             <field name="procure_method">make_to_order</field>
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
-            <field name="sequence">15</field>              
+            <field name="sequence">15</field>             
         </record>    
         <record id="stock_location_rule_PutawayLeftovers" model="stock.rule">
             <field name="name">Putaway Leftovers</field>
@@ -116,7 +175,8 @@
             <field name="location_id" ref="stock_location_GoodsIn"/>   
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
             <field name="group_propagation_option">none</field>
-            <field name="sequence">25</field>              
+            <field name="sequence">25</field>   
+            <field name="propagate_cancel">True</field>           
         </record>          
         <record id="stock_location_rule_MTOKitting" model="stock.rule">
             <field name="name">Kit on Demand</field>
@@ -128,7 +188,46 @@
                 eval="obj().env.ref('dmo_demo_data.product_product_CompA').property_stock_production.id"/>                 
             <field name="procure_method">make_to_order</field>
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
-            <field name="sequence">30</field>              
+            <field name="sequence">30</field>
+            <field name="propagate_cancel">True</field>              
+        </record>            
+
+
+        <record id="stock_location_rule_MTOSubAssy" model="stock.rule">
+            <field name="name">Build Subassy</field>
+            <field name="action">manufacture</field>
+            <field name="picking_type_id" model="stock.picking.type"
+                eval="obj().env.ref('stock.warehouse0').manu_type_id.id"/>
+            <field name="location_id" ref="stock_location_Builds"/>   
+            <field name="route_id" ref="stock_location_route_SubassemblyResupply"/>   
+            <field name="sequence">25</field>  
+            <field name="propagate_cancel">True</field>            
+        </record>  
+        <record id="stock_location_rule_SubFromStores" model="stock.rule">
+            <field name="name">Subs from Stores</field>
+            <field name="action">branch</field>
+            <field name="picking_type_id" model="stock.picking.type"
+                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
+            <field name="location_src_id" ref="stock_location_Stores"/>
+            <field name="location_id" ref="stock_location_Builds"/>   
+            <field name="procure_method">make_to_stock</field>
+            <field name="alternate_rule_id" ref="stock_location_rule_MTOSubAssy"/>
+            <field name="route_id" ref="stock_location_route_SubassemblyResupply"/>
+            <field name="sequence">20</field>      
+            <field name="propagate_cancel">True</field>         
+        </record>                 
+        <record id="stock_location_rule_MTOKittingSub" model="stock.rule">
+            <field name="name">Subassy On Demand</field>
+            <field name="action">pull</field>
+            <field name="picking_type_id" model="stock.picking.type"
+                eval="obj().env.ref('stock.warehouse0').manu_type_id.id"/>
+            <field name="location_src_id" ref="stock_location_Builds"/>   
+            <field name="location_id" model="product.template"
+                eval="obj().env.ref('dmo_demo_data.product_product_CompA').property_stock_production.id"/>   
+            <field name="procure_method">make_to_order</field>              
+            <field name="route_id" ref="stock_location_route_SubassemblyResupply"/>   
+            <field name="sequence">30</field>            
+            <field name="propagate_cancel">True</field>  
         </record>                      
      
 
@@ -142,27 +241,52 @@
             <field name="increment_qty">5.0</field>
             <field name="round_up">True</field>
             <field name="price">2.50</field>
-        </record>       
+        </record>   
+        <record id="product_supplierinfo_CompB" model="product.supplierinfo">
+            <field name="product_tmpl_id" model="product.template"
+                eval="obj().env.ref('dmo_demo_data.product_product_CompB').product_tmpl_id.id"/> 
+            <field name="name" ref="base.res_partner_12"/>
+            <field name="delay">1</field>
+            <field name="min_qty">100.0</field>
+            <field name="increment_qty">100.0</field>
+            <field name="round_up">True</field>
+            <field name="price">3.33</field>
+        </record>              
 
         <!-- Resource: stock.inventory.line -->
         <record id="stock_inventory_CompA" model="stock.inventory">
             <field name="name">Starting CompA Inventory</field>
         </record>
-
         <record id="stock_inventory_line_CompA" model="stock.inventory.line">
             <field name="product_id" ref="product_product_CompA"/>
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="inventory_id" ref="stock_inventory_CompA"/>
             <field name="product_qty">2.0</field>
-            <field name="location_id" ref="stock_location_Vertical1"/>
+            <field name="location_id" ref="stock_location_Shelf2"/>
         </record>  
-
         <function model="stock.inventory" name="_action_start">
             <function eval="[[('state','=','draft'),('id', '=', ref('stock_inventory_CompA'))]]" model="stock.inventory" name="search"/>
         </function>
         <function model="stock.inventory" name="action_validate">
             <function eval="[[('state','=','confirm'),('id', '=', ref('stock_inventory_CompA'))]]" model="stock.inventory" name="search"/>
-        </function>        
+        </function>      
+        
+        <record id="stock_inventory_SubA" model="stock.inventory">
+            <field name="name">Starting SubA Inventory</field>
+        </record>
+        <record id="stock_inventory_line_SubA" model="stock.inventory.line">
+            <field name="product_id" ref="product_product_SubA"/>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="inventory_id" ref="stock_inventory_SubA"/>
+            <field name="product_qty">1.0</field>
+            <field name="location_id" ref="stock_location_Shelf4"/>
+        </record>  
+        <function model="stock.inventory" name="_action_start">
+            <function eval="[[('state','=','draft'),('id', '=', ref('stock_inventory_SubA'))]]" model="stock.inventory" name="search"/>
+        </function>
+        <function model="stock.inventory" name="action_validate">
+            <function eval="[[('state','=','confirm'),('id', '=', ref('stock_inventory_SubA'))]]" model="stock.inventory" name="search"/>
+        </function>            
 
 
         <!-- BOM -->
@@ -172,14 +296,42 @@
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
         </record>
         <record id="mrp_bom_manufacture_line_1" model="mrp.bom.line">
-            <field name="product_id" ref="product_product_CompA"/>
-            <field name="product_qty">3</field>
+            <field name="product_id" ref="product_product_CompB"/>
+            <field name="product_qty">25</field>
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">5</field>
             <field name="bom_id" ref="mrp_bom_MW3"/>
         </record> 
+        <record id="mrp_bom_manufacture_line_2" model="mrp.bom.line">
+            <field name="product_id" ref="product_product_SubA"/>
+            <field name="product_qty">2</field>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="sequence">5</field>
+            <field name="bom_id" ref="mrp_bom_MW3"/>
+        </record>         
 
-        <!-- create xml id for manufacturing operation, for more convenience -->
+        <record id="mrp_bom_SubA" model="mrp.bom">
+            <field name="product_tmpl_id" model="product.template"
+                eval="obj().env.ref('dmo_demo_data.product_product_SubA').product_tmpl_id.id"/>      
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="multilevel_kitting_name">XY2</field>
+        </record>
+        <record id="mrp_bom_manufacture_line_SubA1" model="mrp.bom.line">
+            <field name="product_id" ref="product_product_CompA"/>
+            <field name="product_qty">9.0</field>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="sequence">5</field>
+            <field name="bom_id" ref="mrp_bom_SubA"/>
+        </record>      
+        <record id="mrp_bom_manufacture_line_SubA2" model="mrp.bom.line">
+            <field name="product_id" ref="product_product_CompB"/>
+            <field name="product_qty">14.0</field>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="sequence">5</field>
+            <field name="bom_id" ref="mrp_bom_SubA"/>
+        </record>              
+
+        <!-- create xml id for manufacturing operation, "for more convenience" -->
         <function model="ir.model.data" name="_update_xmlids">
             <value model="base" eval="[{
                 'xml_id': 'dmo_demo_data.picking_type_manu',
@@ -205,8 +357,15 @@
         </record>  
 
         <!-- Turn on apply_parent for manufacturing -->
+        <!-- Clear default locations on Manufacturing Operation -->
+        <!-- Turn on multilevel kitting -->
         <record id="dmo_demo_data.picking_type_manu" model="stock.picking.type">
             <field name="apply_parent_pull">True</field>
-        </record>                    
+            <field name="multilevel_kitting">True</field>
+            <field name="default_location_dest_id"></field>
+            <field name="default_location_src_id"></field>
+        </record>       
+
+             
     </data>
 </odoo> 

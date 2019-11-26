@@ -1,0 +1,16 @@
+<odoo>
+    <record id="view_picking_type_form_inherit_mrp_multilevel_kitting" model="ir.ui.view">
+        <field name="name">Operation Types</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.view_picking_type_form"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="multilevel_kitting" attrs="{'invisible':[('code', '!=', 'mrp_operation')]}"/>
+            </field>
+            <field name="default_location_src_id" position="attributes">
+                <attribute name="invisible">0</attribute>
+                <attribute name="attrs">{'invisible': [('code', '=', 'mrp_operation'),('multilevel_kitting', '=', True)]}</attribute>            
+            </field>            
+        </field>
+    </record>
+</odoo>

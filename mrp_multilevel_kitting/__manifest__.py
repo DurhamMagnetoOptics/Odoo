@@ -1,9 +1,9 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    'name': 'MTS else Alternate Rule',
-    'summary': 'Modify MTS else MTO to actually execute an alternate rule instead of automatically running MTS in the same source location',
-    'version': '13.0.2.0.0',
+    'name': 'MRP Multi-level Kitting',
+    'summary': 'If specified in the BOM, the source location for an MO is set to a sublocation of the destination location',
+    'version': '13.0.1.0.0',
     'development_status': 'caveat emptor',
     'category': 'Warehouse',
     'website': 'http://www.dmoltd.co.uk',
@@ -12,9 +12,13 @@
     'application': False,
     'installable': True,
     'depends': [
-        'stock',
+        'mrp',
     ],
     'data': [
-        'view/pull_rule.xml',
+        'views/mrp_bom_views.xml',
+        'views/stock_picking_views.xml',
     ],
+    'demo': [
+        
+    ]
 }
