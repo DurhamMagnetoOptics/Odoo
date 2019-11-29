@@ -13,6 +13,8 @@ addon | version | summary
 [product_supplierinfo_round_up](product_supplierinfo_round_up/) | 13.0.1.0.0  | Look for rules that apply to a destinations parents as well as the destination when satisfyin MRP needs.
 [stock_location_savespace](stock_location_savespace/) | 13.0.1.0.0  | If a product is already in stock in a child location, and no other putaway rule applies, use the existing location as the putaway target.
 [mrp_multilevel_kitting](mrp_multilevel_kitting/) | 13.0.1.0.0  | If specified in the BOM, the source location for an MO is set to a sublocation of the destination location.
+[mrp_bom_lot](mrp_bom_lot/) | 13.0.1.0.0  | Create a link between BOM and lot/serial number.
+[stock_serialise_per_product](stock_serialise_per_product/) | 13.0.1.0.0  | Allows the selection of a serialisation sequence per product.
 [dmo_demo_data](dmo_demo_data/) | 13.0.1.0.0  | When no supplierinfo is found for the desired quantity, increase the ordered quanity to meet the supplier minimum.
 
 [//]: # (end addons)
