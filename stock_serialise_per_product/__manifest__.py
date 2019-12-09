@@ -16,7 +16,6 @@
     ],
     'data': [
         'views/product_views.xml',
-        'views/stock_production_lot_views.xml',
     ],
     'demo': [
         
