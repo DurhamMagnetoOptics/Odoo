@@ -32,6 +32,7 @@ class ProductionLot(models.Model):
 
 
     @api.onchange('product_id', 'company_id')
+    @api.constrains('product_id', 'company_id')
     def onchange_product_id(self):
         """ Finds BoM of changed product. """
         if self.product_id and self.product_id.link_BOM_to_lot:  #only make changes if the boolean is set, otherwise we leave BOM untouched.  This means in cases where we chose a product where it was set (and the BOM was automatcially set) then deleted the product, the BOM is left.  That's safer than deleting it when the flag wasn't set.
