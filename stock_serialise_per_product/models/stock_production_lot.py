@@ -7,6 +7,7 @@ class ProductionLot(models.Model):
     _inherit = 'stock.production.lot'
 
     @api.depends('product_id')
+    @api.constrains('product_id')  #Need to add the constrains decorator so it's also executed on create and write operations.  Depends on executes from changes in the ORM.
     def _compute_name(self):
         for lot in self:
             if not lot.name and lot.product_id:
