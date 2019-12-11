@@ -92,7 +92,7 @@ class TestBomLot(SavepointCase):
         strName = 'AB100C'
         lot1 = self.prodlot.create({
             'name': strName,
-            'product_id': self.MW3_BOM.id,
+            'product_id': self.MW3.id,
             'company_id': self.company.id,
             'bom_id': self.MW3_BOM.id
         })
