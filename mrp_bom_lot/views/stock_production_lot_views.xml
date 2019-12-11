@@ -1,0 +1,14 @@
+<odoo>
+    <record id="mrp_bom_lot_view_production_lot_form" model="ir.ui.view">
+        <field name="name">MRP BOM Lot</field>
+        <field name="model">stock.production.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <field name="ref" position="after">
+                <field name="product_tmpl_id" invisible="1"/>
+                <field name="bom_id" context="{'default_product_tmpl_id': product_tmpl_id}"/>
+            </field>
+        </field>
+    </record>
+</odoo>
+
