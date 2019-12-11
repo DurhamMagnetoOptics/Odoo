@@ -52,9 +52,7 @@ class TestMove(SavepointCase):
 
     def test_defaultseq_noname(self):
         self.CompA.tracking = 'lot'
-        strName = ''
         lot1 = self.prodlot.create({
-            'name': strName,
             'product_id': self.CompA.id,
             'company_id': self.company.id
         })

@@ -55,7 +55,18 @@
         <record id="stock_location_route_SubassemblyResupply" model="stock.location.route">
             <field name="name">Subassembly Resupply</field>
             <field name="product_selectable">True</field>
-        </record>        
+        </record>     
+
+
+        <record id="ir_sequence_testseq2" model="ir.sequence">
+            <field name="prefix">AA</field>
+            <field name="suffix">BB</field>
+            <field name="padding">4</field>
+            <field name="number_increment">5</field>
+            <field name="company_id" model="res.company" eval="obj().env.ref('stock.warehouse0').company_id.id"/>
+            <field name="implementation">standard</field>
+            <field name="name">TestSeq2</field>
+        </record>            
 
         <!-- Products-->
         <record id="product_product_MW3" model="product.product">
@@ -71,7 +82,11 @@
             <field name="default_code">DMO_MW3</field>
             <field name="sale_ok">True</field>
             <field name="purchase_ok">False</field>             
-        </record> 
+            <field name="tracking">serial</field>
+            <field name="link_BOM_to_lot">True</field>
+            <field name="company_id" model="res.company" eval="obj().env.ref('stock.warehouse0').company_id.id"/>
+            <field name="sequence_id" ref="ir_sequence_testseq2"/>
+        </record>    
         <record id="product_product_SubA" model="product.product">
             <field name="name">SubA</field>
             <field name="categ_id" ref="product.product_category_5"/>
@@ -294,6 +309,8 @@
             <field name="product_tmpl_id" model="product.template"
                 eval="obj().env.ref('dmo_demo_data.product_product_MW3').product_tmpl_id.id"/>      
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="code">New</field>
+            <field name="sequence">5</field>           
         </record>
         <record id="mrp_bom_manufacture_line_1" model="mrp.bom.line">
             <field name="product_id" ref="product_product_CompB"/>
@@ -309,6 +326,28 @@
             <field name="sequence">5</field>
             <field name="bom_id" ref="mrp_bom_MW3"/>
         </record>         
+
+        <record id="mrp_bom_MW3_old" model="mrp.bom">
+            <field name="product_tmpl_id" model="product.template"
+                eval="obj().env.ref('dmo_demo_data.product_product_MW3').product_tmpl_id.id"/>      
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="code">Old</field>
+            <field name="sequence">10</field>           
+        </record>
+        <record id="mrp_bom_manufacture_line_1_old" model="mrp.bom.line">
+            <field name="product_id" ref="product_product_CompB"/>
+            <field name="product_qty">25</field>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="sequence">5</field>
+            <field name="bom_id" ref="mrp_bom_MW3_old"/>
+        </record> 
+        <record id="mrp_bom_manufacture_line_2_old" model="mrp.bom.line">
+            <field name="product_id" ref="product_product_SubA"/>
+            <field name="product_qty">2</field>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="sequence">5</field>
+            <field name="bom_id" ref="mrp_bom_MW3_old"/>
+        </record>               
 
         <record id="mrp_bom_SubA" model="mrp.bom">
             <field name="product_tmpl_id" model="product.template"

@@ -19,7 +19,7 @@
             "program": "${workspaceFolder}\\odoo\\odoo-bin",
             "console": "integratedTerminal",
             //update "testdb" and "module name" as appropriate
-            "args": ["-u", "mrp_bom_lot", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
+            "args": ["-u", "dmo_demo_data", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
         },           
         {
             "name": "Odoo Update & Tests",
@@ -28,7 +28,7 @@
             "program": "${workspaceFolder}\\odoo\\odoo-bin",
             "console": "integratedTerminal",
             //update "testdb" and "module name" as appropriate
-            "args": ["-u", "mrp_bom_lot", "--test-enable", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
+            "args": ["-u", "dmo_demo_data", "--test-enable", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
         },      
         {
             "name": "Odoo Fresh Install",
@@ -37,7 +37,7 @@
             "program": "${workspaceFolder}\\odoo\\odoo-bin",
             "console": "integratedTerminal",
             //update "testdb" and "module name" as appropriate
-            "args": ["-i", "mrp_bom_lot", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
+            "args": ["-i", "dmo_demo_data", "-d", "testdb", "-r", "odoo", "-w", "odoo", "--addons-path=${workspaceFolder}\\odoo\\addons,${workspaceFolder}\\enterprise,${workspaceFolder}\\user", "--stop-after-init"]
         },                  
         {
             "name": "Python: Current File (Integrated Terminal)",

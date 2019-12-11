@@ -20,6 +20,8 @@
         'product_supplierinfo_round_up',
         'stock_location_savespace',
         'mrp_multilevel_kitting',
+        'mrp_bom_lot',
+        'stock_serialise_per_product',
         'stock',
         'purchase',
         'purchase_stock',

@@ -7,7 +7,6 @@ class ProductionLot(models.Model):
     _inherit = 'stock.production.lot'
 
     @api.depends('product_id')
-    @api.constrains('product_id')  #Need to add the constrains decorator so it's also executed on create and write operations.  Depends on executes from changes in the ORM.
     def _compute_name(self):
         for lot in self:
             if not lot.name and lot.product_id:
@@ -17,6 +16,12 @@ class ProductionLot(models.Model):
                     #In this case return the default as written in the stock module
                     lot.name = lot.env['ir.sequence'].next_by_code('stock.lot.serial')
 
-    #keep the existing name field, but change the default
-    name = fields.Char(default=False, compute="_compute_name", store=True, readonly=False)
+    #keep the existing name field, but change the default to empty string.  Setting the default to False causes an error as name can't be Null. I guess SQL differentiates between null and the empty string.
+    name = fields.Char(default='', compute="_compute_name", store=True, readonly=False)
+
+    @api.model
+    def create(self, vals):
+        res = super().create(vals)
+        res._compute_name()
+        return res
     

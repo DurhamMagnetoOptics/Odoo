@@ -6,6 +6,7 @@ class TestMove(SavepointCase):
 
         self.warehouse = self.env.ref('stock.warehouse0')
         self.uom_xid = self.ref('uom.product_uom_unit')
+        self.company = self.env.ref('stock.warehouse0').company_id
 
         #Create Locations
         self.Location = self.env['stock.location']
@@ -65,7 +66,18 @@ class TestMove(SavepointCase):
         self.SubResupply = self.route.create({
             'name': 'Subassy Resupply',
             'product_selectable': True
-        })               
+        })   
+
+        #create sequence
+        self.MW3_seq = self.env['ir.sequence'].create({
+            'prefix': 'AA',
+            'suffix': 'BB',
+            'padding': 4,
+            'number_increment': 5,
+            'company_id': self.company.id,
+            'implementation': 'standard',
+            'name': 'TestSeq1',
+        })                    
 
 
         #Create products
@@ -83,6 +95,10 @@ class TestMove(SavepointCase):
             'default_code': 'DMO_MW3',
             'sale_ok': True,
             'purchase_ok': False,
+            'tracking': 'serial',
+            'link_BOM_to_lot': True,
+            'sequence_id': self.MW3_seq.id,
+            'company_id': self.company.id,
         })
         self.SubA = self.product.create({
             'name': 'SubA',
@@ -235,7 +251,9 @@ class TestMove(SavepointCase):
         #Create BOM
         self.MW3_BOM = self.env['mrp.bom'].create({
             'product_tmpl_id': self.MW3.product_tmpl_id.id,
-            'product_uom_id': self.ref('uom.product_uom_unit')
+            'product_uom_id': self.ref('uom.product_uom_unit'),
+            'code': 'New',
+            'sequence': 5            
         })
         self.compA_BOM_line = self.env['mrp.bom.line'].create({
             'product_id': self.CompA.id,
@@ -272,6 +290,27 @@ class TestMove(SavepointCase):
             'bom_id': self.SubA_BOM.id
         })              
 
+
+        self.MW3_BOM_old = self.env['mrp.bom'].create({
+            'product_tmpl_id': self.MW3.product_tmpl_id.id,
+            'product_uom_id': self.ref('uom.product_uom_unit'),
+            'code': 'Old',
+            'sequence': 10            
+        })
+        self.compA_BOM_line_old = self.env['mrp.bom.line'].create({
+            'product_id': self.CompA.id,
+            'product_qty': 25.0,
+            'product_uom_id': self.ref('uom.product_uom_unit'),
+            'sequence': 5,
+            'bom_id': self.MW3_BOM_old.id
+        })   
+        self.SubA_BOM_line_old = self.env['mrp.bom.line'].create({
+            'product_id': self.SubA.id,
+            'product_qty': 2.0,
+            'product_uom_id': self.ref('uom.product_uom_unit'),
+            'sequence': 5,
+            'bom_id': self.MW3_BOM_old.id
+        })     
 
         #create Suplier
         self.supplierCompA = self.env['product.supplierinfo'].create({
@@ -351,7 +390,7 @@ class TestMove(SavepointCase):
             'product_qty': 2.0,
             'location_src_id': self.HUST.id,
             'location_dest_id': self.HUST.id,
-            'bom_id': self.MW3_BOM.id,
+            'bom_id': self.MW3_BOM_old.id,
             'product_uom_id': self.ref('uom.product_uom_unit')
         })      
        
@@ -474,3 +513,8 @@ class TestMove(SavepointCase):
 
         #Check that CompA was sent directly to the bin that already had some, as per stock_location_savespace
         self.assertEqual(compA_GItoStores.move_line_ids.location_dest_id.id, self.Shelf1.id)
+
+        production_wizard = self.env['mrp.product.produce'].with_context(active_id=self.MW3_MO_for2.id, active_ids=[self.MW3_MO_for2.id], active_model='mrp.production').create({})
+        production_wizard.action_generate_serial()    
+        self.assertEqual(production_wizard.finished_lot_id.bom_id.id, self.MW3_BOM_old.id)
+        self.assertEqual(production_wizard.finished_lot_id.name, 'AA0001BB') 
