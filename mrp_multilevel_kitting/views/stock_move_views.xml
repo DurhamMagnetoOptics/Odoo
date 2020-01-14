@@ -1,0 +1,29 @@
+<odoo>
+    <record id="view_stock_move_raw_tree_inherit_mrp_multilevel_kitting" model="ir.ui.view">
+        <field name="name">mrp_multilevel_kitting.stock.move.raw.tree</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="mrp.view_stock_move_raw_tree"/>
+        <field name="arch" type="xml">
+            <field name="product_uom_qty" position="before">
+                <field name="multilevel_kitting_name"/>
+            </field>
+            <field name="location_id" position="attributes">
+                <attribute name="invisible">0</attribute>
+            </field>      
+        </field>
+    </record>
+
+    <record id="view_stock_move_lots_inherit_mrp_multilevel_kitting" model="ir.ui.view">
+        <field name="name">mrp_multilevel_kitting.stock.move.lots.form</field>
+        <field name="model">stock.move</field>   
+        <field name="inherit_id" ref="mrp.view_stock_move_lots"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="before">
+                <field name="multilevel_kitting_name"/>
+            </field>    
+            <field name="location_id" position="attributes">
+                <attribute name="invisible">0</attribute>
+            </field>                 
+        </field>         
+    </record>        
+</odoo>

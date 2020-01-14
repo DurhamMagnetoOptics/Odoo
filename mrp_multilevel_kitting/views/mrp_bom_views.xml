@@ -1,12 +1,26 @@
 <odoo>
-    <record id="mrp_bom_form_view_inherit_mrp_multilevel_kitting" model="ir.ui.view">
-        <field name="name">Bill of Materials</field>
-        <field name="model">mrp.bom</field>
-        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+    <record id="mrp_bom_line_view_form_inherit_mrp_multilevel_kitting" model="ir.ui.view">
+        <field name="name">mrp_multilevel_kitting.bom.line.view.form</field>
+        <field name="model">mrp.bom.line</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_line_view_form"/>
         <field name="arch" type="xml">
-            <field name="code" position="after">
+            <field name="possible_bom_product_template_attribute_value_ids" position="before">
                 <field name="multilevel_kitting_name"/>
             </field>
         </field>
     </record>
+
+    <record id="mrp_bom_form_view" model="ir.ui.view">
+        <field name="name">mrp_multilevel_kitting.bom.form</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <field name="code" position="after">
+                <field name="multilevel_kitting"/>
+            </field>        
+            <field name="possible_bom_product_template_attribute_value_ids" position="before">
+                <field name="multilevel_kitting_name"/>
+            </field>
+        </field>
+    </record>        
 </odoo>

@@ -2,8 +2,8 @@
 
 {
     'name': 'MRP Multi-level Kitting',
-    'summary': 'If specified in the BOM, the source location for an MO is set to a sublocation of the destination location',
-    'version': '13.0.1.0.0',
+    'summary': 'If specified on the bom line, the source location for each moveis set to a sublocation of the MOs soure',
+    'version': '13.1.0.0.0',
     'development_status': 'caveat emptor',
     'category': 'Warehouse',
     'website': 'http://www.dmoltd.co.uk',
@@ -17,6 +17,7 @@
     'data': [
         'views/mrp_bom_views.xml',
         'views/stock_picking_views.xml',
+        'views/stock_move_views.xml',
     ],
     'demo': [
         
