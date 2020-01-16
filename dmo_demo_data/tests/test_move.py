@@ -253,27 +253,26 @@ class TestMove(SavepointCase):
             'product_tmpl_id': self.MW3.product_tmpl_id.id,
             'product_uom_id': self.ref('uom.product_uom_unit'),
             'code': 'New',
-            'sequence': 5            
+            'sequence': 5           
         })
         self.compA_BOM_line = self.env['mrp.bom.line'].create({
             'product_id': self.CompA.id,
             'product_qty': 25.0,
             'product_uom_id': self.ref('uom.product_uom_unit'),
             'sequence': 5,
-            'bom_id': self.MW3_BOM.id
+            'bom_id': self.MW3_BOM.id 
         })   
         self.SubA_BOM_line = self.env['mrp.bom.line'].create({
             'product_id': self.SubA.id,
             'product_qty': 2.0,
             'product_uom_id': self.ref('uom.product_uom_unit'),
             'sequence': 5,
-            'bom_id': self.MW3_BOM.id
+            'bom_id': self.MW3_BOM.id 
         })     
 
         self.SubA_BOM = self.env['mrp.bom'].create({
             'product_tmpl_id': self.SubA.product_tmpl_id.id,
             'product_uom_id': self.ref('uom.product_uom_unit'),
-            'multilevel_kitting_name': 'XY2'
         })
         self.compA_subABOM_line = self.env['mrp.bom.line'].create({
             'product_id': self.CompA.id,
@@ -295,21 +294,24 @@ class TestMove(SavepointCase):
             'product_tmpl_id': self.MW3.product_tmpl_id.id,
             'product_uom_id': self.ref('uom.product_uom_unit'),
             'code': 'Old',
-            'sequence': 10            
+            'sequence': 10,
+            'multilevel_kitting': True            
         })
         self.compA_BOM_line_old = self.env['mrp.bom.line'].create({
             'product_id': self.CompA.id,
             'product_qty': 25.0,
             'product_uom_id': self.ref('uom.product_uom_unit'),
             'sequence': 5,
-            'bom_id': self.MW3_BOM_old.id
+            'bom_id': self.MW3_BOM_old.id,
+            'multilevel_kitting_name': 'Little Pieces'
         })   
         self.SubA_BOM_line_old = self.env['mrp.bom.line'].create({
             'product_id': self.SubA.id,
             'product_qty': 2.0,
             'product_uom_id': self.ref('uom.product_uom_unit'),
             'sequence': 5,
-            'bom_id': self.MW3_BOM_old.id
+            'bom_id': self.MW3_BOM_old.id,
+            'multilevel_kitting_name': 'XY2'
         })     
 
         #create Suplier
@@ -426,13 +428,22 @@ class TestMove(SavepointCase):
         self.assertEqual(compBline.desired_qty, 42.0, msg='More than %s items purchased' % 42.0)  #(2*2-1)*14
         self.assertEqual(compBline.product_qty, 100.0, msg='More than %s items purchased' % 100.0)     
 
-        #find XY2, created as per mrp_multilevel_kitting
+        #find locations, created as per mrp_multilevel_kitting
         XY2 = False
         for loc in self.HUST.child_ids:
-            if loc.name == self.SubA_BOM.multilevel_kitting_name:
+            if loc.name == self.SubA_BOM_line_old.multilevel_kitting_name:
                 XY2 = loc
                 continue
-        self.assertTrue(loc)           
+        self.assertTrue(XY2)     
+
+        compABin = False
+        for loc in self.HUST.child_ids:
+            if loc.name == self.compA_BOM_line_old.multilevel_kitting_name:
+                compABin = loc
+                continue
+        self.assertTrue(compABin)           
+
+             
         
         """ Not ready to worry about mergings, yet
         self.MW3_MO_for4 = self.env['mrp.production'].create({
@@ -470,14 +481,14 @@ class TestMove(SavepointCase):
         receipt_compA = self.env['stock.move'].search([('location_dest_id', '=', self.goodsIn.id),('product_id', '=', self.CompA.id)])
         receipt_compB = self.env['stock.move'].search([('location_dest_id', '=', self.goodsIn.id),('product_id', '=', self.CompB.id)])
         #stock moves created on demand (MTO) from pull rule in Builds (not Builds/HUST or Builds/HUST/XY2) as per mrp_apply_parent_pull
-        compA_GItoHUST = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.HUST.id),('product_id', '=', self.CompA.id)])
+        compA_GItoHUST = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', compABin.id),('product_id', '=', self.CompA.id)])
         compA_GItoXY2 = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', XY2.id),('product_id', '=', self.CompA.id)])
         compB_GItoXY2 = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', XY2.id),('product_id', '=', self.CompB.id)])
         #Push rule (Gi -> Stores) applied to over-order (from MOQ, etc.) as per stock_move_push_leftover
         compA_GItoStores = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.Stores.id),('product_id', '=', self.CompA.id)])
         compB_GItoStores = self.env['stock.move'].search([('location_id', '=', self.goodsIn.id), ('location_dest_id', '=', self.Stores.id),('product_id', '=', self.CompB.id)])
-        compA_StorestoHust = self.env['stock.move'].search([('location_id', '=', self.Stores.id), ('location_dest_id', '=', self.HUST.id),('product_id', '=', self.CompA.id)])
-        subA_StorestoHust = self.env['stock.move'].search([('location_id', '=', self.Stores.id), ('location_dest_id', '=', self.HUST.id),('product_id', '=', self.SubA.id)])
+        compA_StorestoHust = self.env['stock.move'].search([('location_id', '=', self.Stores.id), ('location_dest_id', '=', compABin.id),('product_id', '=', self.CompA.id)])
+        subA_StorestoHust = self.env['stock.move'].search([('location_id', '=', self.Stores.id), ('location_dest_id', '=', XY2.id),('product_id', '=', self.SubA.id)])
                 
         self.assertEqual(len(receipt_compA), 1, msg='Not  1 stock move') 
         self.assertEqual(len(receipt_compB), 1, msg='Not  1 stock move') 
