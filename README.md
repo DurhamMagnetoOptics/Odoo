@@ -2,6 +2,9 @@
 
 [//]: # (addons)
 
+Project version 1.0.1 -- added auth_oauth_microsoft_graph
+Project version 1.1.0 -- upgrade to Odoo 13
+
 Available addons
 ----------------
 addon | version | summary
