@@ -310,7 +310,8 @@
                 eval="obj().env.ref('dmo_demo_data.product_product_MW3').product_tmpl_id.id"/>      
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="code">New</field>
-            <field name="sequence">5</field>           
+            <field name="sequence">5</field>
+            <field name="multilevel_kitting">1</field>           
         </record>
         <record id="mrp_bom_manufacture_line_1" model="mrp.bom.line">
             <field name="product_id" ref="product_product_CompB"/>
@@ -318,6 +319,7 @@
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">5</field>
             <field name="bom_id" ref="mrp_bom_MW3"/>
+            <field name="multilevel_kitting_name">Bin1</field>
         </record> 
         <record id="mrp_bom_manufacture_line_2" model="mrp.bom.line">
             <field name="product_id" ref="product_product_SubA"/>
@@ -325,6 +327,7 @@
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">5</field>
             <field name="bom_id" ref="mrp_bom_MW3"/>
+            <field name="multilevel_kitting_name">Bin2</field>            
         </record>         
 
         <record id="mrp_bom_MW3_old" model="mrp.bom">
@@ -353,7 +356,7 @@
             <field name="product_tmpl_id" model="product.template"
                 eval="obj().env.ref('dmo_demo_data.product_product_SubA').product_tmpl_id.id"/>      
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
-            <field name="multilevel_kitting_name">XY2</field>
+            <field name="multilevel_kitting">0</field>
         </record>
         <record id="mrp_bom_manufacture_line_SubA1" model="mrp.bom.line">
             <field name="product_id" ref="product_product_CompA"/>
