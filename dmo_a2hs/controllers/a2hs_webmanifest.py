@@ -1,8 +1,7 @@
 from odoo import http
 class DMOWebManifest(http.Controller):
-	@http.route('/web/manifest.webmanifest', auth='public')
-	def webmanifest(self):
-		manifest_str = """
+
+	manifest_str = """
 {
   "background_color": "purple",
   "description": "DMO's Odoo Instance",
@@ -17,6 +16,13 @@ class DMOWebManifest(http.Controller):
   "name": "DMO Odoo",
   "short_name": "Odoo",
   "start_url": "/web"
-}
+}  
 """
-		return manifest_str
+
+  @http.route('/web/manifest.webmanifest', auth='public')
+	def webmanifest(self):
+		return manifest_str  
+
+  @http.route('/manifest.webmanifest', auth='public')
+	def rootwebmanifest(self):
+		return manifest_str    
