@@ -129,14 +129,14 @@ class TestMove(SavepointCase):
         self.assertEqual(myPOs.order_line.product_qty, expectedOrderQty, msg='The PO is not for %s units' % expectedOrderQty)
         self.assertEqual(myPOs.order_line.desired_qty, neededQty, msg='The PO does not store an underlying need for %s units' % neededQty)
 
-
     def test_norounding(self):
-        "Verify normal behaviour (exception for no seller found) when round_up is off and MOQ not met"
+        "Verify normal behaviour (order exactly the need, no pricing data) when round_up is off and MOQ not met"
 
         self.supplierCompA.round_up = False
 
         neededQty = 4.0
         expectedOrderQty = neededQty
+        expectedSubtotal = 0.0
 
 
         #Confirm any existing RFQs for the supplier of interest, so we don't muddy up our test results.
@@ -163,9 +163,15 @@ class TestMove(SavepointCase):
             values  # Values
         )
 
-        with self.assertRaises(exceptions.UserError):
-            #Raises error becuase no valid seller/pricebreak found.
-            PG.run([proc])
+        PG.run([proc])
+
+        myPOs = self.env['purchase.order'].search([('partner_id', '=', self.supplierCompA.name.id),('state', '=', 'draft')])
+        self.assertEqual(len(myPOs), 1, msg='There is not 1 PO generated')
+        self.assertEqual(len(myPOs.order_line), 1, msg='There is not 1 line in the PO')
+        self.assertEqual(myPOs.order_line.product_qty, expectedOrderQty, msg='The PO is not for %s units' % expectedOrderQty)
+        self.assertEqual(myPOs.order_line.price_subtotal, expectedSubtotal, msg='The subtotal is not for %s units' % expectedOrderQty)
+        self.assertEqual(myPOs.order_line.desired_qty, neededQty, msg='The PO does not store an underlying need for %s units' % neededQty)         
+
 
     def test_norounding_no_MOQ_mergeold(self):
         "Verify normal behaviour (order exaclty the demand) when round_up is off and no MOQ"
@@ -264,6 +270,7 @@ class TestMove(SavepointCase):
 
         neededQty = 4.0
         expectedOrderQty = 10.0
+        expectedSubtotal = expectedOrderQty * 2.50
 
 
         #Confirm any existing RFQs for the supplier of interest, so we don't muddy up our test results.
@@ -297,6 +304,7 @@ class TestMove(SavepointCase):
         self.assertEqual(len(myPOs), 1, msg='There is not 1 PO generated')
         self.assertEqual(len(myPOs.order_line), 1, msg='There is not 1 line in the PO')
         self.assertEqual(myPOs.order_line.product_qty, expectedOrderQty, msg='The PO is not for %s units' % expectedOrderQty)
+        self.assertEqual(myPOs.order_line.price_subtotal, expectedSubtotal, msg='The subtotal is not for %s units' % expectedOrderQty)
         self.assertEqual(myPOs.order_line.desired_qty, neededQty, msg='The PO does not store an underlying need for %s units' % neededQty)             
 
     def test_rounding_overMOQ_withinc(self):
