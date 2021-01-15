@@ -9,5 +9,5 @@ class res_partner(models.Model):
     _name = 'res.partner'
     _inherit = 'res.partner'
 
-    vendor_short_code = fields.Text('Short code (DMO code prefix) for this vendor', default='')
-    vendor_clipboard_style = fields.Integer('Enumeration describing the text format for manual orders', default='')
+    vendor_short_code = fields.Text('Short Code', help='Short code (DMO code prefix) for this vendor', default='')
+    vendor_clipboard_style = fields.Integer('Order Style', help='Enumeration describing the clipboard text format for manual orders', default='')
