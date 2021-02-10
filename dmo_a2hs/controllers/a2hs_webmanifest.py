@@ -17,6 +17,7 @@ class DMOWebManifest(http.Controller):
   "start_url": "/web"
 }  
 """
+  sw_string = "self.addEventListener('fetch', (event) => {});"
 
   @http.route('/web/manifest.webmanifest', auth='public')
   def webmanifest(self):
@@ -24,4 +25,14 @@ class DMOWebManifest(http.Controller):
 
   @http.route('/manifest.webmanifest', auth='public')
   def rootwebmanifest(self):
-    return self.manifest_str    
+    return self.manifest_str  
+
+
+  @http.route('/web/sw.js', auth='public')
+  def webserviceworker(self):
+    #see https://stackoverflow.com/questions/56265658/how-provide-a-route-to-download-binary-file-in-odoo-10
+    return self.sw_string
+
+  @http.route('/sw.js', auth='public')
+  def rootserviceworker(self):
+    return self.sw_string       

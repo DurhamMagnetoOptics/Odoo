@@ -3,6 +3,9 @@
     <template id="assets_backend" name="dmo_a2hs_manifest" inherit_id="web.assets_backend">
         <xpath expr=".">
             <link rel="manifest" href="manifest.webmanifest"/>
+            <script>
+            if ('serviceWorker' in navigator) {navigator.serviceWorker.register('/sw.js');}
+            </script>>
         </xpath>
     </template>
 </odoo>
