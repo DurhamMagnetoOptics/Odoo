@@ -18,7 +18,7 @@
     //C8201 is the odoo plugin message about no UTF-8 coding comment.
     "python.linting.pylintArgs": [
         "--init-hook",
-        "import sys; sys.path.append(r'${workspaceFolder}'); sys.path.append(os.path.join(r'${workspaceFolder}', 'odoo')); sys.path.append(os.path.join(r'${workspaceFolder}', 'enterprise'))",
+        "import sys; sys.path.append(r'${workspaceFolder}'); sys.path.append(os.path.join(r'${workspaceFolder}', 'odoo')); sys.path.append(os.path.join(r'${workspaceFolder}', 'enterprise')); sys.path.append('.venv\\Lib\\site-packages')",
         "--load-plugins",
         "pylint_odoo",
         "--disable=C8201"
