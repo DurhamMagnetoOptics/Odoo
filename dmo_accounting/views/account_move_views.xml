@@ -25,16 +25,17 @@
     </record>
 
     <!-- Make 'Reference' field mandatory when creating vendor bills.-->
-    <!--No! Do this through the developer mode UI: View Fields, select the field, tick Required.
     <record id="dmo_accounting_view_move_form" model="ir.ui.view">
         <field name="name">dmo.account.move.form</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>        
-        <field name="arch" type="xml">    
+        <field name="arch" type="xml"> 
+            <field name="ref" position="before">
+                <field name="require_ref" invisible="1"/>
+            </field>   
             <field name="ref" position="attributes">
-                <attribute name="required">True</attribute> 
+                <attribute name="attrs">{'required': [('require_ref','=',True)]}</attribute>
             </field>
         </field>
     </record>
-    -->
 </odoo>

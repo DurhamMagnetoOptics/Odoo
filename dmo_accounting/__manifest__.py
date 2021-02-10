@@ -13,10 +13,11 @@
     'application': False,
     'installable': True,
     'depends': [
-        'account',
+        'account_accountant',
     ],
     'data': [
         'views/account_move_views.xml',
+        'views/view_company_form.xml',
     ],
     'demo': [
         
