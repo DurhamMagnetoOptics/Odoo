@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="dmo_accounting_account_move_views" model="ir.ui.view">
+        <field name="name">dmo.account.invoice.tree</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>"
+        <field name="arch" type="xml">                                      
+            <field name="amount_residual_signed" position="after">
+                <field name="amount_untaxed" string="Tax Excluded (local)" sum="Total" optional="show"/>
+                <field name="amount_tax" string="Tax (local)" sum="Total" optional="hide"/>
+                <field name="amount_total" string="Total (local)" sum="Total" optional="show"/>
+                <field name="amount_residual" string="Amount Due (local)" sum="Amount Due" optional="show"/>   
+            </field>
+            <field name="amount_untaxed_signed" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </field>   
+            <field name="amount_total_signed" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </field>     
+            <field name="amount_residual_signed" position="attributes">
+                <attribute name="optional">hide</attribute> 
+            </field>             
+            <!--
+            <field name="amount_untaxed_signed" position="replace">
+                <field name="amount_untaxed_signed" string="Tax Excluded" sum="Total" optional="hide"/>
+            </field>
+            <field name="amount_tax_signed" position="replace">
+                <field name="amount_tax_signed" string="Tax" sum="Total" optional="hide"/>
+            </field>      
+            <field name="amount_total_signed" position="replace">
+                <field name="amount_total_signed" string="Total" sum="Total" optional="hide"/>
+            </field>     
+            <field name="amount_residual_signed" position="replace">
+                <field name="amount_residual_signed" string="Amount Due" sum="Amount Due" optional="hide"/>  
+            </field>  
+            -->            
+        </field>
+    </record>
+</odoo>
