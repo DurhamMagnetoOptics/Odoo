@@ -20,21 +20,7 @@
             </field>     
             <field name="amount_residual_signed" position="attributes">
                 <attribute name="optional">hide</attribute> 
-            </field>             
-            <!--
-            <field name="amount_untaxed_signed" position="replace">
-                <field name="amount_untaxed_signed" string="Tax Excluded" sum="Total" optional="hide"/>
-            </field>
-            <field name="amount_tax_signed" position="replace">
-                <field name="amount_tax_signed" string="Tax" sum="Total" optional="hide"/>
-            </field>      
-            <field name="amount_total_signed" position="replace">
-                <field name="amount_total_signed" string="Total" sum="Total" optional="hide"/>
-            </field>     
-            <field name="amount_residual_signed" position="replace">
-                <field name="amount_residual_signed" string="Amount Due" sum="Amount Due" optional="hide"/>  
-            </field>  
-            -->            
+            </field>                      
         </field>
     </record>
 
