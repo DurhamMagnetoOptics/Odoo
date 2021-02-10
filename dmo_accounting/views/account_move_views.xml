@@ -3,7 +3,7 @@
     <record id="dmo_accounting_account_move_views" model="ir.ui.view">
         <field name="name">dmo.account.invoice.tree</field>
         <field name="model">account.move</field>
-        <field name="inherit_id" ref="account.view_invoice_tree"/>"
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
         <field name="arch" type="xml">                                      
             <field name="amount_residual_signed" position="after">
                 <field name="amount_untaxed" string="Tax Excluded (local)" sum="Total" optional="show"/>
