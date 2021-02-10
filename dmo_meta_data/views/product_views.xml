@@ -1,0 +1,35 @@
+<odoo>
+    <record id="dmo_meta_data_product_template_views" model="ir.ui.view">
+        <field name="name">DMO Meta Data product template</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <group name="purchase" position="after">
+                <group string="Purchasing Meta Data" name="purchase_meta_data" modifiers="{}">
+                    <field name="product_revision"/>
+                    <field name="product_design_file_name"/>
+                    <field name="product_manufacturer"/>
+                    <field name="product_manufacturer_part"/>
+                    <field name="product_CoO"/>
+                </group>            
+            </group>
+        </field>
+    </record>
+
+    <record id="mrp_bom_lot_product_views" model="ir.ui.view">
+        <field name="name">DMO Meta Data product</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <group name="purchase" position="after">
+                <group string="Purchasing Meta Data" name="purchase_meta_data" modifiers="{}">
+                    <field name="product_revision"/>
+                    <field name="product_design_file_name"/>
+                    <field name="product_manufacturer"/>
+                    <field name="product_manufacturer_part"/>
+                    <field name="product_CoO"/>
+                </group>            
+            </group>
+        </field>
+    </record>
+</odoo>
