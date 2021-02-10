@@ -24,7 +24,8 @@
         </field>
     </record>
 
-    <!-- Make 'Reference' field mandatory when creating vendor bills-->
+    <!-- Make 'Reference' field mandatory when creating vendor bills.-->
+    <!--No! Do this through the developer mode UI: View Fields, select the field, tick Required.
     <record id="dmo_accounting_view_move_form" model="ir.ui.view">
         <field name="name">dmo.account.move.form</field>
         <field name="model">account.move</field>
@@ -35,4 +36,5 @@
             </field>
         </field>
     </record>
+    -->
 </odoo>
