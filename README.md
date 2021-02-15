@@ -4,6 +4,7 @@
 
 Project version 1.0.1 -- added auth_oauth_microsoft_graph
 Project version 1.1.0 -- upgrade to Odoo 13
+Project version 1.2.0 -- added dmo_accounting, dmo_a2hs
 
 Available addons
 ----------------
@@ -19,5 +20,8 @@ addon | version | summary
 [mrp_bom_lot](mrp_bom_lot/) | 13.0.1.0.0  | Create a link between BOM and lot/serial number.
 [stock_serialise_per_product](stock_serialise_per_product/) | 13.0.1.0.0  | Allows the selection of a serialisation sequence per product.
 [dmo_demo_data](dmo_demo_data/) | 13.0.1.0.0  | When no supplierinfo is found for the desired quantity, increase the ordered quanity to meet the supplier minimum.
+[auth_oauth_microsoft_graph](auth_oauth_microsoft_graph/) | 13.0.1.0.0 | From Odoonz: Allow users to login using Microsoft Graph.
+[dmo_accounting](dmo_accounting/) | 13.0.1.0.0 | Various tweaks to Odoo accounting to better match DMO's work flow.
+[dmo_a2hs](dmo_a2hs/) | 13.0.1.0.0 | Enables Add To Home Screen with a minimal service worker.
 
 [//]: # (end addons)
