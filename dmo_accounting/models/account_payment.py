@@ -13,5 +13,5 @@ class payment_register(models.TransientModel):
         invoices = self.env["account.move"]
         for inv in self.invoice_ids:
             invoices += inv
-        self.live_amount = abs(self.env['account.payment']._compute_payment_amount(invoices, invoices[0].currency_id, self.journal_id, self.payment_date))
+        self.live_amount = abs(self.env['account.payment']._compute_payment_amount(invoices, self.currency_id, self.journal_id, self.payment_date))
         
