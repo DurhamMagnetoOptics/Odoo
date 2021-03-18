@@ -9,6 +9,8 @@ Add option to Company settings to make 'Reference' field mandatory when creating
 
 Adds total amount to vendor bill Group Payment view.
 
+Adjusts column names and removes "memo" field from payment receipt document
+
 ==================
 Known Limitations
 ==================
