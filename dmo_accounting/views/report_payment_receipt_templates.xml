@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="dmo_report_payment_receipt_document" inherit_id="account.report_payment_receipt_document">
-        <xpath expr="//div[@class='row mb64']/div[2]" position="replace">
+        <xpath expr="//div[hasclass('row','mb64')]/div[2]" position="replace">
             <!-- Removes the o.communcation field, which was called "Memo" and was redundent now that Reference is in the table below-->
             <div class="col-6">
             </div>
         </xpath>
-        <xpath expr="//table[@class='table table-sm']/thead/tr" position="replace">
+        <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr" position="replace">
             <tr>
                 <th><span>Invoice Date</span></th>
                 <th><span>Our Reference</span></th> <!-- was Invoice Number-->
