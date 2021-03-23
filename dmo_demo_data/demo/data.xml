@@ -20,10 +20,12 @@
         <record id="stock_location_Shelf1" model="stock.location">
             <field name="name">Shelf 1</field>
             <field name="location_id" ref="stock_location_Vertical1"/>
+            <field name="barcode">LOC-1-1</field>
         </record>  
         <record id="stock_location_Shelf2" model="stock.location">
             <field name="name">Shelf 2</field>
             <field name="location_id" ref="stock_location_Vertical1"/>
+            <field name="barcode">LOC-1-2</field>
         </record>       
         <record id="stock_location_Vertical2" model="stock.location">
             <field name="name">Vertical 2</field>
@@ -32,10 +34,12 @@
         <record id="stock_location_Shelf3" model="stock.location">
             <field name="name">Shelf 3</field>
             <field name="location_id" ref="stock_location_Vertical2"/>
+            <field name="barcode">LOC-2-3</field>
         </record>  
         <record id="stock_location_Shelf4" model="stock.location">
             <field name="name">Shelf 4</field>
             <field name="location_id" ref="stock_location_Vertical2"/>
+            <field name="barcode">LOC-2-4</field>
         </record>                       
         <record id="stock_location_Builds" model="stock.location">
             <field name="name">Builds</field>
@@ -113,6 +117,7 @@
             <field name="uom_po_id" ref="uom.product_uom_unit"/>
             <field name="description">Machined Component</field>
             <field name="default_code">PL-12345</field>
+            <field name="barcode">PL-12345</field>
             <field name="route_ids" eval="[(6, 0, [ref('stock_location_route_ComponentResupply')])]"/>
             <field name="sale_ok">False</field>
             <field name="purchase_ok">True</field>            
@@ -128,11 +133,11 @@
             <field name="uom_po_id" ref="uom.product_uom_unit"/>
             <field name="description">Screw</field>
             <field name="default_code">PT-12345</field>
+            <field name="barcode">474824</field>
             <field name="route_ids" eval="[(6, 0, [ref('stock_location_route_ComponentResupply')])]"/>   
             <field name="sale_ok">False</field>
             <field name="purchase_ok">True</field>                       
         </record>           
-
 
         <!-- Rules -->
         <record id="stock_location_rule_ResupplyInPlace" model="stock.rule">
