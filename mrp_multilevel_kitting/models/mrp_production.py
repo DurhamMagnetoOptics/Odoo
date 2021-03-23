@@ -28,7 +28,7 @@ class MrpProduction(models.Model):
                             'location_id': production.location_src_id.id
                         })
                         if production.location_src_id.barcode:
-                            sublocation_id.barcode = production.location_src_id + '-' + key
+                            sublocation_id.barcode = production.location_src_id.barcode + '-' + key
                     for mv in sublocation_dict[key]:
                         mv.location_id = sublocation_id
 
