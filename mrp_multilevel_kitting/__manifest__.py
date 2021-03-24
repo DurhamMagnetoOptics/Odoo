@@ -3,7 +3,7 @@
 {
     'name': 'MRP Multi-level Kitting',
     'summary': 'If specified on the bom line, the source location for each moveis set to a sublocation of the MOs soure',
-    'version': '13.1.0.0.0',
+    'version': '13.1.1.0.0',
     'development_status': 'caveat emptor',
     'category': 'Warehouse',
     'website': 'http://www.dmoltd.co.uk',

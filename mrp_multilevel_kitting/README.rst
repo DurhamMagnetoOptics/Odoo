@@ -9,10 +9,14 @@ flag is set on the Manufacturing opration and the BOM) source location
 for each move is set to a sublocation of the MOs source, whose name mathces the "bin name."
 This location is created if it doesn't already exist.
 
-13.0-13.3 Change:
+13.0-13.1 Changelog:
 Bin name is now done line-by-line rather than BOM-by-BOM.  This means we do not have to make
 each bin into its own Odoo product. We reserve prodcut 'status' for true subassemblies, and 
 treat bins as purely locations.
+
+13.1-13.1.1 Changelog:
+Auto-creating of bin locations now also generates a barcode of the new location, based on the 
+bin name and the parent location barcode.
 
 ==================
 Known Limitations

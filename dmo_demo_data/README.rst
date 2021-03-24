@@ -15,3 +15,6 @@ Known Limitations
 ==================
 
 No one else will make any sense of it.
+
+If barcode module is added as a dependency, then uninstalling the barcode module
+will clear the demo MW3 BOM.

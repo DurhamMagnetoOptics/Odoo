@@ -25,7 +25,6 @@
         'stock',
         'purchase',
         'purchase_stock',
-        'stock_barcode',
     ],
     'data': [
         
