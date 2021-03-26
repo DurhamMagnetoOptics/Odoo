@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add local currency fields to invoice list view -->
+    <record id="dmo_accounting_account_payment_view" model="ir.ui.view">
+        <field name="name">dmo.account.payment.form.multi</field>
+        <field name="model">account.payment.register</field>
+        <field name="inherit_id" ref="account.view_account_payment_form_multi"/>
+        <field name="arch" type="xml">                                      
+            <field name="payment_date" position="after">
+                <label for="live_amount"/>
+                <div name="live_amount_div" class="o_row">
+                    <field name="live_amount"/>
+                    <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency"/>
+                </div>
+            </field>                   
+        </field>
+    </record>
+</odoo>
