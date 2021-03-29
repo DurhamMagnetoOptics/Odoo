@@ -18,6 +18,7 @@
     'data': [
         'views/product_views.xml',
         'views/res_partner_views.xml',
+        'views/stock_location_views.xml',
     ],
     'demo': [
         
