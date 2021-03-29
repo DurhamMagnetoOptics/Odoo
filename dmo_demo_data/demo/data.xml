@@ -2,16 +2,20 @@
 <odoo>
     <data>
     <!-- Locations -->
+        <record id="stock_warhouse_DMO" model="stock.warehouse">
+            <field name="name">DMO</field>
+            <field name="code">DMO</field>
+        </record> 
         <record id="stock_location_GoodsIn" model="stock.location">
             <field name="name">Goods In</field>
             <field name="location_id" model="stock.location"
-                eval="obj().env.ref('stock.warehouse0').view_location_id.id"/>
+                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').view_location_id.id"/>
         </record>          
         <record id="stock_location_Stores" model="stock.location">
             <field name="name">Stores</field>
             <field name="putaway_savespace">True</field>
             <field name="location_id" model="stock.location"
-                eval="obj().env.ref('stock.warehouse0').view_location_id.id"/>
+                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').view_location_id.id"/>
         </record>          
         <record id="stock_location_Vertical1" model="stock.location">
             <field name="name">Vertical 1</field>
@@ -44,7 +48,7 @@
         <record id="stock_location_Builds" model="stock.location">
             <field name="name">Builds</field>
             <field name="location_id" model="stock.location"
-                eval="obj().env.ref('stock.warehouse0').view_location_id.id"/>
+                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').view_location_id.id"/>
         </record>          
         <record id="stock_location_HUST" model="stock.location">
             <field name="name">HUST</field>
@@ -68,7 +72,7 @@
             <field name="suffix">BB</field>
             <field name="padding">4</field>
             <field name="number_increment">5</field>
-            <field name="company_id" model="res.company" eval="obj().env.ref('stock.warehouse0').company_id.id"/>
+            <field name="company_id" model="res.company" eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').company_id.id"/>
             <field name="implementation">standard</field>
             <field name="name">TestSeq2</field>
         </record>            
@@ -89,7 +93,7 @@
             <field name="purchase_ok">False</field>             
             <field name="tracking">serial</field>
             <field name="link_BOM_to_lot">True</field>
-            <field name="company_id" model="res.company" eval="obj().env.ref('stock.warehouse0').company_id.id"/>
+            <field name="company_id" model="res.company" eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').company_id.id"/>
             <field name="sequence_id" ref="ir_sequence_testseq2"/>
         </record>    
         <record id="product_product_SubA" model="product.product">
@@ -145,7 +149,7 @@
             <field name="name">Resupply In Place</field>
             <field name="action">pull</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
+                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').int_type_id.id"/>
             <field name="location_src_id" ref="stock_location_GoodsIn"/>
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="procure_method">make_to_order</field>
@@ -157,7 +161,7 @@
             <field name="name">Kit from Stores</field>
             <field name="action">branch</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
+                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').int_type_id.id"/>
             <field name="location_src_id" ref="stock_location_Stores"/>
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="procure_method">make_to_stock</field>
@@ -170,7 +174,7 @@
             <field name="name">Resupply Stores</field>
             <field name="action">pull</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
+                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').int_type_id.id"/>
             <field name="location_src_id" ref="stock_location_GoodsIn"/>
             <field name="location_id" ref="stock_location_Stores"/>   
             <field name="procure_method">make_to_order</field>
@@ -181,7 +185,7 @@
             <field name="name">Putaway Leftovers</field>
             <field name="action">push</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
+                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').int_type_id.id"/>
             <field name="location_src_id" ref="stock_location_GoodsIn"/>
             <field name="location_id" ref="stock_location_Stores"/>   
             <field name="auto">manual</field>
@@ -192,7 +196,7 @@
             <field name="name">Trigger PO</field>
             <field name="action">buy</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('stock.warehouse0').in_type_id.id"/> 
+                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').in_type_id.id"/> 
             <field name="location_id" ref="stock_location_GoodsIn"/>   
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
             <field name="group_propagation_option">none</field>
@@ -203,7 +207,7 @@
             <field name="name">Kit on Demand</field>
             <field name="action">pull</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('stock.warehouse0').manu_type_id.id"/>
+                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').manu_type_id.id"/>
             <field name="location_src_id" ref="stock_location_Builds"/>   
             <field name="location_id" model="product.template"
                 eval="obj().env.ref('dmo_demo_data.product_product_CompA').property_stock_production.id"/>                 
@@ -218,7 +222,7 @@
             <field name="name">Build Subassy</field>
             <field name="action">manufacture</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('stock.warehouse0').manu_type_id.id"/>
+                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').manu_type_id.id"/>
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="route_id" ref="stock_location_route_SubassemblyResupply"/>   
             <field name="sequence">25</field>  
@@ -228,7 +232,7 @@
             <field name="name">Subs from Stores</field>
             <field name="action">branch</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('stock.warehouse0').int_type_id.id"/>
+                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').int_type_id.id"/>
             <field name="location_src_id" ref="stock_location_Stores"/>
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="procure_method">make_to_stock</field>
@@ -241,7 +245,7 @@
             <field name="name">Subassy On Demand</field>
             <field name="action">pull</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('stock.warehouse0').manu_type_id.id"/>
+                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').manu_type_id.id"/>
             <field name="location_src_id" ref="stock_location_Builds"/>   
             <field name="location_id" model="product.template"
                 eval="obj().env.ref('dmo_demo_data.product_product_CompA').property_stock_production.id"/>   
@@ -383,7 +387,7 @@
         <function model="ir.model.data" name="_update_xmlids">
             <value model="base" eval="[{
                 'xml_id': 'dmo_demo_data.picking_type_manu',
-                'record': obj().env.ref('stock.warehouse0').manu_type_id
+                'record': obj().env.ref('dmo_demo_data.stock_warhouse_DMO').manu_type_id
             }]"/>
         </function>   
 
