@@ -24,4 +24,5 @@ addon | version | summary
 [stock_move_push_leftover](stock_move_push_leftover/) | 13.0.1.1.0  | When child moves do not account for full stock, look for a push rule for the remainder.
 [stock_mts_else_alt](stock_mts_else_alt/) | 13.0.2.0.0 | Modify MTS else MTO to actually execute an alternate rule instead of automatically running MTS in the same source location.
 [stock_serialise_per_product](stock_serialise_per_product/) | 13.0.1.0.0  | Allows the selection of a serialisation sequence per product.
+
 [//]: # (end addons)
