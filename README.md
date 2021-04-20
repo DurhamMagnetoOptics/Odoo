@@ -14,7 +14,7 @@ addon | version | summary
 [auth_oauth_microsoft_graph](auth_oauth_microsoft_graph/) | 13.0.1.0.0 | From Odoonz: Allow users to login using Microsoft Graph.
 [dmo_a2hs](dmo_a2hs/) | 13.0.1.0.0 | Enables Add To Home Screen with a minimal service worker.
 [dmo_accounting](dmo_accounting/) | 13.0.2.0.0 | Various tweaks to Odoo accounting to better match DMO's work flow.
-[dmo_demo_data](dmo_demo_data/) | 13.0.1.0.0  | A place to throw demo data and tests that cross module boundaries.
+[dmo_demo_data](dmo_demo_data/) | 13.0.2.0.0  | A place to throw demo data and tests that cross module boundaries.
 [dmo_meta_data](dmo_meta_data/) | 13.0.1.0.0  | Adds various meta data fields of use to DMO.
 [mrp_apply_parent_pull](mrp_apply_parent_pull/) | 13.0.1.0.0  | Look for rules that apply to a destinations parents as well as the destination when satisfyin MRP needs.
 [mrp_bom_lot](mrp_bom_lot/) | 13.0.1.0.0  | Create a link between BOM and lot/serial number.

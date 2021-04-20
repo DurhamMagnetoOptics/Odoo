@@ -55,6 +55,11 @@
             <field name="location_id" ref="stock_location_Builds"/>
             <field name="barcode">LOC-HUST</field>
         </record>   
+        <record id="stock_location_IITH" model="stock.location">
+            <field name="name">IITH</field>
+            <field name="location_id" ref="stock_location_Builds"/>
+            <field name="barcode">LOC-IITH</field>
+        </record>        
 
         <!-- Route -->
         <record id="stock_location_route_ComponentResupply" model="stock.location.route">
@@ -142,7 +147,39 @@
             <field name="route_ids" eval="[(6, 0, [ref('stock_location_route_ComponentResupply')])]"/>   
             <field name="sale_ok">False</field>
             <field name="purchase_ok">True</field>                       
-        </record>           
+        </record> 
+        <record id="product_product_CompC" model="product.product">
+            <field name="name">CompC</field>
+            <field name="categ_id" ref="product.product_category_5"/>
+            <field name="standard_price">0.03</field>
+            <field name="list_price">0.03</field>
+            <field name="type">product</field>
+            <field name="weight">0.01</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
+            <field name="description">Big Screw</field>
+            <field name="default_code">PT-23456</field>
+            <field name="barcode">23456</field>
+            <field name="route_ids" eval="[(6, 0, [ref('stock_location_route_ComponentResupply')])]"/>   
+            <field name="sale_ok">False</field>
+            <field name="purchase_ok">True</field>                       
+        </record> 
+        <record id="product_product_CompD" model="product.product">
+            <field name="name">CompD</field>
+            <field name="categ_id" ref="product.product_category_5"/>
+            <field name="standard_price">0.03</field>
+            <field name="list_price">0.03</field>
+            <field name="type">product</field>
+            <field name="weight">0.01</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
+            <field name="description">Small Screw</field>
+            <field name="default_code">PT-34567</field>
+            <field name="barcode">34567</field>
+            <field name="route_ids" eval="[(6, 0, [ref('stock_location_route_ComponentResupply')])]"/>   
+            <field name="sale_ok">False</field>
+            <field name="purchase_ok">True</field>                       
+        </record>                           
 
         <!-- Rules -->
         <record id="stock_location_rule_ResupplyInPlace" model="stock.rule">
@@ -276,7 +313,29 @@
             <field name="increment_qty">100.0</field>
             <field name="round_up">True</field>
             <field name="price">3.33</field>
-        </record>              
+        </record>    
+        <record id="product_supplierinfo_CompC" model="product.supplierinfo">
+            <field name="product_tmpl_id" model="product.template"
+                eval="obj().env.ref('dmo_demo_data.product_product_CompC').product_tmpl_id.id"/> 
+            <field name="name" ref="base.res_partner_12"/>
+            <field name="delay">1</field>
+            <field name="min_qty">100.0</field>
+            <field name="increment_qty">100.0</field>
+            <field name="round_up">True</field>
+            <field name="price">3.33</field>
+        </record>                     
+        <record id="product_supplierinfo_CompD" model="product.supplierinfo">
+            <field name="product_tmpl_id" model="product.template"
+                eval="obj().env.ref('dmo_demo_data.product_product_CompD').product_tmpl_id.id"/> 
+            <field name="name" ref="base.res_partner_12"/>
+            <field name="delay">1</field>
+            <field name="min_qty">100.0</field>
+            <field name="increment_qty">100.0</field>
+            <field name="round_up">True</field>
+            <field name="price">3.33</field>
+        </record>          
+
+        <!--TODO: Reordering rules for CompA-D--> 
 
         <!-- Resource: stock.inventory.line -->
         <record id="stock_inventory_CompA" model="stock.inventory">
@@ -294,7 +353,41 @@
         </function>
         <function model="stock.inventory" name="action_validate">
             <function eval="[[('state','=','confirm'),('id', '=', ref('stock_inventory_CompA'))]]" model="stock.inventory" name="search"/>
-        </function>      
+        </function>    
+
+        <record id="stock_inventory_CompC" model="stock.inventory">
+            <field name="name">Starting CompC Inventory</field>
+        </record>
+        <record id="stock_inventory_line_CompC" model="stock.inventory.line">
+            <field name="product_id" ref="product_product_CompC"/>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="inventory_id" ref="stock_inventory_CompC"/>
+            <field name="product_qty">20.0</field>
+            <field name="location_id" ref="stock_location_Shelf3"/>
+        </record>  
+        <function model="stock.inventory" name="_action_start">
+            <function eval="[[('state','=','draft'),('id', '=', ref('stock_inventory_CompC'))]]" model="stock.inventory" name="search"/>
+        </function>
+        <function model="stock.inventory" name="action_validate">
+            <function eval="[[('state','=','confirm'),('id', '=', ref('stock_inventory_CompC'))]]" model="stock.inventory" name="search"/>
+        </function>  
+
+        <record id="stock_inventory_CompD" model="stock.inventory">
+            <field name="name">Starting CompD Inventory</field>
+        </record>
+        <record id="stock_inventory_line_CompD" model="stock.inventory.line">
+            <field name="product_id" ref="product_product_CompD"/>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="inventory_id" ref="stock_inventory_CompD"/>
+            <field name="product_qty">200.0</field>
+            <field name="location_id" ref="stock_location_Shelf1"/>
+        </record>  
+        <function model="stock.inventory" name="_action_start">
+            <function eval="[[('state','=','draft'),('id', '=', ref('stock_inventory_CompD'))]]" model="stock.inventory" name="search"/>
+        </function>
+        <function model="stock.inventory" name="action_validate">
+            <function eval="[[('state','=','confirm'),('id', '=', ref('stock_inventory_CompD'))]]" model="stock.inventory" name="search"/>
+        </function>                    
         
         <record id="stock_inventory_SubA" model="stock.inventory">
             <field name="name">Starting SubA Inventory</field>
@@ -338,7 +431,23 @@
             <field name="sequence">5</field>
             <field name="bom_id" ref="mrp_bom_MW3"/>
             <field name="multilevel_kitting_name">Bin2</field>            
-        </record>         
+        </record>    
+        <record id="mrp_bom_manufacture_line_3" model="mrp.bom.line">
+            <field name="product_id" ref="product_product_CompC"/>
+            <field name="product_qty">15</field>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="sequence">5</field>
+            <field name="bom_id" ref="mrp_bom_MW3"/>
+            <field name="multilevel_kitting_name">Bin1</field>
+        </record> 
+        <record id="mrp_bom_manufacture_line_4" model="mrp.bom.line">
+            <field name="product_id" ref="product_product_CompD"/>
+            <field name="product_qty">30</field>
+            <field name="product_uom_id" ref="uom.product_uom_unit"/>
+            <field name="sequence">5</field>
+            <field name="bom_id" ref="mrp_bom_MW3"/>
+            <field name="multilevel_kitting_name">Bin1</field>
+        </record>                      
 
         <record id="mrp_bom_MW3_old" model="mrp.bom">
             <field name="product_tmpl_id" model="product.template"

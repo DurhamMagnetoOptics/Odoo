@@ -5,7 +5,7 @@
 {
     'name': 'DMO Demo Data',
     'summary': 'A place to throw demo data and tests that cross module boundaries',
-    'version': '13.0.1.0.0',
+    'version': '13.0.2.0.0',
     'development_status': 'Test purposes only',
     'category': 'Manufacture',
     'website': 'http://www.dmoltd.co.uk',
