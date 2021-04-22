@@ -3,7 +3,7 @@
 {
     'name': 'Stock Move Push Leftover',
     'summary': 'When a stock move is committed, any quantity not accounted for by child moves is split off and submitted to push rules instead',
-    'version': '13.0.1.1.0',
+    'version': '13.0.2.0.0',
     'development_status': 'caveat emptor',
     'category': 'Warehouse',
     'website': 'http://www.dmoltd.co.uk',
@@ -12,7 +12,7 @@
     'application': False,
     'installable': True,
     'depends': [
-        'stock',
+        'stock','purchase','purchase_stock',
     ],
     'data': [
         'views/stock_picking_views.xml',

@@ -27,9 +27,9 @@
         'purchase_stock',
     ],
     'data': [
-        
+        'demo/data.xml',
     ],
     'demo': [
-        'demo/data.xml',
+
     ]
 }

@@ -6,6 +6,8 @@
         <field name="arch" type="xml">
             <field name="sequence_code" position="after">
                 <field name="push_leftover" />
+                <field name="merge_procure_method" />
+                <field name="merge_created_PO" />
             </field>
         </field>
     </record>
