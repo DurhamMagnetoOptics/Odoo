@@ -230,8 +230,9 @@
             <field name="location_id" ref="stock_location_Stores"/>   
             <field name="auto">manual</field>
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
-            <field name="sequence">20</field>    
-            <field name="group_propagation_option">none</field>          
+            <field name="sequence">20</field> 
+            <field name="clear_group">True</field> 
+            <field name="group_propagation_option">none</field>
         </record>              
         <record id="stock_location_rule_TriggerPO" model="stock.rule">
             <field name="name">Trigger PO</field>
@@ -573,11 +574,12 @@
             <field name="merge_created_PO">True</field>   
         </record>  
 
-        <!-- Merge across PO and procurement method for internal moves -->        
+        <!-- Merge across PO and procurement method for internal moves -->      
         <record id="dmo_demo_data.picking_type_int" model="stock.picking.type">
             <field name="merge_procure_method">True</field>
             <field name="merge_created_PO">True</field>   
-        </record>          
+        </record>
+             
 
         <!-- Turn on apply_parent for manufacturing -->
         <!-- Clear default locations on Manufacturing Operation -->

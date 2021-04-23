@@ -10,10 +10,10 @@ class StockMove(models.Model):
     def _prepare_move_split_vals(self, qty):
         vals = super()._prepare_move_split_vals(qty)
         if self.env.context.get('do_not_attach_child_moves'):
+            #If we're splitting off unaccounted-for leftovers, we break the link with the pull rule, so that these are handled be a default push/putaway instead
             vals['move_dest_ids'] = []
         return vals
 
-    #TODO: if we can get procurement groups cleared out of the push rule, it may turn out this function is unecessary and we can remove it again.
     def _prepare_merge_moves_distinct_fields(self):
         res = super()._prepare_merge_moves_distinct_fields()
         for move in self:
