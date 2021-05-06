@@ -48,6 +48,7 @@ class TestMove(SavepointCase):
             'procure_method': 'make_to_order',
             'route_id': self.ComponentResupply.id,
             'sequence': 10,
+            'group_propagation_option': 'none',
         })  
         self.ResupplyStores = self.rule.create({
             'name': 'Resupply Stores',
@@ -58,6 +59,7 @@ class TestMove(SavepointCase):
             'procure_method': 'make_to_order',
             'route_id': self.ComponentResupply.id,
             'sequence': 15,
+            'group_propagation_option': 'none',
         })    
         self.PutawayLeftovers = self.rule.create({
             'name': 'Putaway Leftovers',
@@ -68,7 +70,8 @@ class TestMove(SavepointCase):
             'auto': 'manual',
             'route_id': self.ComponentResupply.id,
             'sequence': 20,
-        })                  
+            'group_propagation_option': 'none',
+        })                            
 
         #Make Stores the default location for the default Receipt operation type
         self.warehouse.in_type_id.default_location_dest_id = self.Stores   
@@ -269,8 +272,6 @@ class TestMove(SavepointCase):
 
         #create the equivalent of a buy move
         template = {
-            # truncate to 2000 to avoid triggering index limit error
-            # TODO: remove index in master?
             'name': (''),
             'product_id': self.CompA.id,
             'product_uom': self.CompA.uom_id.id,
@@ -296,4 +297,4 @@ class TestMove(SavepointCase):
         self.assertEqual(len(move2), 1, msg='There are not 1 move to Goods In')
 
         self.assertEqual(move1.product_uom_qty, neededQty, msg='There are not %s units in GoodsIn->Hust' % neededQty)
-        self.assertEqual(move2.product_uom_qty, orderedQty, msg='There are not %s units in GoodsIn->Hust' % orderedQty)
+        self.assertEqual(move2.product_uom_qty, orderedQty, msg='There are not %s units ->GoodsIn' % orderedQty)

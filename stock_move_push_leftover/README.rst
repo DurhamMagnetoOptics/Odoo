@@ -26,6 +26,23 @@ this is less than the current move's quantity, we split off
 that leftover as a separate move, and apply push rules to
 that new move.
 
+In addition, 'merge_procure_method' and 'merge_created_PO' on
+the operation type allow to merge stock moves even when
+procurement_method and created_purchase_line_id and 
+purchase_line_id, respectively, do not match.  This is necessary
+to allow for the case where a rounded-up purchase is requested by
+a re-ordering rule.  In that case, the destination of the
+next pull move in the sequence (the originating pull) and the
+destination of the 'leftovers' caught by the push rull are the
+same, but Odoo does not merge them because one is make_to_stock
+while one is make_to_order (which is a heck of thing to attach to
+a pull rule when the source was a generic reordering rule, Odoo!)
+and one has the creating PO attached and one does not.  It makes 
+sense to receive goods based on PO line, but once they are all 
+in stock, we consider them fungible and shouldn't make separate
+moves just becuase some came from non-alloated stock and some 
+were purchased explicitely against a particular MO.
+
 ==================
 Known Limitations
 ==================

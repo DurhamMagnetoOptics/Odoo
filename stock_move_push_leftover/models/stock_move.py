@@ -10,8 +10,22 @@ class StockMove(models.Model):
     def _prepare_move_split_vals(self, qty):
         vals = super()._prepare_move_split_vals(qty)
         if self.env.context.get('do_not_attach_child_moves'):
+            #If we're splitting off unaccounted-for leftovers, we break the link with the pull rule, so that these are handled be a default push/putaway instead
             vals['move_dest_ids'] = []
         return vals
+
+    def _prepare_merge_moves_distinct_fields(self):
+        res = super()._prepare_merge_moves_distinct_fields()
+        for move in self:
+            if move.picking_type_id.merge_procure_method:
+                if 'procure_method' in res:
+                    res.remove('procure_method')
+            if move.picking_type_id.merge_created_PO:
+                if 'created_purchase_line_id' in res:
+                    res.remove('created_purchase_line_id')
+                if 'purchase_line_id' in res:
+                    res.remove('purchase_line_id')
+        return res
     
     def _push_apply(self):
         super()._push_apply()
