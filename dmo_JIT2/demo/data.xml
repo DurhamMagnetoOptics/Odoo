@@ -206,19 +206,6 @@
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
             <field name="sequence">15</field>  
             <field name="group_propagation_option">none</field>           
-        </record>    
-        <record id="stock_location_rule_PutawayLeftovers" model="stock.rule">
-            <field name="name">Putaway Leftovers</field>
-            <field name="action">push</field>
-            <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').int_type_id.id"/>
-            <field name="location_src_id" ref="stock_location_GoodsIn"/>
-            <field name="location_id" ref="stock_location_Stores"/>   
-            <field name="auto">manual</field>
-            <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
-            <field name="sequence">20</field> 
-            <field name="clear_group">True</field> 
-            <field name="group_propagation_option">none</field>
         </record>                   
         <record id="stock_location_rule_MTOKitting" model="stock.rule">
             <field name="name">Kit on Demand</field>
@@ -268,8 +255,6 @@
             <field name="name" ref="base.res_partner_12"/>
             <field name="delay">1</field>
             <field name="min_qty">10.0</field>
-            <field name="increment_qty">5.0</field>
-            <field name="round_up">True</field>
             <field name="price">2.50</field>
         </record>   
         <record id="product_supplierinfo_CompB" model="product.supplierinfo">
@@ -278,8 +263,6 @@
             <field name="name" ref="base.res_partner_12"/>
             <field name="delay">1</field>
             <field name="min_qty">100.0</field>
-            <field name="increment_qty">100.0</field>
-            <field name="round_up">True</field>
             <field name="price">3.33</field>
         </record>    
         <record id="product_supplierinfo_CompC" model="product.supplierinfo">
@@ -288,8 +271,6 @@
             <field name="name" ref="base.res_partner_12"/>
             <field name="delay">1</field>
             <field name="min_qty">100.0</field>
-            <field name="increment_qty">100.0</field>
-            <field name="round_up">True</field>
             <field name="price">3.33</field>
         </record>                     
         <record id="product_supplierinfo_CompD" model="product.supplierinfo">
@@ -298,8 +279,6 @@
             <field name="name" ref="base.res_partner_12"/>
             <field name="delay">1</field>
             <field name="min_qty">100.0</field>
-            <field name="increment_qty">100.0</field>
-            <field name="round_up">True</field>
             <field name="price">3.33</field>
         </record>          
 
@@ -530,13 +509,10 @@
         <!-- Turn on push leftovers for receipts -->        
         <record id="dmo_JIT2.picking_type_in" model="stock.picking.type">
             <field name="default_location_dest_id" ref="stock_location_GoodsIn"/>
-            <field name="push_leftover">True</field>
         </record>  
 
         <!-- Merge across PO and procurement method for internal moves -->      
         <record id="dmo_JIT2.picking_type_int" model="stock.picking.type">
-            <field name="merge_procure_method">True</field>
-            <field name="merge_created_PO">True</field>   
         </record>
              
 
@@ -544,7 +520,6 @@
         <!-- Clear default locations on Manufacturing Operation -->
         <!-- Turn on multilevel kitting -->
         <record id="dmo_JIT2.picking_type_manu" model="stock.picking.type">
-            <field name="apply_parent_pull">True</field>
             <field name="multilevel_kitting">True</field>
             <field name="default_location_dest_id"></field>
             <field name="default_location_src_id"></field>         

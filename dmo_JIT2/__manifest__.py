@@ -9,7 +9,7 @@
     'website': 'http://www.dmoltd.co.uk',
     'author': 'Durham Magneto Optics Ltd',
     'license': 'AGPL-3',
-    'application': True,
+    'application': False,
     'installable': True,
     'depends': [
         'dmo_meta_data',
