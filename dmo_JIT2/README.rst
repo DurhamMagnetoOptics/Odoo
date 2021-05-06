@@ -1,6 +1,8 @@
 =========================
-DMO Demo Data
+DMO JIT2
 =========================
+
+Top level app to collect stock an mrp mods, and integrated demo data.
 
 For manual testing (and unit testing) we often want data that takes advantage
 of several of our modules at once.  In order not to add unecessary dependencies
@@ -13,10 +15,6 @@ This also provides a handy way to install one module and get all of them loaded.
 ==================
 Known Limitations
 ==================
-
-Test/demo data is flagged a module data and not demo data, so that it is reloaded
-when the module gets updated.  This means it will be loaded even on database that
-are not set up with demo data, upon which it might depend. 
 
 No one else will make any sense of it.
 

@@ -1,8 +1,8 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    'name': 'Round PO up to supplier MOQ',
-    'summary': 'When no supplierinfo is found for the desired quantity, increase the ordered quanity to meet the supplier minimum',
+    'name': 'Stock Replenish In-Place',
+    'summary': 'Allows the user to request stock replenishment in a specific location',
     'version': '13.0.1.0.0',
     'development_status': 'caveat emptor',
     'category': 'Warehouse',
@@ -12,10 +12,10 @@
     'application': False,
     'installable': True,
     'depends': [
-        'purchase_stock',
+        'stock',
     ],
     'data': [
-        'views/product_views.xml',
+        'views/product_replenish_views.xml',
     ],
     'demo': [
         

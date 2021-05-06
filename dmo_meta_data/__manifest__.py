@@ -12,8 +12,7 @@
     'application': False,
     'installable': True,
     'depends': [
-        'mrp',
-        'purchase',
+        'stock',
     ],
     'data': [
         'views/product_views.xml',

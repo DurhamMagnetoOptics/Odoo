@@ -9,13 +9,13 @@
         <record id="stock_location_GoodsIn" model="stock.location">
             <field name="name">Goods In</field>
             <field name="location_id" model="stock.location"
-                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').view_location_id.id"/>
+                eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').view_location_id.id"/>
         </record>          
         <record id="stock_location_Stores" model="stock.location">
             <field name="name">Stores</field>
             <field name="putaway_savespace">True</field>
             <field name="location_id" model="stock.location"
-                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').view_location_id.id"/>
+                eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').view_location_id.id"/>
         </record>          
         <record id="stock_location_Vertical1" model="stock.location">
             <field name="name">Vertical 1</field>
@@ -48,7 +48,7 @@
         <record id="stock_location_Builds" model="stock.location">
             <field name="name">Builds</field>
             <field name="location_id" model="stock.location"
-                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').view_location_id.id"/>
+                eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').view_location_id.id"/>
         </record>          
         <record id="stock_location_HUST" model="stock.location">
             <field name="name">HUST</field>
@@ -77,7 +77,7 @@
             <field name="suffix">BB</field>
             <field name="padding">4</field>
             <field name="number_increment">5</field>
-            <field name="company_id" model="res.company" eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').company_id.id"/>
+            <field name="company_id" model="res.company" eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').company_id.id"/>
             <field name="implementation">standard</field>
             <field name="name">TestSeq2</field>
         </record>            
@@ -98,7 +98,7 @@
             <field name="purchase_ok">False</field>             
             <field name="tracking">serial</field>
             <field name="link_BOM_to_lot">True</field>
-            <field name="company_id" model="res.company" eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').company_id.id"/>
+            <field name="company_id" model="res.company" eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').company_id.id"/>
             <field name="sequence_id" ref="ir_sequence_testseq2"/>
         </record>    
         <record id="product_product_SubA" model="product.product">
@@ -186,7 +186,7 @@
             <field name="name">Resupply In Place</field>
             <field name="action">pull</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').int_type_id.id"/>
+                eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').int_type_id.id"/>
             <field name="location_src_id" ref="stock_location_GoodsIn"/>
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="procure_method">make_to_order</field>
@@ -194,26 +194,12 @@
             <field name="sequence">10</field> 
             <field name="propagate_cancel">True</field>
             <field name="group_propagation_option">none</field>
-        </record>          
-        <record id="stock_location_rule_KitFromStores" model="stock.rule">
-            <field name="name">Kit from Stores</field>
-            <field name="action">branch</field>
-            <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').int_type_id.id"/>
-            <field name="location_src_id" ref="stock_location_Stores"/>
-            <field name="location_id" ref="stock_location_Builds"/>   
-            <field name="procure_method">make_to_stock</field>
-            <field name="alternate_rule_id" ref="stock_location_rule_ResupplyInPlace"/>
-            <field name="route_id" ref="stock_location_route_ComponentResupply"/>
-            <field name="sequence">5</field>     
-            <field name="propagate_cancel">True</field>
-            <field name="group_propagation_option">none</field>                      
-        </record>               
+        </record>                       
         <record id="stock_location_rule_ResupplyStores" model="stock.rule">
             <field name="name">Resupply Stores</field>
             <field name="action">pull</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').int_type_id.id"/>
+                eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').int_type_id.id"/>
             <field name="location_src_id" ref="stock_location_GoodsIn"/>
             <field name="location_id" ref="stock_location_Stores"/>   
             <field name="procure_method">make_to_order</field>
@@ -225,7 +211,7 @@
             <field name="name">Putaway Leftovers</field>
             <field name="action">push</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').int_type_id.id"/>
+                eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').int_type_id.id"/>
             <field name="location_src_id" ref="stock_location_GoodsIn"/>
             <field name="location_id" ref="stock_location_Stores"/>   
             <field name="auto">manual</field>
@@ -233,26 +219,15 @@
             <field name="sequence">20</field> 
             <field name="clear_group">True</field> 
             <field name="group_propagation_option">none</field>
-        </record>              
-        <record id="stock_location_rule_TriggerPO" model="stock.rule">
-            <field name="name">Trigger PO</field>
-            <field name="action">buy</field>
-            <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').in_type_id.id"/> 
-            <field name="location_id" ref="stock_location_GoodsIn"/>   
-            <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
-            <field name="group_propagation_option">none</field>
-            <field name="sequence">25</field>   
-            <field name="propagate_cancel">True</field>        
-        </record>          
+        </record>                   
         <record id="stock_location_rule_MTOKitting" model="stock.rule">
             <field name="name">Kit on Demand</field>
             <field name="action">pull</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').manu_type_id.id"/>
+                eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').manu_type_id.id"/>
             <field name="location_src_id" ref="stock_location_Builds"/>   
             <field name="location_id" model="product.template"
-                eval="obj().env.ref('dmo_demo_data.product_product_CompA').property_stock_production.id"/>                 
+                eval="obj().env.ref('dmo_JIT2.product_product_CompA').property_stock_production.id"/>                 
             <field name="procure_method">make_to_order</field>
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>   
             <field name="sequence">30</field>
@@ -265,33 +240,20 @@
             <field name="name">Build Subassy</field>
             <field name="action">manufacture</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').manu_type_id.id"/>
+                eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').manu_type_id.id"/>
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="route_id" ref="stock_location_route_SubassemblyResupply"/>   
             <field name="sequence">25</field>  
             <field name="propagate_cancel">True</field>            
-        </record>  
-        <record id="stock_location_rule_SubFromStores" model="stock.rule">
-            <field name="name">Subs from Stores</field>
-            <field name="action">branch</field>
-            <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').int_type_id.id"/>
-            <field name="location_src_id" ref="stock_location_Stores"/>
-            <field name="location_id" ref="stock_location_Builds"/>   
-            <field name="procure_method">make_to_stock</field>
-            <field name="alternate_rule_id" ref="stock_location_rule_MTOSubAssy"/>
-            <field name="route_id" ref="stock_location_route_SubassemblyResupply"/>
-            <field name="sequence">20</field>      
-            <field name="propagate_cancel">True</field>         
-        </record>                 
+        </record>               
         <record id="stock_location_rule_MTOKittingSub" model="stock.rule">
             <field name="name">Subassy On Demand</field>
             <field name="action">pull</field>
             <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('dmo_demo_data.stock_warhouse_DMO').manu_type_id.id"/>
+                eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').manu_type_id.id"/>
             <field name="location_src_id" ref="stock_location_Builds"/>   
             <field name="location_id" model="product.template"
-                eval="obj().env.ref('dmo_demo_data.product_product_CompA').property_stock_production.id"/>   
+                eval="obj().env.ref('dmo_JIT2.product_product_CompA').property_stock_production.id"/>   
             <field name="procure_method">make_to_order</field>              
             <field name="route_id" ref="stock_location_route_SubassemblyResupply"/>   
             <field name="sequence">30</field>            
@@ -302,7 +264,7 @@
         <!-- Supplier -->       
         <record id="product_supplierinfo_CompA" model="product.supplierinfo">
             <field name="product_tmpl_id" model="product.template"
-                eval="obj().env.ref('dmo_demo_data.product_product_CompA').product_tmpl_id.id"/> 
+                eval="obj().env.ref('dmo_JIT2.product_product_CompA').product_tmpl_id.id"/> 
             <field name="name" ref="base.res_partner_12"/>
             <field name="delay">1</field>
             <field name="min_qty">10.0</field>
@@ -312,7 +274,7 @@
         </record>   
         <record id="product_supplierinfo_CompB" model="product.supplierinfo">
             <field name="product_tmpl_id" model="product.template"
-                eval="obj().env.ref('dmo_demo_data.product_product_CompB').product_tmpl_id.id"/> 
+                eval="obj().env.ref('dmo_JIT2.product_product_CompB').product_tmpl_id.id"/> 
             <field name="name" ref="base.res_partner_12"/>
             <field name="delay">1</field>
             <field name="min_qty">100.0</field>
@@ -322,7 +284,7 @@
         </record>    
         <record id="product_supplierinfo_CompC" model="product.supplierinfo">
             <field name="product_tmpl_id" model="product.template"
-                eval="obj().env.ref('dmo_demo_data.product_product_CompC').product_tmpl_id.id"/> 
+                eval="obj().env.ref('dmo_JIT2.product_product_CompC').product_tmpl_id.id"/> 
             <field name="name" ref="base.res_partner_12"/>
             <field name="delay">1</field>
             <field name="min_qty">100.0</field>
@@ -332,7 +294,7 @@
         </record>                     
         <record id="product_supplierinfo_CompD" model="product.supplierinfo">
             <field name="product_tmpl_id" model="product.template"
-                eval="obj().env.ref('dmo_demo_data.product_product_CompD').product_tmpl_id.id"/> 
+                eval="obj().env.ref('dmo_JIT2.product_product_CompD').product_tmpl_id.id"/> 
             <field name="name" ref="base.res_partner_12"/>
             <field name="delay">1</field>
             <field name="min_qty">100.0</field>
@@ -448,7 +410,7 @@
         <!-- BOM -->
         <record id="mrp_bom_MW3" model="mrp.bom">
             <field name="product_tmpl_id" model="product.template"
-                eval="obj().env.ref('dmo_demo_data.product_product_MW3').product_tmpl_id.id"/>      
+                eval="obj().env.ref('dmo_JIT2.product_product_MW3').product_tmpl_id.id"/>      
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="code">New</field>
             <field name="sequence">5</field>
@@ -489,7 +451,7 @@
 
         <record id="mrp_bom_MW3_old" model="mrp.bom">
             <field name="product_tmpl_id" model="product.template"
-                eval="obj().env.ref('dmo_demo_data.product_product_MW3').product_tmpl_id.id"/>      
+                eval="obj().env.ref('dmo_JIT2.product_product_MW3').product_tmpl_id.id"/>      
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="code">Old</field>
             <field name="sequence">10</field>           
@@ -511,7 +473,7 @@
 
         <record id="mrp_bom_SubA" model="mrp.bom">
             <field name="product_tmpl_id" model="product.template"
-                eval="obj().env.ref('dmo_demo_data.product_product_SubA').product_tmpl_id.id"/>      
+                eval="obj().env.ref('dmo_JIT2.product_product_SubA').product_tmpl_id.id"/>      
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="multilevel_kitting">0</field>
         </record>
@@ -533,24 +495,24 @@
         <!-- create xml id for manufacturing operation, "for more convenience" -->
         <function model="ir.model.data" name="_update_xmlids">
             <value model="base" eval="[{
-                'xml_id': 'dmo_demo_data.picking_type_manu',
-                'record': obj().env.ref('dmo_demo_data.stock_warhouse_DMO').manu_type_id
+                'xml_id': 'dmo_JIT2.picking_type_manu',
+                'record': obj().env.ref('dmo_JIT2.stock_warhouse_DMO').manu_type_id
             }]"/>
         </function>   
 
         <!-- create xml id for receipt operation, "for more convenience" -->
         <function model="ir.model.data" name="_update_xmlids">
             <value model="base" eval="[{
-                'xml_id': 'dmo_demo_data.picking_type_in',
-                'record': obj().env.ref('dmo_demo_data.stock_warhouse_DMO').in_type_id
+                'xml_id': 'dmo_JIT2.picking_type_in',
+                'record': obj().env.ref('dmo_JIT2.stock_warhouse_DMO').in_type_id
             }]"/>
         </function>        
 
         <!-- create xml id for internal operation, "for more convenience" -->
         <function model="ir.model.data" name="_update_xmlids">
             <value model="base" eval="[{
-                'xml_id': 'dmo_demo_data.picking_type_int',
-                'record': obj().env.ref('dmo_demo_data.stock_warhouse_DMO').int_type_id
+                'xml_id': 'dmo_JIT2.picking_type_int',
+                'record': obj().env.ref('dmo_JIT2.stock_warhouse_DMO').int_type_id
             }]"/>
         </function>            
 
@@ -566,13 +528,13 @@
 
         <!-- Receipts go to goods in by default (like receipt in 2 steps) -->
         <!-- Turn on push leftovers for receipts -->        
-        <record id="dmo_demo_data.picking_type_in" model="stock.picking.type">
+        <record id="dmo_JIT2.picking_type_in" model="stock.picking.type">
             <field name="default_location_dest_id" ref="stock_location_GoodsIn"/>
             <field name="push_leftover">True</field>
         </record>  
 
         <!-- Merge across PO and procurement method for internal moves -->      
-        <record id="dmo_demo_data.picking_type_int" model="stock.picking.type">
+        <record id="dmo_JIT2.picking_type_int" model="stock.picking.type">
             <field name="merge_procure_method">True</field>
             <field name="merge_created_PO">True</field>   
         </record>
@@ -581,7 +543,7 @@
         <!-- Turn on apply_parent for manufacturing -->
         <!-- Clear default locations on Manufacturing Operation -->
         <!-- Turn on multilevel kitting -->
-        <record id="dmo_demo_data.picking_type_manu" model="stock.picking.type">
+        <record id="dmo_JIT2.picking_type_manu" model="stock.picking.type">
             <field name="apply_parent_pull">True</field>
             <field name="multilevel_kitting">True</field>
             <field name="default_location_dest_id"></field>
