@@ -1,5 +1,7 @@
 from odoo.tests.common import TransactionCase
 from odoo import exceptions
+from datetime import datetime, timedelta
+
 
 class TestMove(TransactionCase):
     def setUp(self, *args, **kwargs):
@@ -66,7 +68,7 @@ class TestMove(TransactionCase):
             'description': 'Machined Component',
             'default_code': 'PL-12345',
         })                                  
-        
+
         return result
     
     def test_null_putaway(self):
@@ -408,11 +410,13 @@ class TestMove(TransactionCase):
         self.assertEqual(move1.move_line_ids.location_dest_id.id, self.Shelf2.id)    
 
 
-    def test_noputaway_stock_newer(self):
+    def test_noputaway_stock_newer_FIFO(self):
         "Verify behaviour if override enabled and no putaway exists but stock exists"   
 
         #Enable override
         self.Stores.putaway_savespace = True
+        fifo_strategy = self.env['product.removal'].search([('method', '=', 'fifo')])
+        self.Stores.removal_strategy_id = fifo_strategy
 
         #create inventory
         self.inventoryCompA = self.env['stock.inventory'].create({
@@ -426,20 +430,26 @@ class TestMove(TransactionCase):
             'location_id': self.Shelf4.id,
         })
         self.inventoryCompA._action_start()
-        self.inventoryCompA.action_validate()            
+        self.inventoryCompA.action_validate()
+        in_date1 = datetime.now()
+        self.env['stock.quant']._update_available_quantity(self.CompA, self.Shelf4, 2.0, in_date=in_date1)                    
 
-        self.inventoryCompA = self.env['stock.inventory'].create({
+        self.inventoryCompA2 = self.env['stock.inventory'].create({
             'name': 'Second CompA Inventory'
         })      
-        self.inventoryLineCompA = self.env['stock.inventory.line'].create({
+        self.inventoryLineCompA2 = self.env['stock.inventory.line'].create({
             'product_id': self.CompA.id,
             'product_uom_id': self.uom_unit.id,
-            'inventory_id': self.inventoryCompA.id,
+            'inventory_id': self.inventoryCompA2.id,
             'product_qty': 3.0,
             'location_id': self.Shelf3.id,
         })
-        self.inventoryCompA._action_start()
-        self.inventoryCompA.action_validate()           
+        self.inventoryCompA2._action_start()
+        self.inventoryCompA2.action_validate()    
+
+        in_date2 = datetime.now() - timedelta(days=5)
+        self.env['stock.quant']._update_available_quantity(self.CompA, self.Shelf3, 3.0, in_date=in_date2)  
+
 
         #Create stock move
         move1 = self.env['stock.move'].create({
@@ -459,8 +469,70 @@ class TestMove(TransactionCase):
         self.assertEqual(len(move1.move_line_ids), 1)
 
         # check if the putaway was rightly applied
-        ##TODO: should be Shelf4 when things are working
+        #Shelf3 was FI
         self.assertEqual(move1.move_line_ids.location_dest_id.id, self.Shelf3.id)   
+
+    def test_noputaway_stock_newer_LIFO(self):
+        "Verify behaviour if override enabled and no putaway exists but stock exists"   
+
+        #Enable override
+        self.Stores.putaway_savespace = True
+        lifo_strategy = self.env['product.removal'].search([('method', '=', 'lifo')])
+        self.Stores.removal_strategy_id = lifo_strategy
+
+        #create inventory
+        self.inventoryCompA = self.env['stock.inventory'].create({
+            'name': 'Starting CompA Inventory'
+        })      
+        self.inventoryLineCompA = self.env['stock.inventory.line'].create({
+            'product_id': self.CompA.id,
+            'product_uom_id': self.uom_unit.id,
+            'inventory_id': self.inventoryCompA.id,
+            'product_qty': 2.0,
+            'location_id': self.Shelf4.id,
+        })
+        self.inventoryCompA._action_start()
+        self.inventoryCompA.action_validate()
+        in_date1 = datetime.now()
+        self.env['stock.quant']._update_available_quantity(self.CompA, self.Shelf4, 2.0, in_date=in_date1)                    
+
+        self.inventoryCompA2 = self.env['stock.inventory'].create({
+            'name': 'Second CompA Inventory'
+        })      
+        self.inventoryLineCompA2 = self.env['stock.inventory.line'].create({
+            'product_id': self.CompA.id,
+            'product_uom_id': self.uom_unit.id,
+            'inventory_id': self.inventoryCompA2.id,
+            'product_qty': 3.0,
+            'location_id': self.Shelf3.id,
+        })
+        self.inventoryCompA2._action_start()
+        self.inventoryCompA2.action_validate()    
+
+        in_date2 = datetime.now() - timedelta(days=5)
+        self.env['stock.quant']._update_available_quantity(self.CompA, self.Shelf3, 3.0, in_date=in_date2)  
+
+
+        #Create stock move
+        move1 = self.env['stock.move'].create({
+            'name': 'savespace_test_putaway_1',
+            'location_id': self.supplier_location.id,
+            'location_dest_id': self.Stores.id,
+            'product_id': self.CompA.id,
+            'product_uom': self.uom_unit.id,
+            'product_uom_qty': 100.0,
+        })
+        move1._action_confirm()
+        self.assertEqual(move1.state, 'confirmed')
+
+        # assignment
+        move1._action_assign()
+        self.assertEqual(move1.state, 'assigned')
+        self.assertEqual(len(move1.move_line_ids), 1)
+
+        # check if the putaway was rightly applied
+        #Shelf4 was LI
+        self.assertEqual(move1.move_line_ids.location_dest_id.id, self.Shelf4.id)          
 
     def test_null_noputaway_stock_newer(self):
         "Verify behaviour if override enabled and no putaway exists but stock exists"   
