@@ -42,12 +42,13 @@
         </function>                    
 
     <!-- Locations -->
+        <record id="dmo_JIT2.stock_location_Stock" model="stock.location">
+            <field name="removal_strategy_id" ref="stock.removal_lifo"/>
+        </record>
         <record id="stock_location_Stores" model="stock.location">
             <field name="name">Stores</field>
             <field name="putaway_savespace">True</field>
-            <!--<field name="location_id" model="stock.location"
-                eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').lot_stock_id.id"/>-->
-            <field name="location_id" ref="dmo_JIT2.stock_location_Stock"/>
+            <field name="location_id" ref="dmo_JIT2.stock_location_Stock"/>      
         </record>          
         <record id="stock_location_Vertical1" model="stock.location">
             <field name="name">Vertical 1</field>
