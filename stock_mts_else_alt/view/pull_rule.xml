@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_procurement_rule_form_mts_alt" model="ir.ui.view">
+        <field name="name">stock.rule.mts.alt</field>
+        <field name="model">stock.rule</field>
+        <field name="inherit_id" ref="stock.view_stock_rule_form" />
+        <field name="arch" type="xml">
+            <field name="procure_method" position="attributes">
+                <attribute name="invisible">0</attribute>
+                <attribute name="attrs">{'invisible': [('action', 'not in', ['pull', 'pull_push', 'branch'])]}</attribute>            
+            </field>          
+            <field name="procure_method" position="after">
+                <field name="alternate_rule_id" 
+                    attrs="{'invisible': [('action', '!=', 'branch')]}"/>
+            </field>
+        </field>
+    </record>
+</odoo>
