@@ -5,14 +5,15 @@
         <record id="stock_warhouse_DMO" model="stock.warehouse">
             <field name="name">DMO</field>
             <field name="code">DMO</field>
-        </record>   
+        </record>       
+
 
     <!-- Shortcuts -->
         <!-- create xml id for stock, "for more convenience" -->
         <function model="ir.model.data" name="_update_xmlids">
             <value model="base" eval="[{
                 'xml_id': 'dmo_JIT2.stock_location_Stock',
-                'record': obj().env.ref('dmo_JIT2.stock_warhouse_DMO').in_type_id
+                'record': obj().env.ref('dmo_JIT2.stock_warhouse_DMO').lot_stock_id
             }]"/>
         </function>  
 
@@ -38,7 +39,7 @@
                 'xml_id': 'dmo_JIT2.picking_type_int',
                 'record': obj().env.ref('dmo_JIT2.stock_warhouse_DMO').int_type_id
             }]"/>
-        </function>            
+        </function>                    
 
     <!-- Locations -->
         <record id="stock_location_Stores" model="stock.location">
@@ -90,7 +91,7 @@
             <field name="name">IITH</field>
             <field name="location_id" ref="stock_location_Builds"/>
             <field name="barcode">LOC-IITH</field>
-        </record>        
+        </record>              
 
         <!-- Route -->
         <record id="stock_location_route_ComponentResupply" model="stock.location.route">
@@ -217,7 +218,7 @@
             <field name="name">Kitting</field>
             <field name="action">pull</field>
             <field name="picking_type_id" ref="dmo_JIT2.picking_type_int"/>
-            <field name="location_src_id" ref="stock_location_Stock"/>
+            <field name="location_src_id" ref="dmo_JIT2.stock_location_Stock"/>
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="procure_method">make_to_stock</field>
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>
@@ -229,7 +230,7 @@
             <field name="name">Restock</field>
             <field name="action">pull</field>
             <field name="picking_type_id" ref="dmo_JIT2.picking_type_in"/>
-            <field name="location_id" ref="stock_location_Stock"/>   
+            <field name="location_id" ref="dmo_JIT2.stock_location_Stock"/>   
             <field name="location_src_id" ref="stock.stock_location_suppliers"/>
             <field name="procure_method">make_to_stock</field>
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>
@@ -485,7 +486,7 @@
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">5</field>
             <field name="bom_id" ref="mrp_bom_SubA"/>
-        </record>                      
+        </record>                            
 
         <!-- Settings -->
         <record id="my_config_settings" model="res.config.settings">
@@ -501,9 +502,7 @@
         <!-- Leftovers will be moved out after all pulls are accounted for -->      
         <record id="dmo_JIT2.picking_type_in" model="stock.picking.type">
             <field name="default_location_dest_id" ref="dmo_JIT2.stock_location_Stock"/>
-        </record>       
-
-             
+        </record>                   
 
         <!-- Clear default locations on Manufacturing Operation -->
         <!-- Turn on multilevel kitting -->
