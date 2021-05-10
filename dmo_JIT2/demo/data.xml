@@ -239,32 +239,31 @@
             <field name="group_propagation_option">none</field>
         </record>                                             
        
-
         <record id="stock_location_rule_MTOSubAssy" model="stock.rule">
-            <field name="name">Build Subassy</field>
+            <field name="name">Build in-place</field>
             <field name="action">manufacture</field>
-            <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').manu_type_id.id"/>
+            <field name="picking_type_id" ref="dmo_JIT2.picking_type_manu"/>
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="route_id" ref="stock_location_route_SubassemblyResupply"/>   
             <field name="sequence">25</field>  
-            <field name="propagate_cancel">True</field>            
-        </record>               
+            <field name="propagate_cancel">True</field>
+            <field name="group_propagation_option">none</field>            
+        </record>         
         <record id="stock_location_rule_MTOKittingSub" model="stock.rule">
-            <field name="name">Subassy On Demand</field>
-            <field name="action">pull</field>
-            <field name="picking_type_id" model="stock.picking.type"
-                eval="obj().env.ref('dmo_JIT2.stock_warhouse_DMO').manu_type_id.id"/>
-            <field name="location_src_id" ref="stock_location_Builds"/>   
-            <field name="location_id" model="product.template"
-                eval="obj().env.ref('dmo_JIT2.product_product_CompA').property_stock_production.id"/>   
-            <field name="procure_method">make_to_order</field>              
+            <field name="name">Kit pre-built</field>
+            <field name="action">branch</field>
+            <field name="picking_type_id" ref="dmo_JIT2.picking_type_int"/>
+            <field name="location_src_id" ref="dmo_JIT2.stock_location_Stock"/>   
+            <field name="location_id" ref="stock_location_Builds"/>   
+            <field name="procure_method">make_to_stock</field>              
             <field name="route_id" ref="stock_location_route_SubassemblyResupply"/>   
-            <field name="sequence">30</field>            
+            <field name="sequence">10</field>            
             <field name="propagate_cancel">True</field>  
-        </record>                      
-     
-
+            <field name="alternate_rule_id" ref="stock_location_rule_MTOSubAssy"/>
+            <field name="group_propagation_option">none</field>
+        </record>    
+             
+                  
         <!-- Supplier -->       
         <record id="product_supplierinfo_CompA" model="product.supplierinfo">
             <field name="product_tmpl_id" model="product.template"
