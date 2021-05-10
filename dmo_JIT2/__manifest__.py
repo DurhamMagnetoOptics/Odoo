@@ -16,7 +16,7 @@
         'mrp_bom_lot',
         'mrp_multilevel_kitting',
         'stock_location_savespace',
-        'stock_mts_else_alt'
+        'stock_mts_else_alt',
         'stock_replenish_inplace',
         'stock_serialise_per_product',
     ],
