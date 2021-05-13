@@ -34,16 +34,7 @@
             }]"/>
         </function>    
 
-    <!-- Settings -->
-        <record id="my_config_settings" model="res.config.settings">
-            <field name="group_stock_multi_locations" eval="True"/>
-            <field name="group_stock_adv_location" eval="True"/>
-        </record>
-        <function model="res.config.settings" name="execute">
-            <value model="res.config.settings"
-                search="[('id', '=', ref('my_config_settings'))]"/>
-        </function>     
-
+    <!-- Change settings on pre-created operations -->   
         <!-- Receipts go to top-level stock -->
         <!-- Leftovers will be moved out after all pulls are accounted for -->      
         <record id="dmo_JIT2.picking_type_in" model="stock.picking.type">

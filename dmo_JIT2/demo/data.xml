@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+    <!-- res.config Settings-->
+        <record id="my_config_settings" model="res.config.settings">
+            <field name="group_stock_multi_warehouses" eval="True"/>
+            <field name="group_stock_multi_locations" eval="True"/>
+            <field name="group_stock_adv_location" eval="True"/>
+        </record>
+        <function model="res.config.settings" name="execute">
+            <value model="res.config.settings"
+                search="[('id', '=', ref('my_config_settings'))]"/>
+        </function>  
+
     <!-- Warehouse -->
         <record id="stock_warhouse_DMO" model="stock.warehouse">
             <field name="name">DMO</field>
