@@ -10,13 +10,20 @@
         <function model="res.config.settings" name="execute">
             <value model="res.config.settings"
                 search="[('id', '=', ref('my_config_settings'))]"/>
-        </function>  
+        </function>      
 
-    <!-- Warehouse -->
-        <record id="stock_warhouse_DMO" model="stock.warehouse">
-            <field name="name">DMO</field>
-            <field name="code">DMO</field>
-        </record>                                    
-             
+    <!-- Change settings on pre-existing records -->   
+        <!-- Receipts go to top-level stock -->
+        <!-- Leftovers will be moved out after all pulls are accounted for -->      
+        <record id="stock.picking_type_in" model="stock.picking.type">
+            <field name="default_location_dest_id" ref="stock.stock_location_stock"/>
+        </record>                   
+
+        <!-- Clear default locations on Manufacturing Operation -->
+        <!-- Turn on multilevel kitting -->
+        <function name="write" model="stock.picking.type">
+            <value model="stock.warehouse" eval="obj().env.ref('stock.warehouse0').manu_type_id.id"/> <!-- This is the 'self' argument for the 'wrte' function.  Why is it the id and not the reference itself??-->
+            <value eval="{'multilevel_kitting': True, 'default_location_dest_id': None, 'default_location_src_id': None}"/>
+        </function>                
     </data>
 </odoo> 

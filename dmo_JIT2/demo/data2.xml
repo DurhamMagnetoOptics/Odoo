@@ -1,62 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-    <!-- Shortcuts -->
-        <!-- create xml id for stock, "for more convenience" -->
-        <function model="ir.model.data" name="_update_xmlids">
-            <value model="base" eval="[{
-                'xml_id': 'dmo_JIT2.stock_location_Stock',
-                'record': obj().env.ref('dmo_JIT2.stock_warhouse_DMO').lot_stock_id
-            }]"/>
-        </function>  
-
-        <!-- create xml id for manufacturing operation, "for more convenience" -->
-        <function model="ir.model.data" name="_update_xmlids">
-            <value model="base" eval="[{
-                'xml_id': 'dmo_JIT2.picking_type_manu',
-                'record': obj().env.ref('dmo_JIT2.stock_warhouse_DMO').manu_type_id
-            }]"/>
-        </function>   
-
-        <!-- create xml id for receipt operation, "for more convenience" -->
-        <function model="ir.model.data" name="_update_xmlids">
-            <value model="base" eval="[{
-                'xml_id': 'dmo_JIT2.picking_type_in',
-                'record': obj().env.ref('dmo_JIT2.stock_warhouse_DMO').in_type_id
-            }]"/>
-        </function>        
-
-        <!-- create xml id for internal operation, "for more convenience" -->
-        <function model="ir.model.data" name="_update_xmlids">
-            <value model="base" eval="[{
-                'xml_id': 'dmo_JIT2.picking_type_int',
-                'record': obj().env.ref('dmo_JIT2.stock_warhouse_DMO').int_type_id
-            }]"/>
-        </function>    
-
-    <!-- Change settings on pre-created operations -->   
-        <!-- Receipts go to top-level stock -->
-        <!-- Leftovers will be moved out after all pulls are accounted for -->      
-        <record id="dmo_JIT2.picking_type_in" model="stock.picking.type">
-            <field name="default_location_dest_id" ref="dmo_JIT2.stock_location_Stock"/>
-        </record>                   
-
-        <!-- Clear default locations on Manufacturing Operation -->
-        <!-- Turn on multilevel kitting -->
-        <record id="dmo_JIT2.picking_type_manu" model="stock.picking.type">
-            <field name="multilevel_kitting">True</field>
-            <field name="default_location_dest_id"></field>
-            <field name="default_location_src_id"></field>         
-        </record>  
-
     <!-- Locations -->
-        <record id="dmo_JIT2.stock_location_Stock" model="stock.location">
+        <record id="stock.stock_location_stock" model="stock.location">
             <field name="removal_strategy_id" ref="stock.removal_lifo"/>
         </record>
         <record id="stock_location_Stores" model="stock.location">
             <field name="name">Stores</field>
             <field name="putaway_savespace">True</field>
-            <field name="location_id" ref="dmo_JIT2.stock_location_Stock"/>      
+            <field name="location_id" ref="stock.stock_location_stock"/>      
         </record>          
         <record id="stock_location_Vertical1" model="stock.location">
             <field name="name">Vertical 1</field>
@@ -226,8 +178,8 @@
         <record id="stock_location_rule_Kitting" model="stock.rule">
             <field name="name">Kitting</field>
             <field name="action">pull</field>
-            <field name="picking_type_id" ref="dmo_JIT2.picking_type_int"/>
-            <field name="location_src_id" ref="dmo_JIT2.stock_location_Stock"/>
+            <field name="picking_type_id" ref="stock.picking_type_internal"/>
+            <field name="location_src_id" ref="stock.stock_location_stock"/>
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="procure_method">make_to_stock</field>
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>
@@ -238,8 +190,8 @@
         <record id="stock_location_rule_Restock" model="stock.rule">
             <field name="name">Restock</field>
             <field name="action">pull</field>
-            <field name="picking_type_id" ref="dmo_JIT2.picking_type_in"/>
-            <field name="location_id" ref="dmo_JIT2.stock_location_Stock"/>   
+            <field name="picking_type_id" ref="stock.picking_type_in"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>   
             <field name="location_src_id" ref="stock.stock_location_suppliers"/>
             <field name="procure_method">make_to_stock</field>
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>
@@ -251,7 +203,7 @@
         <record id="stock_location_rule_MTOSubAssy" model="stock.rule">
             <field name="name">Build in-place</field>
             <field name="action">manufacture</field>
-            <field name="picking_type_id" ref="dmo_JIT2.picking_type_manu"/>
+            <field name="picking_type_id" model="stock.warehouse" eval="obj().env.ref('stock.warehouse0').manu_type_id.id"/>
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="route_id" ref="stock_location_route_SubassemblyResupply"/>   
             <field name="sequence">25</field>  
@@ -261,8 +213,8 @@
         <record id="stock_location_rule_MTOKittingSub" model="stock.rule">
             <field name="name">Kit pre-built</field>
             <field name="action">branch</field>
-            <field name="picking_type_id" ref="dmo_JIT2.picking_type_int"/>
-            <field name="location_src_id" ref="dmo_JIT2.stock_location_Stock"/>   
+            <field name="picking_type_id" ref="stock.picking_type_internal"/>
+            <field name="location_src_id" ref="stock.stock_location_stock"/>   
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="procure_method">make_to_stock</field>              
             <field name="route_id" ref="stock_location_route_SubassemblyResupply"/>   
@@ -314,7 +266,7 @@
             <field name="product_max_qty">20</field>
             <field name="qty_multiple">1</field>
             <field name="warehouse_id" ref="stock_warhouse_DMO"/> 
-            <field name="location_id" ref="dmo_JIT2.stock_location_Stock"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
         </record>          
         <record id="stock_oderpoint_CompB" model="stock.warehouse.orderpoint">
             <field name="product_id" ref="product_product_CompB"/>
@@ -322,7 +274,7 @@
             <field name="product_max_qty">10</field>
             <field name="qty_multiple">1</field>
             <field name="warehouse_id" ref="stock_warhouse_DMO"/> 
-            <field name="location_id" ref="dmo_JIT2.stock_location_Stock"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
         </record> 
         <record id="stock_oderpoint_CompC" model="stock.warehouse.orderpoint">
             <field name="product_id" ref="product_product_CompC"/>
@@ -330,7 +282,7 @@
             <field name="product_max_qty">10</field>
             <field name="qty_multiple">1</field>
             <field name="warehouse_id" ref="stock_warhouse_DMO"/> 
-            <field name="location_id" ref="dmo_JIT2.stock_location_Stock"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
         </record>   
         <record id="stock_oderpoint_CompD" model="stock.warehouse.orderpoint">
             <field name="product_id" ref="product_product_CompD"/>
@@ -338,7 +290,7 @@
             <field name="product_max_qty">150</field>
             <field name="qty_multiple">1</field>
             <field name="warehouse_id" ref="stock_warhouse_DMO"/> 
-            <field name="location_id" ref="dmo_JIT2.stock_location_Stock"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
         </record>                    
 
         <!-- Resource: stock.inventory.line -->
