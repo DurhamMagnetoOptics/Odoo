@@ -25,5 +25,7 @@
     ],
     'demo': [
         'demo/data.xml',
+        'demo/data2.xml',
+        'demo/data3.xml',
     ]
 }
