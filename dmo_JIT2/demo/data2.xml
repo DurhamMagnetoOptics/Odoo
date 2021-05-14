@@ -304,12 +304,6 @@
             <field name="product_qty">2.0</field>
             <field name="location_id" ref="stock_location_Shelf2"/>
         </record>  
-        <function model="stock.inventory" name="_action_start">
-            <function eval="[[('state','=','draft'),('id', '=', ref('stock_inventory_CompA'))]]" model="stock.inventory" name="search"/>
-        </function>
-        <function model="stock.inventory" name="action_validate">
-            <function eval="[[('state','=','confirm'),('id', '=', ref('stock_inventory_CompA'))]]" model="stock.inventory" name="search"/>
-        </function>    
 
         <record id="stock_inventory_CompC" model="stock.inventory">
             <field name="name">Starting CompC Inventory</field>
@@ -321,12 +315,6 @@
             <field name="product_qty">20.0</field>
             <field name="location_id" ref="stock_location_Shelf3"/>
         </record>  
-        <function model="stock.inventory" name="_action_start">
-            <function eval="[[('state','=','draft'),('id', '=', ref('stock_inventory_CompC'))]]" model="stock.inventory" name="search"/>
-        </function>
-        <function model="stock.inventory" name="action_validate">
-            <function eval="[[('state','=','confirm'),('id', '=', ref('stock_inventory_CompC'))]]" model="stock.inventory" name="search"/>
-        </function>  
 
         <record id="stock_inventory_CompD" model="stock.inventory">
             <field name="name">Starting CompD Inventory</field>
@@ -337,13 +325,7 @@
             <field name="inventory_id" ref="stock_inventory_CompD"/>
             <field name="product_qty">200.0</field>
             <field name="location_id" ref="stock_location_Shelf1"/>
-        </record>  
-        <function model="stock.inventory" name="_action_start">
-            <function eval="[[('state','=','draft'),('id', '=', ref('stock_inventory_CompD'))]]" model="stock.inventory" name="search"/>
-        </function>
-        <function model="stock.inventory" name="action_validate">
-            <function eval="[[('state','=','confirm'),('id', '=', ref('stock_inventory_CompD'))]]" model="stock.inventory" name="search"/>
-        </function>                    
+        </record>                 
         
         <record id="stock_inventory_SubA" model="stock.inventory">
             <field name="name">Starting SubA Inventory</field>
@@ -354,13 +336,7 @@
             <field name="inventory_id" ref="stock_inventory_SubA"/>
             <field name="product_qty">1.0</field>
             <field name="location_id" ref="stock_location_Shelf4"/>
-        </record>  
-        <function model="stock.inventory" name="_action_start">
-            <function eval="[[('state','=','draft'),('id', '=', ref('stock_inventory_SubA'))]]" model="stock.inventory" name="search"/>
-        </function>
-        <function model="stock.inventory" name="action_validate">
-            <function eval="[[('state','=','confirm'),('id', '=', ref('stock_inventory_SubA'))]]" model="stock.inventory" name="search"/>
-        </function>            
+        </record>       
 
 
         <!-- BOM -->

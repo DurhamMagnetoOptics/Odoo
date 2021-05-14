@@ -21,8 +21,11 @@
 
         <!-- Clear default locations on Manufacturing Operation -->
         <!-- Turn on multilevel kitting -->
+        <!-- This first argument is the 'self' argument for the 'wrte' function.  Why is it the id and not the reference itself??-->
+        <!-- This first argument is the 'vals' argument for the 'wrte' function.-->
+        <!-- Final Odoo WTF:  when I had the above comments in line with the value tags, Odoo wasn't ignoring them, and was passing my comment as a third argument to the function.  Get it together, Odoo!!!  -->
         <function name="write" model="stock.picking.type">
-            <value model="stock.warehouse" eval="obj().env.ref('stock.warehouse0').manu_type_id.id"/> <!-- This is the 'self' argument for the 'wrte' function.  Why is it the id and not the reference itself??-->
+            <value model="stock.warehouse" eval="obj().env.ref('stock.warehouse0').manu_type_id.id"/>
             <value eval="{'multilevel_kitting': True, 'default_location_dest_id': None, 'default_location_src_id': None}"/>
         </function>                
     </data>
