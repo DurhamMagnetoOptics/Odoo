@@ -18,9 +18,9 @@ addon | version | summary
 [dmo_meta_data](dmo_meta_data/) | 13.0.1.0.0  | Adds various meta data fields of use to DMO.
 [mrp_bom_lot](mrp_bom_lot/) | 13.0.1.0.0  | Create a link between BOM and lot/serial number.
 [mrp_multilevel_kitting](mrp_multilevel_kitting/) | 13.1.1.0.0  | The source location for each component is set to a sublocation of the MOs soure.
+[stock_auto_transfer](stock_auto_transfer/) | 13.0.1.0.0  | Expand the stock scheduler to automate the creation of certain stock moves.
 [stock_location_savespace](stock_location_savespace/) | 13.0.1.0.0  | If a product is already in stock in a child location, and no other putaway rule applies, use the existing location as the putaway target.
 [stock_mts_else_alt](stock_mts_else_alt/) | 13.0.2.0.0 | Modified MTS else MTO to actually execute an alternate rule instead of automatically running MTS in the same source location.
 [stock_replenish_inplace](stock_replenish_inplace/) | 13.0.1.0.0  | Allows the user to request stock replenishment in a specific location.
 [stock_serialise_per_product](stock_serialise_per_product/) | 13.0.1.0.0  | Allows the selection of a serialisation sequence per product.
-
 [//]: # (end addons)
