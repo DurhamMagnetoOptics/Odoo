@@ -7,10 +7,13 @@
             <field name="arch" type="xml">
                 <sheet position="before">
                     <header>
-                        <button string="Cancel All" type="object"
-                        groups="stock.group_stock_manager"
-                        name="run_cancel_ephemeral"
-                        attrs="{'invisible': [('ephemeral', '=', False)]}"/>   
+                        <button string="Ephemeral: Cancel All" type="object"
+                            groups="stock.group_stock_manager"
+                            name="run_cancel_ephemeral"
+                            attrs="{'invisible': [('ephemeral', '=', False)]}"
+                            confirm="Don't do this!  Are you sure?"
+                            class="oe_read_only"
+                        />   
                     </header>   
                 </sheet>                       
                 <field name="warehouse_id" position="after">

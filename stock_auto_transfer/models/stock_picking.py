@@ -8,10 +8,8 @@ class PickingType(models.Model):
 
     ephemeral = fields.Boolean('Ephemeral', default=False)
 
-    @api.model
     def run_cancel_ephemeral(self):
-        for wiz in self:
-            wiz._cancel_ephemeral(None, None)
+        self._cancel_ephemeral(None, None)
         return {}      
 
     def _cancel_ephemeral(self, target_location_id, target_product_ids):

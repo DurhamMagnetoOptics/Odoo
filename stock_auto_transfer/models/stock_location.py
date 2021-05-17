@@ -9,23 +9,19 @@ class Location(models.Model):
     auto_empty_target_id = fields.Many2one('stock.location', string="Send excess to") 
     auto_empty_operation_id = fields.Many2one('stock.picking.type', string="Send excess using")   
 
-    @api.model
     def run_auto_fulfill(self):
-        for wiz in self:
-            #depth-first so the procurement location is as specific as possible
-            for c_id in wiz.child_ids:
-                c_id._recursive_auto_fulfill()
-            #Once children are done, do me      
-            wiz._auto_fulfill()
+        #depth-first so the procurement location is as specific as possible
+        for c_id in self.child_ids:
+            c_id.run_auto_fulfill()
+        #Once children are done, do me      
+        self._auto_fulfill()
 
     def _auto_fulfill(self):
         #TODO: generate procurement for -forecast_qty in me for each stock in self _only_ (not in children of self) with forecast_qty < 0
         return {}       
 
-    @api.model
     def run_auto_empty(self):
-        for wiz in self:
-            wiz._auto_empty(None)
+        self._auto_empty(None)
         return {}   
 
     def _auto_empty(self, target_product_ids):
