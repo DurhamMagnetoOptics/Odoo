@@ -5,9 +5,17 @@
             <field name="model">stock.picking.type</field>
             <field name="inherit_id" ref="stock.view_picking_type_form"/>
             <field name="arch" type="xml">
+                <sheet position="before">
+                    <header>
+                        <button string="Cancel All" type="object"
+                        groups="stock.group_stock_manager"
+                        name="run_cancel_ephemeral"
+                        attrs="{'invisible': [('ephemeral', '=', False)]}"/>   
+                    </header>   
+                </sheet>                       
                 <field name="warehouse_id" position="after">
                     <field name="ephemeral" />
-                </field>
+                </field>   
             </field>
         </record>
 </odoo>

@@ -11,20 +11,21 @@ class Location(models.Model):
 
     @api.model
     def run_auto_fulfill(self):
-        #depth-first so the procurement location is as specific as possible
-        for c_id in self.child_ids:
-            c_id._recursive_auto_fulfill()
-        #Once children are done, do me      
-        self.run_auto_fulfill()
+        for wiz in self:
+            #depth-first so the procurement location is as specific as possible
+            for c_id in wiz.child_ids:
+                c_id._recursive_auto_fulfill()
+            #Once children are done, do me      
+            wiz._auto_fulfill()
 
-    @api.model
     def _auto_fulfill(self):
         #TODO: generate procurement for -forecast_qty in me for each stock in self _only_ (not in children of self) with forecast_qty < 0
         return {}       
 
     @api.model
     def run_auto_empty(self):
-        self._run_auto_empty(None)
+        for wiz in self:
+            wiz._auto_empty(None)
         return {}   
 
     def _auto_empty(self, target_product_ids):

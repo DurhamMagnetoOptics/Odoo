@@ -10,12 +10,20 @@ class PickingType(models.Model):
 
     @api.model
     def run_cancel_ephemeral(self):
-        self._cancel_ephemeral(None, None)
+        for wiz in self:
+            wiz._cancel_ephemeral(None, None)
         return {}      
 
-    @api.model
     def _cancel_ephemeral(self, target_location_id, target_product_ids):
-        target_ops = []
+        target_picks = self._prepare_ephemeral(target_location_id, target_product_ids)
+        #TODO: cancel all target_picks
+        pass
+        return {}   
+
+
+    @api.model
+    def _prepare_ephemeral(self, target_location_id, target_product_ids):
+        selected_pickings = []    
         if target_location_id and target_product_ids:
             pass
             #TODO append all operations of my type from location_id containig product_ids
@@ -27,20 +35,20 @@ class PickingType(models.Model):
             #TODO append all operations of my type containig product_ids
         else:
             pass
-            #TODO append all operations of my type
-        #TODO: cancel all target_ops
-        pass
-        return {}   
+            #TODO append all operations of my type 
+        return selected_pickings  
 
 class Picking(models.Model):
     _inherit = "stock.picking"
 
+    @api.model
     def action_done(self):
         res = super().action_done
-        if self.location_dest_id.auto_empty:
-            self.picking_type_id._cancel_ephemeral(self.location_dest_id, self.move_line_ids.product_id)
-            self._assign_related(self.location_dest_id, self.move_line_ids.product_id)
-            self.location_dest_id._auto_empty(self.move_line_ids.product_id)
+        for wiz in self:
+            if wiz.location_dest_id.auto_empty:
+                wiz.picking_type_id._cancel_ephemeral(wiz.location_dest_id, wiz.move_line_ids.product_id)
+                wiz._assign_related(wiz.location_dest_id, wiz.move_line_ids.product_id)
+                wiz.location_dest_id._auto_empty(wiz.move_line_ids.product_id)
         return res
 
     def _assign_related(self, target_location_id, target_product_ids):
