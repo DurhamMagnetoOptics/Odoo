@@ -39,14 +39,12 @@ class PickingType(models.Model):
 class Picking(models.Model):
     _inherit = "stock.picking"
 
-    @api.model
     def action_done(self):
-        res = super().action_done
-        for wiz in self:
-            if wiz.location_dest_id.auto_empty:
-                wiz.picking_type_id._cancel_ephemeral(wiz.location_dest_id, wiz.move_line_ids.product_id)
-                wiz._assign_related(wiz.location_dest_id, wiz.move_line_ids.product_id)
-                wiz.location_dest_id._auto_empty(wiz.move_line_ids.product_id)
+        res = super().action_done()
+        if self.location_dest_id and self.location_dest_id.auto_empty:
+            self.picking_type_id._cancel_ephemeral(self.location_dest_id, self.move_line_ids.product_id)
+            self._assign_related(self.location_dest_id, self.move_line_ids.product_id)
+            self.location_dest_id._auto_empty(self.move_line_ids.product_id)
         return res
 
     def _assign_related(self, target_location_id, target_product_ids):
