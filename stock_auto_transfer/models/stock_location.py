@@ -25,7 +25,7 @@ class Location(models.Model):
         return {}   
 
     def _auto_empty(self, target_product_ids):
-        #TODO: Generate auto_empty_operation_id's for forecast_qty from me to auto_empty_target_id for product_id (or all products) in self _only_ (not in children of self) with forecast_qty > 0
+        #TODO: Generate (and assign!) auto_empty_operation_id's for forecast_qty from me to auto_empty_target_id for product_id (or all products) in self _only_ (not in children of self) with forecast_qty > 0
         pass
 
 
