@@ -15,27 +15,28 @@ class Picking(models.Model):
     #Note: move_lines are the stock.moves, and picks.move_line_ids are the stock.move.lines.
     # For planned transfers, move_lines exist immediate and move_line_ids are only filled in once moves are reserved.
     # For immediate transfers, there could be no move_lines, and only move_line_ids 
-    # On the other hand, for immediate transfers they'll never be in the waiting/confirmed/assigned states, only draft/done/cancelled.  So they're irrelevant here.
     
     def action_done(self):
         res = super().action_done()
-        if self.location_dest_id and self.location_dest_id.auto_empty:
-            self._unreserve_all_ephemeral(self.location_dest_id, self.move_lines.product_id)
-            self._reserve_all_ephemeral(self.location_dest_id, self.move_lines.product_id)
-            self.location_dest_id._auto_empty(self.move_lines.product_id)
+        if self.location_dest_id.auto_empty:
+            myprods = self.move_lines.product_id if self.move_lines else self.move_line_ids.product_id 
+            if not myprods: return res
+            self._unreserve_all_ephemeral(self.location_dest_id, myprods)
+            self._reserve_all_ephemeral(self.location_dest_id, myprods)
+            self.location_dest_id._auto_empty(myprods)
         return res
 
     def _get_ephemeral(self, states, target_location_id, target_product_ids):
         #We can do a lot less filtering than the similar OCA module, becuase we have the ephemeral flag to narrow
         # down our results, so there's no concern about picking moves that are part of an MTO chain, etc.
-        pick_types = self.env['stock.picking.types'].search([('ephemeral','=',True)])
+        pick_types = self.env['stock.picking.type'].search([('ephemeral','=',True)])
         pick_type_ids = pick_types.mapped('id')
         search_domains = [('picking_type_id','in',pick_type_ids),('state','in',states)]
         
         if target_location_id:
             search_domains.append(('location_id','=',target_location_id.id))
         
-        picks = self.env['stock.picking'].search(search_domains)
+        picks = self.env['stock.picking'].search(search_domains, order='priority desc, scheduled_date asc')
 
         if target_product_ids:
             #picks = picks.filtered(lambda r: [pid for pid in r.move_lines.product_id.mapped('id') if pid in target_product_ids.mapped('id')])
@@ -46,11 +47,11 @@ class Picking(models.Model):
         return picks  
 
     def _reserve_all_ephemeral(self, target_location_id, target_product_ids):
-        target_picks = self._get_ephemeral(['waiting','confirmed'], target_location_id, target_product_ids)
-        target_picks.action_assign()
-        return {} 
+        target_picks = self._get_ephemeral(['waiting','confirmed','assigned'], target_location_id, target_product_ids) #include assigned because a picking will be 'assigned' if its moves are mix of assigned and confirmed.
+        if target_picks:
+            target_picks.action_assign()
 
     def _unreserve_all_ephemeral(self, target_location_id, target_product_ids):
         target_picks = self._get_ephemeral(['assigned'], target_location_id, target_product_ids)
-        target_picks.do_unreserve()
-        return {}          
+        if target_picks:
+            target_picks.do_unreserve()       
