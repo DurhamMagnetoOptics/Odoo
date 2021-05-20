@@ -10,23 +10,51 @@
         <function model="res.config.settings" name="execute">
             <value model="res.config.settings"
                 search="[('id', '=', ref('my_config_settings'))]"/>
-        </function>      
+        </function>   
 
-    <!-- Change settings on pre-existing records -->   
-        <!-- Receipts go to top-level stock -->
-        <!-- Leftovers will be moved out after all pulls are accounted for -->      
-        <record id="stock.picking_type_in" model="stock.picking.type">
-            <field name="default_location_dest_id" ref="stock.stock_location_stock"/>
-        </record>                   
+    <!-- First create the three records that we need to use in creating all the others:
+    Warehouse
+    Stores
+    Auto Transfer-->
+        <record id="stock_warehouse_DMO" model="stock.warehouse">
+            <field name="name">DMO</field>
+            <field name="code">DMO</field>
+        </record>    
 
+        <record id="stock_location_Stores" model="stock.location">
+            <field name="name">Stores</field>
+            <field name="putaway_savespace">True</field>
+            <field name="location_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>      
+        </record>    
+
+    <!-- TODO:
+        Create Auto Transfer and set ephemeral to true
+        Set Stock auto_empty type to use auto transfer
+        Set operation type to Auto Transfer for all three non-manufacutring rules-->
+
+
+    <!-- Change settings on two records that are create automatically when creating the warehosue -->                   
         <!-- Clear default locations on Manufacturing Operation -->
         <!-- Turn on multilevel kitting -->
         <!-- This first argument is the 'self' argument for the 'wrte' function.  Why is it the id and not the reference itself??-->
         <!-- This first argument is the 'vals' argument for the 'wrte' function.-->
         <!-- Final Odoo WTF:  when I had the above comments in line with the value tags, Odoo wasn't ignoring them, and was passing my comment as a third argument to the function.  Get it together, Odoo!!!  -->
         <function name="write" model="stock.picking.type">
-            <value model="stock.warehouse" eval="obj().env.ref('stock.warehouse0').manu_type_id.id"/>
+            <value model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').manu_type_id.id"/>
             <value eval="{'multilevel_kitting': True, 'default_location_dest_id': None, 'default_location_src_id': None}"/>
-        </function>                
+        </function>  
+
+        <function name="write" model="stock.location">
+            <value model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>
+            <value model="stock.warehouse" eval="{'removal_strategy_id': obj().env.ref('stock.removal_lifo').id, 'auto_empty': True, 'auto_empty_target_id': obj().env.ref('dmo_JIT2.stock_location_Stores').id}"/>
+        </function> 
+
+        <!-- Receipts go to top-level stock -->
+        <!-- Leftovers will be moved out after all pulls are accounted for -->   
+        <!--TODO: Isn't this already the default location fot receipt operation??
+        <function name="write" model="stock.picking.type">
+            <value model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').in_type_id.id"/>
+            <value model="stock.warehouse" eval="{'default_location_dest_id': obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id}"/>
+        </function>      -->                              
     </data>
 </odoo> 
