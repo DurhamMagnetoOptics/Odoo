@@ -5,8 +5,7 @@ class StockMove(models.Model):
 
     @api.model
     def run_unreserve_ephemeral(self):
-        self._unreserve_all_ephemeral(None, None)
-        return {}       
+        return self._unreserve_all_ephemeral(None, None)    
 
     def _action_done(self, cancel_backorder=False):
         res = super()._action_done(cancel_backorder)
@@ -44,9 +43,15 @@ class StockMove(models.Model):
         target_moves = self._get_ephemeral(['waiting','confirmed','partially_available'], target_location_id, target_product_id) #include assigned to catch part-reserved.
         if target_moves:
             target_moves._action_assign()
+            return True
+        else:
+            return False
 
     @api.model
     def _unreserve_all_ephemeral(self, target_location_id, target_product_id):
         target_moves = self._get_ephemeral(['partially_available','assigned'], target_location_id, target_product_id)
         if target_moves:
-            target_moves._do_unreserve()        
+            target_moves._do_unreserve()   
+            return True
+        else:
+            return False     
