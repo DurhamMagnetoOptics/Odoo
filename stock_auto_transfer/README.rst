@@ -4,11 +4,11 @@ Stock Auto Transfer
 
 1. Creates a new "ephemeral" option for Operation Types.  
 
-2. Creates a routine to automatically generate transfers to clear a location of surplus stock, and assigns them.
+2. Creates a routine to automatically generate moves to clear a location of surplus stock, and assigns them.
 
 3. Creates a routine to automatically generate procurements to satisfy all stock shortfalls in a location.
 
-4. Creates a routine to automatically cancel all unstarted "ephemeral" operations from a target location, containing target products
+4. Creates a routine to automatically unreserve unstarted "ephemeral" moves from a target location, containing target products
 
 5. Creates a routine to automatically assign all moves from a target location, containing target products.
 
