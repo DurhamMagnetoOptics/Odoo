@@ -29,7 +29,15 @@
             <field name="name">Shelf 4</field>
             <field name="location_id" ref="stock_location_Vertical2"/>
             <field name="barcode">LOC-2-4</field>
-        </record>                       
+        </record>     
+        <record id="stock_location_Crate_Bays" model="stock.location">
+            <field name="name">Crate Bay 1</field>
+            <field name="location_id" ref="stock_location_Stores"/>
+        </record>    
+        <record id="stock_location_Crate_Bays" model="stock.location">
+            <field name="name">Crate Bay 2</field>
+            <field name="location_id" ref="stock_location_Stores"/>
+        </record>                                
         <record id="stock_location_Builds" model="stock.location">
             <field name="name">Builds</field>
             <field name="location_id" model="stock.location"
@@ -258,7 +266,7 @@
             <field name="product_id" ref="product_product_CompA"/>
             <field name="product_min_qty">20</field>
             <field name="product_max_qty">20</field>
-            <field name="qty_multiple">1</field>
+            <field name="qty_multiple">20</field>
             <field name="warehouse_id" ref="dmo_JIT2.stock_warehouse_DMO"/> 
             <field name="location_id" model="stock.location" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>
         </record>          
@@ -266,7 +274,7 @@
             <field name="product_id" ref="product_product_CompB"/>
             <field name="product_min_qty">10</field>
             <field name="product_max_qty">10</field>
-            <field name="qty_multiple">1</field>
+            <field name="qty_multiple">20</field>
             <field name="warehouse_id" ref="dmo_JIT2.stock_warehouse_DMO"/> 
             <field name="location_id" model="stock.location" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>
         </record> 
@@ -282,7 +290,7 @@
             <field name="product_id" ref="product_product_CompD"/>
             <field name="product_min_qty">150</field>
             <field name="product_max_qty">150</field>
-            <field name="qty_multiple">1</field>
+            <field name="qty_multiple">100</field>
             <field name="warehouse_id" ref="dmo_JIT2.stock_warehouse_DMO"/> 
             <field name="location_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>
         </record>                    
