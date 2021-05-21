@@ -7,10 +7,7 @@
         <field name="arch" type="xml">
             <field name="company_registry" position="after">
                 <field name="require_ref" string="Require Reference in Vendor Bills" />
-            </field>
-            <field name="company_registry" position="after">
-                <field name="dmo_aged" string="DMO-style Aged reports" />
-            </field>            
+            </field>          
         </field>
     </record>
 </odoo>
