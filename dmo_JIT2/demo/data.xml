@@ -26,11 +26,18 @@
             <field name="putaway_savespace">True</field>
             <field name="location_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>      
         </record>    
-
-    <!-- TODO:
-        Create Auto Transfer and set ephemeral to true
-        Set Stock auto_empty type to use auto transfer
-        Set operation type to Auto Transfer for all three non-manufacutring rules-->
+        <record id="auto_transfer_DMO" model="stock.picking.type">
+            <field name="name">Auto Transfer</field>
+            <field name="sequence_code">AT</field>
+            <!--<field name="default_location_src_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>-->                  
+            <!--<field name="default_location_dest_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>-->                  
+            <field name="code">internal</field>
+            <field name="return_picking_type_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').int_type_id.id"/>                  
+            <field name="warehouse_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').id"/>                  
+            <field name="show_operations">True</field>
+            <field name="company_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').company_id.id"/>                  
+            <field name="ephemeral">True</field>
+        </record>  
 
 
     <!-- Change settings on two records that are create automatically when creating the warehosue -->                   
@@ -46,7 +53,7 @@
 
         <function name="write" model="stock.location">
             <value model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>
-            <value model="stock.warehouse" eval="{'removal_strategy_id': obj().env.ref('stock.removal_lifo').id, 'auto_empty': True, 'auto_empty_target_id': obj().env.ref('dmo_JIT2.stock_location_Stores').id}"/>
+            <value model="stock.warehouse" eval="{'removal_strategy_id': obj().env.ref('stock.removal_lifo').id, 'auto_empty': True, 'auto_empty_target_id': obj().env.ref('dmo_JIT2.stock_location_Stores').id, 'auto_empty_operation_id': obj().env.ref('dmo_JIT2.auto_transfer_DMO').id}"/>
         </function> 
 
         <!-- Receipts go to top-level stock -->

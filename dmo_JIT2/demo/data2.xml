@@ -171,7 +171,7 @@
         <record id="stock_location_rule_Kitting" model="stock.rule">
             <field name="name">Kitting</field>
             <field name="action">pull</field>
-            <field name="picking_type_id" ref="stock.picking_type_internal"/>
+            <field name="picking_type_id" ref="dmo_JIT2.auto_transfer_DMO"/>
             <field name="location_src_id" model="stock.location" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="procure_method">make_to_stock</field>
@@ -183,7 +183,7 @@
         <record id="stock_location_rule_Restock" model="stock.rule">
             <field name="name">Restock</field>
             <field name="action">pull</field>
-            <field name="picking_type_id" ref="stock.picking_type_in"/>
+            <field name="picking_type_id" model="stock.picking.type" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').in_type_id.id"/>
             <field name="location_id" model="stock.location" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>   
             <field name="location_src_id" ref="stock.stock_location_suppliers"/>
             <field name="procure_method">make_to_stock</field>
@@ -206,7 +206,7 @@
         <record id="stock_location_rule_MTOKittingSub" model="stock.rule">
             <field name="name">Kit pre-built</field>
             <field name="action">branch</field>
-            <field name="picking_type_id" ref="stock.picking_type_internal"/>
+            <field name="picking_type_id" ref="dmo_JIT2.auto_transfer_DMO"/>
             <field name="location_src_id" model="stock.location" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>   
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="procure_method">make_to_stock</field>              
