@@ -24,10 +24,11 @@
         <record id="stock_location_Stores" model="stock.location">
             <field name="name">Stores</field>
             <field name="putaway_savespace">True</field>
+            <field name="usage">view</field>
             <field name="location_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>      
         </record>    
         <record id="auto_transfer_DMO" model="stock.picking.type">
-            <field name="name">Auto Transfer</field>
+            <field name="name">Auto Transfers</field>
             <field name="sequence_code">AT</field>
             <!--<field name="default_location_src_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>-->                  
             <!--<field name="default_location_dest_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>-->                  
@@ -37,6 +38,9 @@
             <field name="show_operations">True</field>
             <field name="company_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').company_id.id"/>                  
             <field name="ephemeral">True</field>
+            <field name="color" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').int_type_id.color"/>
+            <field name="sequence" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').int_type_id.sequence"/>
+            
         </record>  
 
 
@@ -55,6 +59,11 @@
             <value model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>
             <value model="stock.warehouse" eval="{'removal_strategy_id': obj().env.ref('stock.removal_lifo').id, 'auto_empty': True, 'auto_empty_target_id': obj().env.ref('dmo_JIT2.stock_location_Stores').id, 'auto_empty_operation_id': obj().env.ref('dmo_JIT2.auto_transfer_DMO').id}"/>
         </function> 
+
+        <function name="write" model="stock.picking.type">
+            <value model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').int_type_id.id"/>
+            <value eval="{'name': 'Manual Transfers'}"/>
+        </function>          
 
         <!-- Receipts go to top-level stock -->
         <!-- Leftovers will be moved out after all pulls are accounted for -->   

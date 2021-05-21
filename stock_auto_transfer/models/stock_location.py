@@ -16,10 +16,10 @@ class Location(models.Model):
             for c_id in loc.child_ids:
                 c_id.run_auto_fulfill()
             #Once children are done, do me      
-            loc._auto_fulfill()
+            loc._auto_fulfill(override=True)
 
-    def _auto_fulfill(self):
-        if self.auto_fulfill:
+    def _auto_fulfill(self, override = False):
+        if self.auto_fulfill or override:
             #TODO: totally untested!
             shortfall_products = self.env['product.product'].with_context({},location=self.id, compute_child=False).search([('virtual_available','<',0.0)])
             procs = []
@@ -43,13 +43,23 @@ class Location(models.Model):
             loc._auto_empty(None)
         return {}   
 
-    def _auto_empty(self, target_product_id):
+    def run_auto_empty_all(self):
+        for loc in self:
+            loc._auto_empty(None, True)
+        return {}         
+
+    def _auto_empty(self, target_product_id, include_children=False):
         if self.auto_empty and self.auto_empty_target_id and self.auto_empty_operation_id:
-            #TODO: totally untested!
+            #This was originally based on virtual_available (qty - incoming + outgoing)
+            # That works well for clearing somewhere like builds, and for putting away leftovers from goods in.
+            # But if we have a delivery when current stock is alreayd in excess, then it predicts the excess that we will ahve after the deliveyr comes in, and requests that that amount be moved
+            # to stores, but since there's already some in stores, that amount is reserved from the putaway order, which becomes partially available as stores/shelf 1 -> stores/shelf 1.
+            # What we know is that auto_empty always runs last, so we can assume it happens _after_ all reservations.  More to the point, it's ephemeral and there's no point in "planning" a putaway
+            # So we can base it off of stock in excess of reservations (free_qty) instead of final predicted quantity (virtual_available)
             if target_product_id: #target_product_id might be None, not just an empty recordset
-                excess_products = target_product_id.with_context({},location=self.id, compute_child=False).filtered(lambda r: r.virtual_available > 0.0)
+                excess_products = target_product_id.with_context({},location=self.id, compute_child=include_children).filtered(lambda r: r.free_qty > 0.0)
             else:
-                excess_products = self.env['product.product'].with_context({},location=self.id, compute_child=False).search([('virtual_available','>',0.0)])
+                excess_products = self.env['product.product'].with_context({},location=self.id, compute_child=include_children).search([('free_qty','>',0.0)])
 
             for prod in excess_products:
                 new_move = self.env['stock.move'].create({
@@ -58,7 +68,7 @@ class Location(models.Model):
                     'location_dest_id': self.auto_empty_target_id.id,
                     'product_id': prod.id,
                     'product_uom': prod.uom_id.id,
-                    'product_uom_qty': prod.virtual_available,
+                    'product_uom_qty': prod.free_qty,
                     'picking_type_id': self.auto_empty_operation_id.id
                 })  
                 new_move._action_confirm()

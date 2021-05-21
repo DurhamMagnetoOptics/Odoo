@@ -35,6 +35,7 @@
             <field name="location_id" model="stock.location"
                 eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').view_location_id.id"/>
             <field name="auto_fulfill">True</field>
+            <field name="usage">view</field>
         </record>          
         <record id="stock_location_HUST" model="stock.location">
             <field name="name">HUST</field>

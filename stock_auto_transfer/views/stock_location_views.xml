@@ -12,12 +12,18 @@
                         attrs="{'invisible': [('auto_fulfill', '=', False)]}"
                         class="oe_read_only"
                     />      
-                    <button string="Clear All Excess" type="object"
+                    <button string="Clear Excess: Exclude Sub-locations" type="object"
                         groups="stock.group_stock_manager"
                         name="run_auto_empty"
                         attrs="{'invisible': ['|','|',('auto_empty', '=', False),('auto_empty_target_id', '=', False),('auto_empty_operation_id', '=', False)]}"
                         class="oe_read_only"
-                    />                                  
+                    />
+                    <button string="Clear Excess: Include Sub-locations" type="object"
+                        groups="stock.group_stock_manager"
+                        name="run_auto_empty_all"
+                        attrs="{'invisible': ['|','|',('auto_empty', '=', False),('auto_empty_target_id', '=', False),('auto_empty_operation_id', '=', False)]}"
+                        class="oe_read_only"
+                    />                                                       
                 </header>   
             </sheet>              
             <field name="removal_strategy_id" position="after">
