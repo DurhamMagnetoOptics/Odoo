@@ -1,0 +1,37 @@
+<odoo>
+    <record id="stock_auto_transfer_inherit_stock_location_form_view" model="ir.ui.view">
+        <field name="name">Auto Transfer Location</field>
+        <field name="model">stock.location</field>
+        <field name="inherit_id" ref="stock.view_location_form"/>
+        <field name="arch" type="xml">
+            <sheet position="before">
+                <header>
+                    <button string="Meet All Needs" type="object"
+                        groups="stock.group_stock_manager"
+                        name="run_auto_fulfill"
+                        attrs="{'invisible': [('auto_fulfill', '=', False)]}"
+                        class="oe_read_only"
+                    />      
+                    <button string="Clear Excess: Exclude Sub-locations" type="object"
+                        groups="stock.group_stock_manager"
+                        name="run_auto_empty"
+                        attrs="{'invisible': ['|','|',('auto_empty', '=', False),('auto_empty_target_id', '=', False),('auto_empty_operation_id', '=', False)]}"
+                        class="oe_read_only"
+                    />
+                    <button string="Clear Excess: Include Sub-locations" type="object"
+                        groups="stock.group_stock_manager"
+                        name="run_auto_empty_all"
+                        attrs="{'invisible': ['|','|',('auto_empty', '=', False),('auto_empty_target_id', '=', False),('auto_empty_operation_id', '=', False)]}"
+                        class="oe_read_only"
+                    />                                                       
+                </header>   
+            </sheet>              
+            <field name="removal_strategy_id" position="after">
+                <field name="auto_fulfill" />
+                <field name="auto_empty" />
+                <field name="auto_empty_target_id" attrs="{'invisible': [('auto_empty', '=', False)]}"/>
+                <field name="auto_empty_operation_id" attrs="{'invisible': [('auto_empty', '=', False)]}"/>
+            </field>
+        </field>
+    </record>
+</odoo>

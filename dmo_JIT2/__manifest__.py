@@ -15,6 +15,7 @@
         'dmo_meta_data',
         'mrp_bom_lot',
         'mrp_multilevel_kitting',
+        'stock_auto_transfer',
         'stock_location_savespace',
         'stock_mts_else_alt',
         'stock_replenish_inplace',

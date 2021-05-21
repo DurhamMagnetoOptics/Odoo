@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-    <!-- Locations -->
-        <record id="stock.stock_location_stock" model="stock.location">
-            <field name="removal_strategy_id" ref="stock.removal_lifo"/>
-        </record>
-        <record id="stock_location_Stores" model="stock.location">
-            <field name="name">Stores</field>
-            <field name="putaway_savespace">True</field>
-            <field name="location_id" ref="stock.stock_location_stock"/>      
-        </record>          
+    <!-- Locations -->         
         <record id="stock_location_Vertical1" model="stock.location">
             <field name="name">Vertical 1</field>
             <field name="location_id" ref="stock_location_Stores"/>
@@ -41,7 +33,9 @@
         <record id="stock_location_Builds" model="stock.location">
             <field name="name">Builds</field>
             <field name="location_id" model="stock.location"
-                eval="obj().env.ref('stock.warehouse0').view_location_id.id"/>
+                eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').view_location_id.id"/>
+            <field name="auto_fulfill">True</field>
+            <field name="usage">view</field>
         </record>          
         <record id="stock_location_HUST" model="stock.location">
             <field name="name">HUST</field>
@@ -70,7 +64,7 @@
             <field name="suffix">BB</field>
             <field name="padding">4</field>
             <field name="number_increment">5</field>
-            <field name="company_id" model="res.company" eval="obj().env.ref('stock.warehouse0').company_id.id"/>
+            <field name="company_id" model="res.company" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').company_id.id"/>
             <field name="implementation">standard</field>
             <field name="name">TestSeq2</field>
         </record>            
@@ -91,7 +85,7 @@
             <field name="purchase_ok">False</field>             
             <field name="tracking">serial</field>
             <field name="link_BOM_to_lot">True</field>
-            <field name="company_id" model="res.company" eval="obj().env.ref('stock.warehouse0').company_id.id"/>
+            <field name="company_id" model="res.company" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').company_id.id"/>
             <field name="sequence_id" ref="ir_sequence_testseq2"/>
         </record>    
         <record id="product_product_SubA" model="product.product">
@@ -178,8 +172,8 @@
         <record id="stock_location_rule_Kitting" model="stock.rule">
             <field name="name">Kitting</field>
             <field name="action">pull</field>
-            <field name="picking_type_id" ref="stock.picking_type_internal"/>
-            <field name="location_src_id" ref="stock.stock_location_stock"/>
+            <field name="picking_type_id" ref="dmo_JIT2.auto_transfer_DMO"/>
+            <field name="location_src_id" model="stock.location" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="procure_method">make_to_stock</field>
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>
@@ -190,8 +184,8 @@
         <record id="stock_location_rule_Restock" model="stock.rule">
             <field name="name">Restock</field>
             <field name="action">pull</field>
-            <field name="picking_type_id" ref="stock.picking_type_in"/>
-            <field name="location_id" ref="stock.stock_location_stock"/>   
+            <field name="picking_type_id" model="stock.picking.type" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').in_type_id.id"/>
+            <field name="location_id" model="stock.location" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>   
             <field name="location_src_id" ref="stock.stock_location_suppliers"/>
             <field name="procure_method">make_to_stock</field>
             <field name="route_id" ref="stock_location_route_ComponentResupply"/>
@@ -203,7 +197,7 @@
         <record id="stock_location_rule_MTOSubAssy" model="stock.rule">
             <field name="name">Build in-place</field>
             <field name="action">manufacture</field>
-            <field name="picking_type_id" model="stock.warehouse" eval="obj().env.ref('stock.warehouse0').manu_type_id.id"/>
+            <field name="picking_type_id" model="stock.picking.type" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').manu_type_id.id"/>
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="route_id" ref="stock_location_route_SubassemblyResupply"/>   
             <field name="sequence">25</field>  
@@ -213,8 +207,8 @@
         <record id="stock_location_rule_MTOKittingSub" model="stock.rule">
             <field name="name">Kit pre-built</field>
             <field name="action">branch</field>
-            <field name="picking_type_id" ref="stock.picking_type_internal"/>
-            <field name="location_src_id" ref="stock.stock_location_stock"/>   
+            <field name="picking_type_id" ref="dmo_JIT2.auto_transfer_DMO"/>
+            <field name="location_src_id" model="stock.location" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>   
             <field name="location_id" ref="stock_location_Builds"/>   
             <field name="procure_method">make_to_stock</field>              
             <field name="route_id" ref="stock_location_route_SubassemblyResupply"/>   
@@ -265,32 +259,32 @@
             <field name="product_min_qty">20</field>
             <field name="product_max_qty">20</field>
             <field name="qty_multiple">1</field>
-            <field name="warehouse_id" ref="stock.warehouse0"/> 
-            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="warehouse_id" ref="dmo_JIT2.stock_warehouse_DMO"/> 
+            <field name="location_id" model="stock.location" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>
         </record>          
         <record id="stock_oderpoint_CompB" model="stock.warehouse.orderpoint">
             <field name="product_id" ref="product_product_CompB"/>
             <field name="product_min_qty">10</field>
             <field name="product_max_qty">10</field>
             <field name="qty_multiple">1</field>
-            <field name="warehouse_id" ref="stock.warehouse0"/> 
-            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="warehouse_id" ref="dmo_JIT2.stock_warehouse_DMO"/> 
+            <field name="location_id" model="stock.location" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>
         </record> 
         <record id="stock_oderpoint_CompC" model="stock.warehouse.orderpoint">
             <field name="product_id" ref="product_product_CompC"/>
             <field name="product_min_qty">10</field>
             <field name="product_max_qty">10</field>
             <field name="qty_multiple">1</field>
-            <field name="warehouse_id" ref="stock.warehouse0"/> 
-            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="warehouse_id" ref="dmo_JIT2.stock_warehouse_DMO"/> 
+            <field name="location_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>
         </record>   
         <record id="stock_oderpoint_CompD" model="stock.warehouse.orderpoint">
             <field name="product_id" ref="product_product_CompD"/>
             <field name="product_min_qty">150</field>
             <field name="product_max_qty">150</field>
             <field name="qty_multiple">1</field>
-            <field name="warehouse_id" ref="stock.warehouse0"/> 
-            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="warehouse_id" ref="dmo_JIT2.stock_warehouse_DMO"/> 
+            <field name="location_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>
         </record>                    
 
         <!-- Resource: stock.inventory.line -->
