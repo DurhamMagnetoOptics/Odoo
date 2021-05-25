@@ -10,6 +10,14 @@ class account_payment(models.Model):
         if res:
             res['res_model'] = 'account.payment.register'
             res['view_id'] = self.env.ref('account.view_account_payment_form_multi').id
+            #The following three valaues are only set in the context when we are coming from the aged partner reports, and they result in behaviour Ian doesn't like, so we'll clear them.
+            old_context = res['context']
+            if 'model' in old_context.keys() or 'default_type' in old_context.keys() or 'default_journal_id' in old_context.keys():
+                new_context = dict(old_context).copy()
+                new_context.pop('model', False)
+                new_context.pop('default_type', False)
+                new_context.pop('default_journal_id', False)
+                res['context'] = new_context
         return res
 
 class payment_register(models.TransientModel):
