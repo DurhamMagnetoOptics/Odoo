@@ -7,7 +7,8 @@
         <field name="arch" type="xml">
             <field name="company_registry" position="after">
                 <field name="require_ref" string="Require Reference in Vendor Bills" />
-            </field>
+                <field name="always_multi_payment" string="Use the register payment wizard for single payments" />
+            </field>          
         </field>
     </record>
 </odoo>
