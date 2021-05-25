@@ -13,7 +13,7 @@ Adds total amount to vendor bill Group Payment view.
 Adjusts column names and removes "memo" field from payment receipt document
 
 13.1.0
-New report style: "DMO Aged XXXX"
+New report style: "DMO Aged Payable/Receivable"
 
 Registering Payment (from Bill view, from single Bill selected from list, and from multiple Bills selected from list) all open the same 'multipayment' wizard for registering payments (which jumps you to the Payment upon completion, instead of returning you to the Bill) 
 
