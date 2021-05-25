@@ -45,8 +45,9 @@ class StockRule(models.Model):
                 msg = _('No source location defined on stock rule: %s!') % (rule.name, )
                 raise UserError(msg)
 
-            localized_product = procurement.product_id.with_context(location=rule.location_src_id.id)
-            qty_available = localized_product.virtual_available
+            #If it is coming out of auto-fulfill, this could be happening in a context where compute_child is False.  We won't want that for computing if we have any to spare
+            localized_product = procurement.product_id.with_context(location=rule.location_src_id.id, compute_child=True)
+            qty_available = localized_product.free_qty
             qty_needed = procurement.product_uom._compute_quantity(procurement.product_qty, procurement.product_id.uom_id)
             qty_shortfall = qty_needed - qty_available   
 

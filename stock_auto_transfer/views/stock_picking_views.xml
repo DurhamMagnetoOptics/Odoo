@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="stock_auto_transfer_view_picking_type_form">
+        <field name="name">Auto Transfer Operation Types</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.view_picking_type_form"/>
+        <field name="arch" type="xml">                     
+            <field name="warehouse_id" position="after">
+                <field name="ephemeral" />
+            </field>   
+        </field>
+    </record>
+
+    <record id="stock_auto_transfer_check_availability" model="ir.actions.server">
+        <field name="name">Check Availability</field>
+        <field name="sequence">100</field>
+        <field name="type">ir.actions.server</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="state">code</field>
+        <field name="code">records.action_assign()</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">list,tree</field>
+    </record>
+
+    <record id="stock_auto_transfer_unreserve" model="ir.actions.server">
+        <field name="name">Unreserve</field>
+        <field name="sequence">101</field>
+        <field name="type">ir.actions.server</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="state">code</field>
+        <field name="code">records.do_unreserve()</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">list,tree</field>
+    </record>
+
+    <record id="stock_auto_transfer_cancel" model="ir.actions.server">
+        <field name="name">Cancel</field>
+        <field name="sequence">102</field>
+        <field name="type">ir.actions.server</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="state">code</field>
+        <field name="code">records.action_cancel()</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">list,tree</field>
+    </record>        
+
+</odoo>

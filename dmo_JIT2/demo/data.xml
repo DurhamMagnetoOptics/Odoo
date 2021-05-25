@@ -6,17 +6,73 @@
             <field name="group_stock_multi_warehouses" eval="True"/>
             <field name="group_stock_multi_locations" eval="True"/>
             <field name="group_stock_adv_location" eval="True"/>
+            <field name="group_stock_production_lot" eval="True"/>
+            <field name="group_uom" eval="True"/>
+            <field name="group_product_variant" eval="False"/>
         </record>
         <function model="res.config.settings" name="execute">
             <value model="res.config.settings"
                 search="[('id', '=', ref('my_config_settings'))]"/>
-        </function>  
+        </function>   
 
-    <!-- Warehouse -->
-        <record id="stock_warhouse_DMO" model="stock.warehouse">
+    <!-- First create the three records that we need to use in creating all the others:
+    Warehouse
+    Stores
+    Auto Transfer-->
+        <record id="stock_warehouse_DMO" model="stock.warehouse">
             <field name="name">DMO</field>
             <field name="code">DMO</field>
-        </record>                                    
-             
+        </record>    
+
+        <record id="stock_location_Stores" model="stock.location">
+            <field name="name">Stores</field>
+            <field name="putaway_savespace">True</field>
+            <field name="usage">view</field>
+            <field name="location_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>      
+        </record>    
+        <record id="auto_transfer_DMO" model="stock.picking.type">
+            <field name="name">Auto Transfers</field>
+            <field name="sequence_code">AT</field>
+            <!--<field name="default_location_src_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>-->                  
+            <!--<field name="default_location_dest_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>-->                  
+            <field name="code">internal</field>
+            <field name="return_picking_type_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').int_type_id.id"/>                  
+            <field name="warehouse_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').id"/>                  
+            <field name="show_operations">True</field>
+            <field name="company_id" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').company_id.id"/>                  
+            <field name="ephemeral">True</field>
+            <field name="color" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').int_type_id.color"/>
+            <field name="sequence" model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').int_type_id.sequence"/>
+            
+        </record>  
+
+
+    <!-- Change settings on two records that are create automatically when creating the warehosue -->                   
+        <!-- Clear default locations on Manufacturing Operation -->
+        <!-- Turn on multilevel kitting -->
+        <!-- This first argument is the 'self' argument for the 'wrte' function.  Why is it the id and not the reference itself??-->
+        <!-- This first argument is the 'vals' argument for the 'wrte' function.-->
+        <!-- Final Odoo WTF:  when I had the above comments in line with the value tags, Odoo wasn't ignoring them, and was passing my comment as a third argument to the function.  Get it together, Odoo!!!  -->
+        <function name="write" model="stock.picking.type">
+            <value model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').manu_type_id.id"/>
+            <value eval="{'multilevel_kitting': True, 'default_location_dest_id': None, 'default_location_src_id': None}"/>
+        </function>  
+
+        <function name="write" model="stock.location">
+            <value model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').lot_stock_id.id"/>
+            <value model="stock.warehouse" eval="{'removal_strategy_id': obj().env.ref('stock.removal_lifo').id, 'auto_empty': True, 'auto_empty_target_id': obj().env.ref('dmo_JIT2.stock_location_Stores').id, 'auto_empty_operation_id': obj().env.ref('dmo_JIT2.auto_transfer_DMO').id}"/>
+        </function> 
+
+        <function name="write" model="stock.picking.type">
+            <value model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').int_type_id.id"/>
+            <value eval="{'name': 'Manual Transfers'}"/>
+        </function>          
+
+        <!-- Receipts go to top-level stock -->
+        <!-- Leftovers will be moved out after all pulls are accounted for -->   
+        <function name="write" model="stock.picking.type">
+            <value model="stock.warehouse" eval="obj().env.ref('dmo_JIT2.stock_warehouse_DMO').in_type_id.id"/>
+            <value model="stock.warehouse" eval="{'show_operations': False}"/>
+        </function>                             
     </data>
 </odoo> 
