@@ -1,6 +1,17 @@
 from odoo import models, fields, api
 from collections import defaultdict
 
+class account_payment(models.Model):
+    _inherit = "account.payment"
+
+    def action_register_payment(self):
+        #override default method to always use the view_account_payment_form_multi wizard
+        res = super().action_register_payment()
+        if res:
+            res['res_model'] = 'account.payment.register'
+            res['view_id'] = self.env.ref('account.view_account_payment_form_multi').id
+        return res
+
 class payment_register(models.TransientModel):
     _inherit = "account.payment.register"
     
