@@ -19,6 +19,10 @@ Registering Payment (from Bill view, from single Bill selected from list, and fr
 
 When a Bill is opened from the aged partner report, it follows the normal default values when registering payment 
 
+13.1.1
+Registering Payment has been reverted to use single or multi-payment as appropriate.  Instead, we have added a shortcut button to related Payments from the Bill.
+
+
 
 
 ==================
@@ -28,4 +32,4 @@ Known Limitations
 ==================
 Version
 ==================
-13.1.0.0.0 
+13.1.1.0.0 
