@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <!-- Add local currency fields to invoice list view -->
     <record id="dmo_accounting_account_move_views" model="ir.ui.view">
         <field name="name">dmo.account.invoice.tree</field>
@@ -36,6 +37,9 @@
             <field name="ref" position="attributes">
                 <attribute name="attrs">{'required': [('require_ref','=',True)]}</attribute>
             </field>
+            <button name="open_reconcile_view" position="after">
+                <button class="oe_stat_button" name="button_payments" string="Payments" type="object" attrs="{'invisible': [('invoice_payment_state', 'not in', ('paid', 'in_payment'))]}" icon="fa-bars"/>
+            </button>            
         </field>
     </record>
 </odoo>
