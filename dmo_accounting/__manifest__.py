@@ -4,7 +4,7 @@
 {
     'name': 'DMO Accounting',
     'summary': 'Various tweaks to Odoo accounting to better match DMO work flow',
-    'version': '13.1.0.0.0',
+    'version': '13.1.1.1.0',
     'development_status': 'caveat emptor',
     'category': 'Accounting',
     'website': 'http://www.dmoltd.co.uk',
