@@ -21,6 +21,7 @@ When a Bill is opened from the aged partner report, it follows the normal defaul
 
 13.1.1
 Added a shortcut button to related Payments from the Bill.
+Removed the 'multipayment' override introduced in 13.1.0
 
 
 

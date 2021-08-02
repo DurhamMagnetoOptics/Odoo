@@ -5,13 +5,8 @@ class account_payment(models.Model):
     _inherit = "account.payment"
 
     def action_register_payment(self):
-        #override default method to always use the view_account_payment_form_multi wizard
         res = super().action_register_payment()
         if res:
-            if res['context'].get('allowed_company_ids', False) and self.env['res.company'].browse(res['context']['allowed_company_ids']).always_multi_payment:
-                res['res_model'] = 'account.payment.register'
-                res['view_id'] = self.env.ref('account.view_account_payment_form_multi').id
-
             #If we have come to the Bill/Invoice view through the aged partner report, there are some incorrect values in the context
             #This isn't actually specific to our "DMO Ageed XXX" reports (aka it happens from Odoo's aged parter reports, too), but
             #  in the interest of being as light-touch as possible, we will only remove them from the context in the case of our custom forms.
