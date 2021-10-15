@@ -1,0 +1,4 @@
+[submodule "odoonz/odoonz-addons"]
+	path = odoonz/odoonz-addons
+	url = git@github.com:odoonz/odoonz-addons.git
+	branch = 13.0
