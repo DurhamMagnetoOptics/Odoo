@@ -2,3 +2,8 @@
 	path = OCA/server-tools
 	url = git@github.com:OCA/server-tools.git
 	branch = 13.0
+
+[submodule "odoonz/odoonz-addons"]
+	path = odoonz/odoonz-addons
+	url = git@github.com:odoonz/odoonz-addons.git
+	branch = 13.0
