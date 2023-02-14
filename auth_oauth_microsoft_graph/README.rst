@@ -1,6 +1,21 @@
-.. image:: https://img.shields.io/badge/licence-AGPL--3-blue.svg
-   :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
-   :alt: License: AGPL-3
+====================================
+DMO auth_oauth_microscoft_graph
+====================================
+
+Was a clone of the excellent module described below.  Now an empty placeholder.
+
+16.0.0.0
+All changes disabled, for upgrade to vanilla Odoo 16 for legacy transactional data only.
+
+==================
+Version
+==================
+16.0.0.0
+
+
+
+
+
 
 ====================================
 Microsoft Graph Oauth Authentication

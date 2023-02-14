@@ -5,7 +5,10 @@ DMO A2HS
 
 Enables Add To Home Screen with a minimal manifest.webmanifest and serviceworker.
 
+16.0.0.0
+All changes disabled, for upgrade to vanilla Odoo 16 for legacy transactional data only.
+
 ==================
 Version
 ==================
-13.0.1.0.0 
+16.0.0.0

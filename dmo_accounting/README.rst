@@ -23,6 +23,9 @@ When a Bill is opened from the aged partner report, it follows the normal defaul
 Added a shortcut button to related Payments from the Bill.
 Removed the 'multipayment' override introduced in 13.1.0
 
+16.0.0.0
+All changes disabled, for upgrade to vanilla Odoo 16 for legacy transactional data only.
+
 
 
 
@@ -34,4 +37,4 @@ Known Limitations
 ==================
 Version
 ==================
-13.1.1.1.0 
+16.0.0.0
