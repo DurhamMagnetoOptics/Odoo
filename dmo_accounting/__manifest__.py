@@ -19,7 +19,6 @@
     'data': [
         'views/account_move_views.xml',
         'views/view_company_form.xml',
-        'views/account_payment_view.xml',
         'views/report_payment_receipt_templates.xml',
         'views/account_financial_report_data.xml',
     ],

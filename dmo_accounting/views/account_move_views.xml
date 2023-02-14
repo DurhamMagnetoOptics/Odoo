@@ -38,7 +38,7 @@
                 <attribute name="attrs">{'required': [('require_ref','=',True)]}</attribute>
             </field>
             <button name="open_reconcile_view" position="after">
-                <button class="oe_stat_button" name="button_payments" string="Payments" type="object" attrs="{'invisible': [('invoice_payment_state', 'not in', ('paid', 'in_payment'))]}" icon="fa-bars"/>
+                <button class="oe_stat_button" name="button_payments" string="Payments" type="object" attrs="{'invisible': [('payment_state', 'not in', ('paid', 'in_payment'))]}" icon="fa-bars"/>
             </button>            
         </field>
     </record>
