@@ -17,6 +17,7 @@
         'account_reports',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/account_move_views.xml',
         'views/view_company_form.xml',
         'views/report_payment_receipt_templates.xml',
