@@ -5,7 +5,7 @@ from odoo import models, api, fields, _
 from odoo.tools.misc import format_date
 
 
-class report_account_aged_receivableDMO(models.AbstractModel):
+class report_account_aged_receivableDMO(models.Model):
     _name = "account.aged.receivabledmo"
     _description = "DMO Aged Receivable"
     _inherit = "account.aged.receivable"
@@ -42,7 +42,7 @@ class report_account_aged_receivableDMO(models.AbstractModel):
         return lines       
 
 
-class report_account_aged_payableDMO(models.AbstractModel):
+class report_account_aged_payableDMO(models.Model):
     _name = "account.aged.payabledmo"
     _description = "DMO Aged Payable"
     _inherit = "account.aged.payable"
