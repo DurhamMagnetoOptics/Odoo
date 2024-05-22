@@ -12,7 +12,7 @@ Project version 1.6.0 -- auth_oauth_microsoft_graph 16.0.0.0
                        -- dmo_accounting 16.0.0.0
                        -- dmo_a2hs 16.0.0.0                       
 
-Available addons
+Available addons - EOL
 ----------------
 addon | version | summary
 --- | --- | ---
